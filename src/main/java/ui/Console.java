@@ -1,5 +1,6 @@
 package ui;
 
+import domain.validators.BookValidator;
 import domain.validators.ValidatorException;
 
 import java.io.BufferedReader;
@@ -9,9 +10,11 @@ import java.util.Set;
 
 public class Console {
     private service.ClientService clientService;
+    private service.BookService bookService;
 
-    public Console(service.ClientService studentService) {
+    public Console(service.ClientService studentService, service.BookService bookService) {
         this.clientService = studentService;
+        this.bookService = bookService;
     }
 
     public void runConsole() {
@@ -33,11 +36,20 @@ public class Console {
                     case 1:
                         addClient();
                         break;
+                    case 2:
+                        addBook();
+                        break;
                     case 3:
                         printAllClients();
                         break;
+                    case 4:
+                        printAllBooks();
+                        break;
                     case 5:
                         filterClients();
+                        break;
+                    case 6:
+                        filterBooks();
                         break;
                     default:
                         break;
@@ -99,6 +111,57 @@ public class Console {
             student.setId(id);
 
             return student;
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    // ----------------
+    // Books
+
+    private void filterBooks() {
+        System.out.println("filtered books (name containing 's2'):");
+        Set<domain.Book> books = bookService.filterBooksByName("s2");
+        books.stream().forEach(System.out::println);
+    }
+
+    private void printAllBooks() {
+        Set<domain.Book> books = bookService.getAllBooks();
+        books.stream().forEach(System.out::println);
+    }
+
+    private void addBook() {
+        domain.Book book = readBook();
+        BookValidator validator = new BookValidator();
+        try {
+            validator.validate(book);
+            bookService.addBook(book);
+        } catch (ValidatorException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private domain.Book readBook() {
+        System.out.println("Please enter a new book: ");
+
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("ID: ");
+            Long id = Long.parseLong(bufferRead.readLine());
+            System.out.println("Serial Number: ");
+            String serialNumber = bufferRead.readLine();
+            System.out.println("Name: ");
+            String name = bufferRead.readLine();
+            System.out.println("Author: ");
+            String author = bufferRead.readLine();
+            System.out.println("Year: ");
+            int year = Integer.parseInt(bufferRead.readLine());
+
+            domain.Book book = new domain.Book(serialNumber, name, author, year);
+            book.setId(id);
+
+            return book;
         } catch (IOException ex) {
             ex.printStackTrace();
         }

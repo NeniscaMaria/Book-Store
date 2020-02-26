@@ -30,7 +30,16 @@ public class Main {
         domain.validators.Validator<domain.Client> studentValidator = new domain.validators.ClientValidator();
         repository.Repository<Long, domain.Client> clientRepository = new repository.ClientFileRepository(studentValidator, "clients.txt");
         service.ClientService clientService = new service.ClientService(clientRepository);
-        ui.Console console = new ui.Console(clientService);
+
+        // book
+
+        domain.validators.Validator<domain.Book> bookValidator = new domain.validators.BookValidator();
+        repository.Repository<Long, domain.Book> bookRepository = new repository.BookFileRepository(bookValidator, "books.txt");
+        service.BookService bookService = new service.BookService(bookRepository);
+
+        ui.Console console = new ui.Console(clientService, bookService);
         console.runConsole();
+//        ui.Console console = new ui.Console(clientService);
+//        console.runConsole();
     }
 }

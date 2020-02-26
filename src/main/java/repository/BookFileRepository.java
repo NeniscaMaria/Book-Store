@@ -18,8 +18,10 @@ import java.util.Optional;
 public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
     private String fileName;
 
-    public BookFileRepository(Validator<Book> validator) {
+    public BookFileRepository(Validator<Book> validator, String fileName) {
         super(validator);
+        this.fileName = fileName;
+        loadData();
     }
 
     private void loadData() {
@@ -64,7 +66,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
+                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName() + "," + entity.getAuthor() + "," + entity.getYear() + '\n');
             bufferedWriter.newLine();
         } catch (IOException e) {
             e.printStackTrace();

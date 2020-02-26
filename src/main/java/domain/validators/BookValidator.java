@@ -3,6 +3,9 @@ package domain.validators;
 import domain.Book;
 
 public class BookValidator implements Validator<domain.Book>  {
+    boolean checkNull(String stringToBeChecked){
+        return stringToBeChecked.equals("") || stringToBeChecked.equals(" ");
+    }
     @Override
     public void validate(Book entity) throws ValidatorException {
         // Checks if the Book is null
