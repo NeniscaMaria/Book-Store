@@ -28,8 +28,7 @@ public class Main {
 //        }
 //        //in file repo
         domain.validators.Validator<domain.Client> studentValidator = new domain.validators.ClientValidator();
-
-        repository.Repository<Long, domain.Client> clientRepository = new repository.ClientFileRepository(studentValidator, "./data/students");
+        repository.Repository<Long, domain.Client> clientRepository = new repository.ClientFileRepository(studentValidator, "clients.txt");
         service.ClientService clientService = new service.ClientService(clientRepository);
         ui.Console console = new ui.Console(clientService);
         console.runConsole();

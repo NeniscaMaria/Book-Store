@@ -1,5 +1,6 @@
 package ui;
 
+import domain.validators.ClientValidator;
 import domain.validators.ValidatorException;
 
 import java.io.BufferedReader;
@@ -15,11 +16,46 @@ public class Console {
     }
 
     public void runConsole() {
-//        addStudents();
-        printAllClients();
-        filterClients();
-    }
+        boolean finished=false;
+        while(!finished){
+            printChoices();
+            BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+            int choice=-1;
+            try {
+                choice = Integer.parseInt(bufferRead.readLine());
+            }catch(IOException ex){
+                System.out.println(ex.getStackTrace());
+            }
+            if(isChoiceOK(choice))
+                switch (choice) {
+                    case 0:
+                        finished=true;
+                        break;
+                    case 1:
+                        addClient();
+                        break;
+                    case 2:
+                        printAllClients();
+                        break;
+                    case 3:
+                        filterClients();
+                        break;
+                    default:
+                        break;
+                }
+        }
 
+    }
+    boolean isChoiceOK(int choiceToCheck){
+        return choiceToCheck>=0 && choiceToCheck<4;
+    }
+    private void printChoices(){
+        System.out.println("\nChoose one from below:");
+        System.out.println("0.Exit");
+        System.out.println("1.Add new client.");
+        System.out.println("2.Show all clients.");
+        System.out.println("3.Filter clients.");
+    }
     private void filterClients() {
         System.out.println("filtered clients (name containing 's2'):");
         Set<domain.Client> students = studentService.filterClientsByName("s2");
@@ -31,27 +67,27 @@ public class Console {
         students.stream().forEach(System.out::println);
     }
 
-    private void addClients() {
-        while (true) {
-            domain.Client student = readClient();
-            if (student == null || student.getId() < 0) {
-                break;
-            }
-            try {
-                studentService.addClient(student);
-            } catch (ValidatorException e) {
-                e.printStackTrace();
-            }
+    private void addClient() {
+        domain.Client client = readClient();
+        ClientValidator validator = new ClientValidator();
+        try {
+            validator.validate(client);
+            studentService.addClient(client);
+        } catch (ValidatorException e) {
+            System.out.println(e.getMessage());
         }
     }
 
     private domain.Client readClient() {
-        System.out.println("Read client {id,serialNumber, name}");
+        System.out.println("Please enter a new client: ");
 
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
         try {
-            Long id = Long.valueOf(bufferRead.readLine());
+            System.out.println("ID: ");
+            Long id = Long.parseLong(bufferRead.readLine());
+            System.out.println("Serial Number: ");
             String serialNumber = bufferRead.readLine();
+            System.out.println("Name: ");
             String name = bufferRead.readLine();
 
             domain.Client student = new domain.Client(serialNumber, name);

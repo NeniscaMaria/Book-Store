@@ -1,8 +1,7 @@
 package domain.validators;
-import domain.validators.CatalogException;
 
 
-public class ValidatorException extends CatalogException {
+public class ValidatorException extends RuntimeException {
     public ValidatorException(String message) {
         super(message);
     }
