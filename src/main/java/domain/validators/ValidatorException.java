@@ -1,5 +1,5 @@
-package ro.ubb.catalog.domain.validators;
-
+package domain.validators;
+import domain.validators.CatalogException;
 /**
  * @author radu.
  */

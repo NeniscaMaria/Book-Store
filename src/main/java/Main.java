@@ -1,13 +1,5 @@
 
 
-import ro.ubb.catalog.domain.validators.StudentValidator;
-import ro.ubb.catalog.domain.validators.Validator;
-import ro.ubb.catalog.repository.Repository;
-import ro.ubb.catalog.repository.StudentFileRepository;
-import ro.ubb.catalog.service.StudentService;
-import ro.ubb.catalog.ui.Console;
-
-
 /**
  * Created by radu.
  * <p>
@@ -49,10 +41,11 @@ public class Main {
 //            e.printStackTrace();
 //        }
 //        //in file repo
-        Validator<ro.ubb.catalog.domain.Client> studentValidator = new StudentValidator();
-        Repository<Long, ro.ubb.catalog.domain.Client> studentRepository = new StudentFileRepository(studentValidator, "./data/students");
-        StudentService studentService = new StudentService(studentRepository);
-        Console console = new Console(studentService);
+        domain.validators.Validator<domain.Client> studentValidator = new domain.validators.ClientValidator();
+
+        repository.Repository<Long, domain.Client> clientRepository = new ro.ubb.catalog.repository.ClientFileRepository(studentValidator, "./data/students");
+        service.ClientService clientService = new service.ClientService(clientRepository);
+        ui.Console console = new ui.Console(clientService);
         console.runConsole();
 
 

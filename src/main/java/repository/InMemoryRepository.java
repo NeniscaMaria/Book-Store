@@ -1,7 +1,7 @@
-package ro.ubb.catalog.repository;
+package repository;
 
-import ro.ubb.catalog.domain.validators.Validator;
-import ro.ubb.catalog.domain.validators.ValidatorException;
+import domain.validators.Validator;
+import domain.validators.ValidatorException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * @author radu.
  */
-public class InMemoryRepository<ID, T extends ro.ubb.catalog.domain.BaseEntity<ID>> implements Repository<ID, T> {
+public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements repository.Repository<ID, T> {
 
     private Map<ID, T> entities;
     private Validator<T> validator;

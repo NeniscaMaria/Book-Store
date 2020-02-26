@@ -1,4 +1,4 @@
-package ro.ubb.catalog.domain.validators;
+package domain.validators;
 
 /**
  * Created by radu.

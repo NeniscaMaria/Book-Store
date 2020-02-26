@@ -1,8 +1,5 @@
-package ro.ubb.catalog.domain;
+package domain;
 
-/**
- * @author radu.
- */
 public class BaseEntity<ID> {
     private ID id;
 

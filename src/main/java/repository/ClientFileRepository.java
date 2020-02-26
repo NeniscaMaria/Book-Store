@@ -16,10 +16,10 @@ import java.util.Optional;
 /**
  * @author radu.
  */
-public class StudentFileRepository extends InMemoryRepository<Long, ro.ubb.catalog.domain.Client> {
+public class ClientFileRepository extends InMemoryRepository<Long, ro.ubb.catalog.domain.Client> {
     private String fileName;
 
-    public StudentFileRepository(Validator<ro.ubb.catalog.domain.Client> validator, String fileName) {
+    public ClientFileRepository(Validator<ro.ubb.catalog.domain.Client> validator, String fileName) {
         super(validator);
         this.fileName = fileName;
 

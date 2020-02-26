@@ -1,21 +1,15 @@
-package ro.ubb.catalog.domain;
+package domain;
 
-/**
- * @author radu.
- *
- */
-public class Client extends BaseEntity<Long>{
+public class Client extends domain.BaseEntity<Long> {
     private String serialNumber;
     private String name;
-    private int group;
 
     public Client() {
     }
 
-    public Client(String serialNumber, String name, int group) {
+    public Client(String serialNumber, String name) {
         this.serialNumber = serialNumber;
         this.name = name;
-        this.group = group;
     }
 
     public String getSerialNumber() {
@@ -34,32 +28,20 @@ public class Client extends BaseEntity<Long>{
         this.name = name;
     }
 
-    public int getGroup() {
-        return group;
-    }
-
-    public void setGroup(int group) {
-        this.group = group;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ro.ubb.catalog.domain.Client student = (ro.ubb.catalog.domain.Client) o;
-
-        if (group != student.group) return false;
+        domain.Client student = (domain.Client) o;
         if (!serialNumber.equals(student.serialNumber)) return false;
         return name.equals(student.name);
-
     }
 
     @Override
     public int hashCode() {
         int result = serialNumber.hashCode();
         result = 31 * result + name.hashCode();
-        result = 31 * result + group;
         return result;
     }
 
@@ -68,7 +50,6 @@ public class Client extends BaseEntity<Long>{
         return "Student{" +
                 "serialNumber='" + serialNumber + '\'' +
                 ", name='" + name + '\'' +
-                ", group=" + group +
                 "} " + super.toString();
     }
 }
