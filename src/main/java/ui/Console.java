@@ -1,6 +1,5 @@
 package ro.ubb.catalog.ui;
 
-import ro.ubb.catalog.domain.Student;
 import ro.ubb.catalog.domain.validators.ValidatorException;
 import ro.ubb.catalog.service.StudentService;
 
@@ -27,18 +26,18 @@ public class Console {
 
     private void filterStudents() {
         System.out.println("filtered students (name containing 's2'):");
-        Set<Student> students = studentService.filterStudentsByName("s2");
+        Set<ro.ubb.catalog.domain.Client> students = studentService.filterStudentsByName("s2");
         students.stream().forEach(System.out::println);
     }
 
     private void printAllStudents() {
-        Set<Student> students = studentService.getAllStudents();
+        Set<ro.ubb.catalog.domain.Client> students = studentService.getAllStudents();
         students.stream().forEach(System.out::println);
     }
 
     private void addStudents() {
         while (true) {
-            Student student = readStudent();
+            ro.ubb.catalog.domain.Client student = readStudent();
             if (student == null || student.getId() < 0) {
                 break;
             }
@@ -50,7 +49,7 @@ public class Console {
         }
     }
 
-    private Student readStudent() {
+    private ro.ubb.catalog.domain.Client readStudent() {
         System.out.println("Read student {id,serialNumber, name, group}");
 
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -60,7 +59,7 @@ public class Console {
             String name = bufferRead.readLine();
             int group = Integer.parseInt(bufferRead.readLine());// ...
 
-            Student student = new Student(serialNumber, name, group);
+            ro.ubb.catalog.domain.Client student = new ro.ubb.catalog.domain.Client(serialNumber, name, group);
             student.setId(id);
 
             return student;

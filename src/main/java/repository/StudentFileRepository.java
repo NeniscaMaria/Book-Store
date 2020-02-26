@@ -1,6 +1,5 @@
 package ro.ubb.catalog.repository;
 
-import ro.ubb.catalog.domain.Student;
 import ro.ubb.catalog.domain.validators.Validator;
 import ro.ubb.catalog.domain.validators.ValidatorException;
 
@@ -17,10 +16,10 @@ import java.util.Optional;
 /**
  * @author radu.
  */
-public class StudentFileRepository extends InMemoryRepository<Long, Student> {
+public class StudentFileRepository extends InMemoryRepository<Long, ro.ubb.catalog.domain.Client> {
     private String fileName;
 
-    public StudentFileRepository(Validator<Student> validator, String fileName) {
+    public StudentFileRepository(Validator<ro.ubb.catalog.domain.Client> validator, String fileName) {
         super(validator);
         this.fileName = fileName;
 
@@ -39,7 +38,7 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
                 String name = items.get((2));
                 int group = Integer.parseInt(items.get(3));
 
-                Student student = new Student(serialNumber, name, group);
+                ro.ubb.catalog.domain.Client student = new ro.ubb.catalog.domain.Client(serialNumber, name, group);
                 student.setId(id);
 
                 try {
@@ -54,8 +53,8 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
     }
 
     @Override
-    public Optional<Student> save(Student entity) throws ValidatorException {
-        Optional<Student> optional = super.save(entity);
+    public Optional<ro.ubb.catalog.domain.Client> save(ro.ubb.catalog.domain.Client entity) throws ValidatorException {
+        Optional<ro.ubb.catalog.domain.Client> optional = super.save(entity);
         if (optional.isPresent()) {
             return optional;
         }
@@ -63,7 +62,7 @@ public class StudentFileRepository extends InMemoryRepository<Long, Student> {
         return Optional.empty();
     }
 
-    private void saveToFile(Student entity) {
+    private void saveToFile(ro.ubb.catalog.domain.Client entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {

@@ -1,6 +1,5 @@
 package ro.ubb.catalog.repository;
 
-import ro.ubb.catalog.domain.BaseEntity;
 import ro.ubb.catalog.domain.validators.Validator;
 import ro.ubb.catalog.domain.validators.ValidatorException;
 
@@ -13,7 +12,7 @@ import java.util.stream.Collectors;
 /**
  * @author radu.
  */
-public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements Repository<ID, T> {
+public class InMemoryRepository<ID, T extends ro.ubb.catalog.domain.BaseEntity<ID>> implements Repository<ID, T> {
 
     private Map<ID, T> entities;
     private Validator<T> validator;

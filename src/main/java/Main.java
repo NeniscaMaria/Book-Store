@@ -1,6 +1,5 @@
-package ro.ubb.catalog;
 
-import ro.ubb.catalog.domain.Student;
+
 import ro.ubb.catalog.domain.validators.StudentValidator;
 import ro.ubb.catalog.domain.validators.Validator;
 import ro.ubb.catalog.repository.Repository;
@@ -50,8 +49,8 @@ public class Main {
 //            e.printStackTrace();
 //        }
 //        //in file repo
-        Validator<Student> studentValidator = new StudentValidator();
-        Repository<Long, Student> studentRepository = new StudentFileRepository(studentValidator, "./data/students");
+        Validator<ro.ubb.catalog.domain.Client> studentValidator = new StudentValidator();
+        Repository<Long, ro.ubb.catalog.domain.Client> studentRepository = new StudentFileRepository(studentValidator, "./data/students");
         StudentService studentService = new StudentService(studentRepository);
         Console console = new Console(studentService);
         console.runConsole();

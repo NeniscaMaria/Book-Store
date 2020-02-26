@@ -1,6 +1,5 @@
 package ro.ubb.catalog.service;
 
-import ro.ubb.catalog.domain.Student;
 import ro.ubb.catalog.domain.validators.ValidatorException;
 import ro.ubb.catalog.repository.Repository;
 
@@ -13,18 +12,18 @@ import java.util.stream.StreamSupport;
  * @author radu.
  */
 public class StudentService {
-    private Repository<Long, Student> repository;
+    private Repository<Long, ro.ubb.catalog.domain.Client> repository;
 
-    public StudentService(Repository<Long, Student> repository) {
+    public StudentService(Repository<Long, ro.ubb.catalog.domain.Client> repository) {
         this.repository = repository;
     }
 
-    public void addStudent(Student student) throws ValidatorException {
+    public void addStudent(ro.ubb.catalog.domain.Client student) throws ValidatorException {
         repository.save(student);
     }
 
-    public Set<Student> getAllStudents() {
-        Iterable<Student> students = repository.findAll();
+    public Set<ro.ubb.catalog.domain.Client> getAllStudents() {
+        Iterable<ro.ubb.catalog.domain.Client> students = repository.findAll();
         return StreamSupport.stream(students.spliterator(), false).collect(Collectors.toSet());
     }
 
@@ -34,14 +33,14 @@ public class StudentService {
      * @param s
      * @return
      */
-    public Set<Student> filterStudentsByName(String s) {
-        Iterable<Student> students = repository.findAll();
+    public Set<ro.ubb.catalog.domain.Client> filterStudentsByName(String s) {
+        Iterable<ro.ubb.catalog.domain.Client> students = repository.findAll();
         //version 1
 //        Set<Student> filteredStudents = StreamSupport.stream(students.spliterator(), false)
 //                .filter(student -> student.getName().contains(s)).collect(Collectors.toSet());
 
         //version 2
-        Set<Student> filteredStudents= new HashSet<>();
+        Set<ro.ubb.catalog.domain.Client> filteredStudents= new HashSet<>();
         students.forEach(filteredStudents::add);
         filteredStudents.removeIf(student -> !student.getName().contains(s));
 

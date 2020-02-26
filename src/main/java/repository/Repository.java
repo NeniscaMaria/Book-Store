@@ -1,6 +1,5 @@
 package ro.ubb.catalog.repository;
 
-import ro.ubb.catalog.domain.BaseEntity;
 import ro.ubb.catalog.domain.validators.ValidatorException;
 
 import java.util.Optional;
@@ -11,7 +10,7 @@ import java.util.Optional;
  * @author radu.
  *
  */
-public interface Repository<ID, T extends BaseEntity<ID>> {
+public interface Repository<ID, T extends ro.ubb.catalog.domain.BaseEntity<ID>> {
     /**
      * Find the entity with the given {@code id}.
      * 

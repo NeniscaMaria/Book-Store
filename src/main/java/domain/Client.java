@@ -4,15 +4,15 @@ package ro.ubb.catalog.domain;
  * @author radu.
  *
  */
-public class Student extends BaseEntity<Long>{
+public class Client extends BaseEntity<Long>{
     private String serialNumber;
     private String name;
     private int group;
 
-    public Student() {
+    public Client() {
     }
 
-    public Student(String serialNumber, String name, int group) {
+    public Client(String serialNumber, String name, int group) {
         this.serialNumber = serialNumber;
         this.name = name;
         this.group = group;
@@ -47,7 +47,7 @@ public class Student extends BaseEntity<Long>{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Student student = (Student) o;
+        ro.ubb.catalog.domain.Client student = (ro.ubb.catalog.domain.Client) o;
 
         if (group != student.group) return false;
         if (!serialNumber.equals(student.serialNumber)) return false;

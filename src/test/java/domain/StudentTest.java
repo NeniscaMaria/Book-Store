@@ -4,7 +4,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import ro.ubb.catalog.domain.Student;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -20,11 +19,11 @@ public class StudentTest {
     private static final String NAME = "studentName";
     private static final int GROUP = 123;
 
-    private Student student;
+    private ro.ubb.catalog.domain.Client student;
 
     @Before
     public void setUp() throws Exception {
-        student = new Student(SERIAL_NUMBER, NAME, GROUP);
+        student = new ro.ubb.catalog.domain.Client(SERIAL_NUMBER, NAME, GROUP);
         student.setId(ID);
     }
 
