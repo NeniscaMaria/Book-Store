@@ -47,7 +47,7 @@ public class Console {
 
     }
     boolean isChoiceOK(int choiceToCheck){
-        return choiceToCheck>=0 && choiceToCheck<4;
+        return choiceToCheck>=0 && choiceToCheck<11);
     }
     private void printChoices(){
         System.out.println("\nChoose one from below:");
@@ -61,7 +61,7 @@ public class Console {
         System.out.println("7.Delete client.");
         System.out.println("8.Delete book.");
         System.out.println("9.Update client.");
-        System.out.println("9.Update book.");
+        System.out.println("10.Update book.");
     }
     private void filterClients() {
         System.out.println("filtered clients (name containing 's2'):");
