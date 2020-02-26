@@ -1,6 +1,5 @@
 package ui;
 
-import domain.validators.ClientValidator;
 import domain.validators.ValidatorException;
 
 import java.io.BufferedReader;
@@ -34,10 +33,10 @@ public class Console {
                     case 1:
                         addClient();
                         break;
-                    case 2:
+                    case 3:
                         printAllClients();
                         break;
-                    case 3:
+                    case 5:
                         filterClients();
                         break;
                     default:
@@ -77,7 +76,8 @@ public class Console {
     private void addClient() {
         domain.Client client = readClient();
         try {
-            clientService.addClient(client);
+            if(clientService.addClient(client).isPresent())
+                System.out.println("A client with this ID already exists.");
         } catch (ValidatorException e) {
             System.out.println(e.getMessage());
         }

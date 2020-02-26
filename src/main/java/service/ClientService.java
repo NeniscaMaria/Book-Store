@@ -1,9 +1,11 @@
 package service;
 
+import domain.Client;
 import domain.validators.ValidatorException;
 import repository.Repository;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -15,10 +17,8 @@ public class ClientService {
         this.repository = repository;
     }
 
-    public void addClient(domain.Client client) throws ValidatorException {
-        if(repository.save(client).isPresent())
-            System.out.println("A client with this ID already exists.");
-
+    public Optional<Client> addClient(domain.Client client) throws ValidatorException {
+        return repository.save(client);
     }
 
     public Set<domain.Client> getAllClients() {
