@@ -16,7 +16,9 @@ public class ClientService {
     }
 
     public void addClient(domain.Client client) throws ValidatorException {
-        repository.save(client);
+        if(repository.save(client).isPresent())
+            System.out.println("A client with this ID already exists.");
+
     }
 
     public Set<domain.Client> getAllClients() {

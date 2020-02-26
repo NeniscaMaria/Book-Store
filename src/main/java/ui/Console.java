@@ -9,10 +9,10 @@ import java.io.InputStreamReader;
 import java.util.Set;
 
 public class Console {
-    private service.ClientService studentService;
+    private service.ClientService clientService;
 
     public Console(service.ClientService studentService) {
-        this.studentService = studentService;
+        this.clientService = studentService;
     }
 
     public void runConsole() {
@@ -47,7 +47,7 @@ public class Console {
 
     }
     boolean isChoiceOK(int choiceToCheck){
-        return choiceToCheck>=0 && choiceToCheck<11);
+        return choiceToCheck>=0 && choiceToCheck<11;
     }
     private void printChoices(){
         System.out.println("\nChoose one from below:");
@@ -65,21 +65,19 @@ public class Console {
     }
     private void filterClients() {
         System.out.println("filtered clients (name containing 's2'):");
-        Set<domain.Client> students = studentService.filterClientsByName("s2");
+        Set<domain.Client> students = clientService.filterClientsByName("s2");
         students.stream().forEach(System.out::println);
     }
 
     private void printAllClients() {
-        Set<domain.Client> students = studentService.getAllClients();
+        Set<domain.Client> students = clientService.getAllClients();
         students.stream().forEach(System.out::println);
     }
 
     private void addClient() {
         domain.Client client = readClient();
-        ClientValidator validator = new ClientValidator();
         try {
-            validator.validate(client);
-            studentService.addClient(client);
+            clientService.addClient(client);
         } catch (ValidatorException e) {
             System.out.println(e.getMessage());
         }
