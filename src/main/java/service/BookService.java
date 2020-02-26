@@ -23,11 +23,11 @@ public class BookService {
 
     public Set<Book> getAllBooks() {
         // return all books from the repository
-        Iterable<domain.Book> clients = repository.findAll();
-        return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
+        Iterable<domain.Book> books = repository.findAll();
+        return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
     }
 
-    public Set<domain.Client> filterClientsByName(String s) {
+    public Set<domain.Book> filterBooksByName(String s) {
         return null;
     }
 }
