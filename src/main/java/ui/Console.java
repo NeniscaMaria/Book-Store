@@ -53,8 +53,15 @@ public class Console {
         System.out.println("\nChoose one from below:");
         System.out.println("0.Exit");
         System.out.println("1.Add new client.");
-        System.out.println("2.Show all clients.");
-        System.out.println("3.Filter clients.");
+        System.out.println("2.Add new book.");
+        System.out.println("3.Show all clients.");
+        System.out.println("4.Show all books.");
+        System.out.println("5.Filter clients.");
+        System.out.println("6.Filter books.");
+        System.out.println("7.Delete client.");
+        System.out.println("8.Delete book.");
+        System.out.println("9.Update client.");
+        System.out.println("9.Update book.");
     }
     private void filterClients() {
         System.out.println("filtered clients (name containing 's2'):");
