@@ -1,4 +1,4 @@
-package catalog.domain;
+package domain;
 
 import org.junit.After;
 import org.junit.Before;
@@ -8,22 +8,19 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-/**
- * @author radu.
- */
-public class StudentTest {
+
+public class ClientTest {
     private static final Long ID = new Long(1);
     private static final Long NEW_ID = new Long(2);
     private static final String SERIAL_NUMBER = "sn01";
     private static final String NEW_SERIAL_NUMBER = "sn02";
     private static final String NAME = "studentName";
-    private static final int GROUP = 123;
 
-    private ro.ubb.catalog.domain.Client student;
+    private domain.Client student;
 
     @Before
     public void setUp() throws Exception {
-        student = new ro.ubb.catalog.domain.Client(SERIAL_NUMBER, NAME, GROUP);
+        student = new domain.Client(SERIAL_NUMBER, NAME);
         student.setId(ID);
     }
 

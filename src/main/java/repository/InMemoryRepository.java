@@ -9,9 +9,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * @author radu.
- */
 public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements repository.Repository<ID, T> {
 
     private Map<ID, T> entities;
@@ -25,7 +22,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     @Override
     public Optional<T> findOne(ID id) {
         if (id == null) {
-            throw new IllegalArgumentException("id must not be null");
+            throw new IllegalArgumentException("ID must not be null");
         }
         return Optional.ofNullable(entities.get(id));
     }
@@ -39,7 +36,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     @Override
     public Optional<T> save(T entity) throws ValidatorException {
         if (entity == null) {
-            throw new IllegalArgumentException("id must not be null");
+            throw new IllegalArgumentException("ID must not be null");
         }
         validator.validate(entity);
         return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
@@ -48,7 +45,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     @Override
     public Optional<T> delete(ID id) {
         if (id == null) {
-            throw new IllegalArgumentException("id must not be null");
+            throw new IllegalArgumentException("ID must not be null");
         }
         return Optional.ofNullable(entities.remove(id));
     }
@@ -56,7 +53,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     @Override
     public Optional<T> update(T entity) throws ValidatorException {
         if (entity == null) {
-            throw new IllegalArgumentException("entity must not be null");
+            throw new IllegalArgumentException("Entity must not be null");
         }
         validator.validate(entity);
         return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> entity));

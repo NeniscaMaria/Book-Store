@@ -1,14 +1,12 @@
-package catalog.repository;
+package repository;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import ro.ubb.catalog.domain.validators.ValidatorException;
+import domain.validators.ValidatorException;
 
 import static org.junit.Assert.fail;
 
-/**
- * @author radu.
- */
+
 public class InMemoryRepositoryTest {
 
     @Ignore

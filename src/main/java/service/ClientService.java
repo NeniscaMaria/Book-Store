@@ -15,29 +15,29 @@ public class ClientService {
         this.repository = repository;
     }
 
-    public void addStudent(domain.Client student) throws ValidatorException {
-        repository.save(student);
+    public void addClient(domain.Client client) throws ValidatorException {
+        repository.save(client);
     }
 
-    public Set<domain.Client> getAllStudents() {
-        Iterable<domain.Client> students = repository.findAll();
-        return StreamSupport.stream(students.spliterator(), false).collect(Collectors.toSet());
+    public Set<domain.Client> getAllClients() {
+        Iterable<domain.Client> clients = repository.findAll();
+        return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
     }
 
     /*POST:Returns all students whose name contain the given string.
      PRE: @param s
      */
-    public Set<domain.Client> filterStudentsByName(String s) {
-        Iterable<domain.Client> students = repository.findAll();
+    public Set<domain.Client> filterClientsByName(String s) {
+        Iterable<domain.Client> clients = repository.findAll();
         //version 1
-//        Set<Student> filteredStudents = StreamSupport.stream(students.spliterator(), false)
-//                .filter(student -> student.getName().contains(s)).collect(Collectors.toSet());
+//        Set<domain.Client> filteredStudents = StreamSupport.stream(clients.spliterator(), false)
+//                .filter(client -> client.getName().contains(s)).collect(Collectors.toSet());
 
         //version 2
-        Set<domain.Client> filteredStudents= new HashSet<>();
-        students.forEach(filteredStudents::add);
-        filteredStudents.removeIf(student -> !student.getName().contains(s));
+        Set<domain.Client> filteredClients= new HashSet<>();
+        clients.forEach(filteredClients::add);
+        filteredClients.removeIf(student -> !student.getName().contains(s));
 
-        return filteredStudents;
+        return filteredClients;
     }
 }

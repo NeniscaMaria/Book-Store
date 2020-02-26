@@ -1,7 +1,7 @@
-package ro.ubb.catalog.repository;
+package repository;
 
-import ro.ubb.catalog.domain.validators.Validator;
-import ro.ubb.catalog.domain.validators.ValidatorException;
+import domain.validators.Validator;
+import domain.validators.ValidatorException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -13,16 +13,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author radu.
- */
-public class ClientFileRepository extends InMemoryRepository<Long, ro.ubb.catalog.domain.Client> {
+
+public class ClientFileRepository extends InMemoryRepository<Long, domain.Client> {
     private String fileName;
 
-    public ClientFileRepository(Validator<ro.ubb.catalog.domain.Client> validator, String fileName) {
+    public ClientFileRepository(Validator<domain.Client> validator, String fileName) {
         super(validator);
         this.fileName = fileName;
-
         loadData();
     }
 
@@ -36,9 +33,8 @@ public class ClientFileRepository extends InMemoryRepository<Long, ro.ubb.catalo
                 Long id = Long.valueOf(items.get(0));
                 String serialNumber = items.get(1);
                 String name = items.get((2));
-                int group = Integer.parseInt(items.get(3));
 
-                ro.ubb.catalog.domain.Client student = new ro.ubb.catalog.domain.Client(serialNumber, name, group);
+                domain.Client student = new domain.Client(serialNumber, name);
                 student.setId(id);
 
                 try {
@@ -53,8 +49,8 @@ public class ClientFileRepository extends InMemoryRepository<Long, ro.ubb.catalo
     }
 
     @Override
-    public Optional<ro.ubb.catalog.domain.Client> save(ro.ubb.catalog.domain.Client entity) throws ValidatorException {
-        Optional<ro.ubb.catalog.domain.Client> optional = super.save(entity);
+    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException {
+        Optional<domain.Client> optional = super.save(entity);
         if (optional.isPresent()) {
             return optional;
         }
@@ -62,12 +58,12 @@ public class ClientFileRepository extends InMemoryRepository<Long, ro.ubb.catalo
         return Optional.empty();
     }
 
-    private void saveToFile(ro.ubb.catalog.domain.Client entity) {
+    private void saveToFile(domain.Client entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName() + "," + entity.getGroup());
+                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
             bufferedWriter.newLine();
         } catch (IOException e) {
             e.printStackTrace();

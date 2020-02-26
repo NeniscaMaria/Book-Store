@@ -7,9 +7,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Set;
 
-/**
- * @author radu.
- */
 public class Console {
     private service.ClientService studentService;
 
@@ -19,41 +16,41 @@ public class Console {
 
     public void runConsole() {
 //        addStudents();
-        printAllStudents();
-        filterStudents();
+        printAllClients();
+        filterClients();
     }
 
-    private void filterStudents() {
-        System.out.println("filtered students (name containing 's2'):");
-        Set<domain.Client> students = studentService.filterStudentsByName("s2");
+    private void filterClients() {
+        System.out.println("filtered clients (name containing 's2'):");
+        Set<domain.Client> students = studentService.filterClientsByName("s2");
         students.stream().forEach(System.out::println);
     }
 
-    private void printAllStudents() {
-        Set<domain.Client> students = studentService.getAllStudents();
+    private void printAllClients() {
+        Set<domain.Client> students = studentService.getAllClients();
         students.stream().forEach(System.out::println);
     }
 
-    private void addStudents() {
+    private void addClients() {
         while (true) {
-            domain.Client student = readStudent();
+            domain.Client student = readClient();
             if (student == null || student.getId() < 0) {
                 break;
             }
             try {
-                studentService.addStudent(student);
+                studentService.addClient(student);
             } catch (ValidatorException e) {
                 e.printStackTrace();
             }
         }
     }
 
-    private domain.Client readStudent() {
-        System.out.println("Read student {id,serialNumber, name, group}");
+    private domain.Client readClient() {
+        System.out.println("Read client {id,serialNumber, name}");
 
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
         try {
-            Long id = Long.valueOf(bufferRead.readLine());// ...
+            Long id = Long.valueOf(bufferRead.readLine());
             String serialNumber = bufferRead.readLine();
             String name = bufferRead.readLine();
 
