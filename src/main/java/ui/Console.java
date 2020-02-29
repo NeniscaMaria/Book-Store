@@ -1,12 +1,15 @@
 package ui;
 
+import domain.Client;
 import domain.validators.BookValidator;
+import domain.validators.Validator;
 import domain.validators.ValidatorException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.InputMismatchException;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -27,41 +30,40 @@ public class Console {
                 Scanner keyboard = new Scanner(System.in);
                 System.out.println("Input your choice: ");
                 int choice = keyboard.nextInt();
-                if (isChoiceOK(choice))
-                    switch (choice) {
-                        case 0:
-                            finished = true;
-                            break;
-                        case 1:
-                            addClient();
-                            break;
-                        case 2:
-                            addBook();
-                            break;
-                        case 3:
-                            printAllClients();
-                            break;
-                        case 4:
-                            printAllBooks();
-                            break;
-                        case 5:
-                            filterClients();
-                            break;
-                        case 6:
-                            filterBooks();
-                            break;
-                        default:
-                            break;
+                switch (choice) {
+                    case 0:
+                        finished = true;
+                        break;
+                    case 1:
+                        addClient();
+                        break;
+                    case 2:
+                        addBook();
+                        break;
+                    case 3:
+                        printAllClients();
+                        break;
+                    case 4:
+                        printAllBooks();
+                        break;
+                    case 5:
+                        filterClients();
+                        break;
+                    case 6:
+                        filterBooks();
+                        break;
+                    default:
+                        throw new ValidatorException("Please input a valid choice.");
                     }
             }catch(InputMismatchException e ){
                 System.out.println("Please input a number.");
+            }catch(ValidatorException ve){
+                System.out.println(ve.getMessage());
             }
         }
 
     }
-    boolean isChoiceOK(int choiceToCheck){
-        return choiceToCheck>=0 && choiceToCheck<11;
-    }
+
     private void printChoices(){
         System.out.println("\nChoose one from below:");
         System.out.println("0.Exit");
@@ -77,6 +79,7 @@ public class Console {
         System.out.println("10.Update book.");
     }
 
+    //******************************************************************************************************************
     //Client functions:
     private void filterClients() {
         System.out.println("filtered clients (name containing 's2'):");
@@ -85,24 +88,29 @@ public class Console {
     }
 
     private void printAllClients() {
+        //DESCR: function that prints all the clients saved until now
+
         Set<domain.Client> students = clientService.getAllClients();
         students.stream().forEach(System.out::println);
     }
 
     private void addClient() {
-        domain.Client client = readClient();
-        if (client != null) {
+        //DESCR: function that saves a new client
+
+        Optional<Client> client = readClient();
+        client.ifPresent(c->{
             try {
-                if (clientService.addClient(client).isPresent())
-                    System.out.println("A client with this ID already exists.");
+                Optional<Client> result = clientService.addClient(c);
+                result.ifPresent(r-> System.out.println("A client with this ID already exists."));
             } catch (ValidatorException e) {
                 System.out.println(e.getMessage());
-            }
-        }else
-            System.out.println("Please try again.");
+            }});
     }
 
-    private domain.Client readClient() {
+    private Optional<Client> readClient() {
+        //DESCR: function that reads a client from the keyboard
+        //POST: returns the client read
+
         System.out.println("Please enter a new client: ");
 
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -117,13 +125,13 @@ public class Console {
             domain.Client student = new domain.Client(serialNumber, name);
             student.setId(id);
 
-            return student;
+            return Optional.of(student);
         } catch (IOException ex) {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
         }
-        return null;
+        return Optional.empty();
     }
 
     // ----------------
