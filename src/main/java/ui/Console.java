@@ -6,6 +6,8 @@ import domain.validators.ValidatorException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 import java.util.Set;
 
 public class Console {
@@ -21,39 +23,39 @@ public class Console {
         boolean finished=false;
         while(!finished){
             printChoices();
-            BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-            int choice=-1;
             try {
-                choice = Integer.parseInt(bufferRead.readLine());
-            }catch(IOException ex){
-                System.out.println(ex.getStackTrace());
+                Scanner keyboard = new Scanner(System.in);
+                System.out.println("Input your choice: ");
+                int choice = keyboard.nextInt();
+                if (isChoiceOK(choice))
+                    switch (choice) {
+                        case 0:
+                            finished = true;
+                            break;
+                        case 1:
+                            addClient();
+                            break;
+                        case 2:
+                            addBook();
+                            break;
+                        case 3:
+                            printAllClients();
+                            break;
+                        case 4:
+                            printAllBooks();
+                            break;
+                        case 5:
+                            filterClients();
+                            break;
+                        case 6:
+                            filterBooks();
+                            break;
+                        default:
+                            break;
+                    }
+            }catch(InputMismatchException e ){
+                System.out.println("Please input a number.");
             }
-            if(isChoiceOK(choice))
-                switch (choice) {
-                    case 0:
-                        finished=true;
-                        break;
-                    case 1:
-                        addClient();
-                        break;
-                    case 2:
-                        addBook();
-                        break;
-                    case 3:
-                        printAllClients();
-                        break;
-                    case 4:
-                        printAllBooks();
-                        break;
-                    case 5:
-                        filterClients();
-                        break;
-                    case 6:
-                        filterBooks();
-                        break;
-                    default:
-                        break;
-                }
         }
 
     }

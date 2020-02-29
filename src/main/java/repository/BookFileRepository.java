@@ -30,7 +30,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
         try {
             Files.lines(path).forEach(line -> {
                 List<String> items = Arrays.asList(line.split(","));
-
+                //todo: check that the items length is valid
                 Long id = Long.valueOf(items.get(0));
                 String serialNumber = items.get(1);
                 String name = items.get((2));
