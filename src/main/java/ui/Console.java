@@ -76,6 +76,8 @@ public class Console {
         System.out.println("9.Update client.");
         System.out.println("10.Update book.");
     }
+
+    //Client functions:
     private void filterClients() {
         System.out.println("filtered clients (name containing 's2'):");
         Set<domain.Client> students = clientService.filterClientsByName("s2");
@@ -89,12 +91,15 @@ public class Console {
 
     private void addClient() {
         domain.Client client = readClient();
-        try {
-            if(clientService.addClient(client).isPresent())
-                System.out.println("A client with this ID already exists.");
-        } catch (ValidatorException e) {
-            System.out.println(e.getMessage());
-        }
+        if (client != null) {
+            try {
+                if (clientService.addClient(client).isPresent())
+                    System.out.println("A client with this ID already exists.");
+            } catch (ValidatorException e) {
+                System.out.println(e.getMessage());
+            }
+        }else
+            System.out.println("Please try again.");
     }
 
     private domain.Client readClient() {
@@ -115,6 +120,8 @@ public class Console {
             return student;
         } catch (IOException ex) {
             ex.printStackTrace();
+        }catch (NumberFormatException ex){
+            System.out.println("Please input a valid format.");
         }
         return null;
     }
