@@ -5,6 +5,7 @@ import domain.validators.ValidatorException;
 import repository.Repository;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -16,9 +17,9 @@ public class BookService {
         this.repository = repository;
     }
 
-    public void addBook(domain.Book book) throws ValidatorException {
+    public Optional<Book> addBook(domain.Book book) throws ValidatorException {
         // add given book to the repository
-        repository.save(book);
+        return repository.save(book);
     }
 
     public Set<Book> getAllBooks() {

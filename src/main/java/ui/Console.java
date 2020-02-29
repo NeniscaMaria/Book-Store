@@ -142,13 +142,15 @@ public class Console {
 
     private void addBook() {
         domain.Book book = readBook();
-        BookValidator validator = new BookValidator();
-        try {
-            validator.validate(book);
-            bookService.addBook(book);
-        } catch (ValidatorException e) {
-            System.out.println(e.getMessage());
-        }
+        if (book != null) {
+            try {
+                if (bookService.addBook(book).isPresent())
+                    System.out.println("A book with this ID already exists.");
+            } catch (ValidatorException e) {
+                System.out.println(e.getMessage());
+            }
+        }else
+            System.out.println("Please try again.");
     }
 
     private domain.Book readBook() {
@@ -173,6 +175,8 @@ public class Console {
             return book;
         } catch (IOException ex) {
             ex.printStackTrace();
+        }catch (NumberFormatException ex){
+            System.out.println("Please input a valid format.");
         }
         return null;
     }
