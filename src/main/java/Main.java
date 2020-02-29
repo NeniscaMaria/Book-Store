@@ -1,4 +1,17 @@
-
+import domain.Book;
+import domain.Client;
+import domain.validators.BookValidator;
+import domain.validators.ClientValidator;
+import domain.validators.Validator;
+import domain.validators.ValidatorException;
+import repository.BookFileRepository;
+import repository.ClientFileRepository;
+import repository.InMemoryRepository;
+import repository.Repository;
+import service.BookService;
+import service.ClientService;
+import java.util.InputMismatchException;
+import java.util.Scanner;
 
 /**
  * I1:
@@ -11,33 +24,62 @@
  * <li>F3: print students whose name contain a given string</li>
  */
 
+
 public class Main {
-    public static void main(String args[]) {
-        //in-memory repo
-//         Validator<Student> studentValidator = new StudentValidator();
-//         Repository<Long, Student> studentRepository = new InMemoryRepository<>(studentValidator);
-//         StudentService studentService = new StudentService(studentRepository);
-//         Console console = new Console(studentService);
-//         console.runConsole();
+    private static void runInMemory(){
+        //DESCR: runs the program and saves everything in the memory
+        Validator<Client> studentValidator = new ClientValidator();
+        Repository<Long, Client> studentRepository = new InMemoryRepository<>(studentValidator);
+        ClientService clientService = new ClientService(studentRepository);
 
-        //file repo
-//        try {
-//            System.out.println(new File(".").getCanonicalPath());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//        //in file repo
-        domain.validators.Validator<domain.Client> studentValidator = new domain.validators.ClientValidator();
-        repository.Repository<Long, domain.Client> clientRepository = new repository.ClientFileRepository(studentValidator, "clients.txt");
-        service.ClientService clientService = new service.ClientService(clientRepository);
-
-        // book
-
-        domain.validators.Validator<domain.Book> bookValidator = new domain.validators.BookValidator();
-        repository.Repository<Long, domain.Book> bookRepository = new repository.BookFileRepository(bookValidator, "books.txt");
-        service.BookService bookService = new service.BookService(bookRepository);
+        Validator<Book> bookValidator = new BookValidator();
+        Repository<Long, Book> bookRepository = new InMemoryRepository<>(bookValidator);
+        BookService bookService = new BookService(bookRepository);
 
         ui.Console console = new ui.Console(clientService, bookService);
         console.runConsole();
+    }
+
+    private static void runInFiles(){
+        //DESCR: runs program and saves the clients and the books in files
+        Validator<Client> studentValidator = new ClientValidator();
+        Repository<Long, Client> clientRepository = new ClientFileRepository(studentValidator, "clients.txt");
+        ClientService clientService = new ClientService(clientRepository);
+
+        Validator<Book> bookValidator = new BookValidator();
+        Repository<Long, Book> bookRepository = new BookFileRepository(bookValidator, "books.txt");
+        BookService bookService = new BookService(bookRepository);
+
+        ui.Console console = new ui.Console(clientService, bookService);
+        console.runConsole();
+    }
+    public static void main(String args[]) {
+        System.out.println("Choose storage option:");
+        System.out.println("1.In memory");
+        System.out.println("2.In files");
+        boolean finished = false;
+        while(!finished) {
+            try {
+                Scanner keyboard = new Scanner(System.in);
+                System.out.println("Input choice: ");
+                int choice = keyboard.nextInt();
+                switch (choice) {
+                    case 1:
+                        runInMemory();
+                        finished = true;
+                        break;
+                    case 2:
+                        runInFiles();
+                        finished = true;
+                        break;
+                    default:
+                        throw new ValidatorException("Please input a valid choice.");
+                }
+            } catch (ValidatorException ve) {
+                System.out.println(ve.getMessage());
+            }catch(InputMismatchException e ){
+                System.out.println("Please input a number.");
+            }
+        }
     }
 }
