@@ -25,8 +25,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
 
     private void loadData() {
         Path path = Paths.get(fileName);
-
-        try {
+        try {//Files.lines(path) return a stream that contains the lines in the file
             Files.lines(path).forEach(line -> {
                 List<String> items = Arrays.asList(line.split(","));
 
@@ -60,7 +59,6 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
 
     private void saveToFile(domain.Client entity) {
         Path path = Paths.get(fileName);
-
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.write(
                     entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());

@@ -34,8 +34,7 @@ public class Client extends domain.BaseEntity<Long> {
         if (o == null || getClass() != o.getClass()) return false;
 
         domain.Client student = (domain.Client) o;
-        if (!serialNumber.equals(student.serialNumber)) return false;
-        return name.equals(student.name);
+        return name.equals(student.name) && serialNumber.equals(student.serialNumber);
     }
 
     @Override

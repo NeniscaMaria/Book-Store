@@ -6,7 +6,6 @@ import domain.validators.ValidatorException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements repository.Repository<ID, T> {
@@ -21,10 +20,10 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
 
     @Override
     public Optional<T> findOne(ID id) {
-        if (id == null) {
+        if(id==null)
             throw new IllegalArgumentException("ID must not be null");
-        }
         return Optional.ofNullable(entities.get(id));
+        //.orElseThrow(new IllegalArgumentException("ID must not be null"));
     }
 
     @Override
@@ -33,10 +32,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     }
 
     @Override
-    public Optional<T> save(T entity) throws ValidatorException {
-        if (entity == null) {
-            throw new IllegalArgumentException("ID must not be null");
-        }
+    public Optional<T> save(T entity) throws ValidatorException {//the validator check if the entity is null
         validator.validate(entity);
         return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
     }
@@ -50,10 +46,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     }
 
     @Override
-    public Optional<T> update(T entity) throws ValidatorException {
-        if (entity == null) {
-            throw new IllegalArgumentException("Entity must not be null");
-        }
+    public Optional<T> update(T entity) throws ValidatorException {//the validator checks if the entity is null
         validator.validate(entity);
         return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> entity));
     }
