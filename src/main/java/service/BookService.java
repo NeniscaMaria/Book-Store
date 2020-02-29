@@ -18,12 +18,12 @@ public class BookService {
     }
 
     public Optional<Book> addBook(domain.Book book) throws ValidatorException {
-        // add given book to the repository
+        // Add given book to the repository
         return repository.save(book);
     }
 
     public Set<Book> getAllBooks() {
-        // return all books from the repository
+        // Return all books from the repository
         Iterable<domain.Book> books = repository.findAll();
         return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
     }

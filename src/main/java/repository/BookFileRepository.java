@@ -1,7 +1,6 @@
 package repository;
 
 import domain.Book;
-import domain.Client;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
 
@@ -24,13 +23,14 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
         loadData();
     }
 
+    // Load data from file
     private void loadData() {
         Path path = Paths.get(fileName);
 
         try {
             Files.lines(path).forEach(line -> {
                 List<String> items = Arrays.asList(line.split(","));
-                //todo: check that the items length is valid
+
                 Long id = Long.valueOf(items.get(0));
                 String serialNumber = items.get(1);
                 String name = items.get((2));
@@ -61,13 +61,15 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
         return Optional.empty();
     }
 
+    // Save data to file
+    // in: entity (Book)
     private void saveToFile(domain.Book entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
-            bufferedWriter.write(
-                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName() + "," + entity.getAuthor() + "," + entity.getYear() + '\n');
             bufferedWriter.newLine();
+            bufferedWriter.write(
+                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName() + "," + entity.getAuthor() + "," + entity.getYear());
         } catch (IOException e) {
             e.printStackTrace();
         }
