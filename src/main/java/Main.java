@@ -39,7 +39,5 @@ public class Main {
 
         ui.Console console = new ui.Console(clientService, bookService);
         console.runConsole();
-//        ui.Console console = new ui.Console(clientService);
-//        console.runConsole();
     }
 }

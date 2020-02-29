@@ -2,76 +2,63 @@ package domain;
 
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 
 public class ClientTest {
-    private static final Long ID = new Long(1);
-    private static final Long NEW_ID = new Long(2);
+    private static final Long ID = 1L;
+    private static final Long NEW_ID = 2L;
     private static final String SERIAL_NUMBER = "sn01";
     private static final String NEW_SERIAL_NUMBER = "sn02";
-    private static final String NAME = "studentName";
+    private static final String NAME = "Client Name";
+    private static final String NEW_NAME = "New Name";
 
-    private domain.Client student;
+    private domain.Client  client;
 
     @Before
     public void setUp() throws Exception {
-        student = new domain.Client(SERIAL_NUMBER, NAME);
-        student.setId(ID);
+        client = new domain.Client(SERIAL_NUMBER, NAME);
+        client.setId(ID);
     }
 
     @After
     public void tearDown() throws Exception {
-        student=null;
+        client=null;
     }
 
     @Test
     public void testGetSerialNumber() throws Exception {
-        assertEquals("Serial numbers should be equal", SERIAL_NUMBER, student.getSerialNumber());
+        assertEquals("Serial numbers should be equal", SERIAL_NUMBER, client.getSerialNumber());
     }
 
     @Test
     public void testSetSerialNumber() throws Exception {
-        student.setSerialNumber(NEW_SERIAL_NUMBER);
-        assertEquals("Serial numbers should be equal", NEW_SERIAL_NUMBER, student.getSerialNumber());
+        client.setSerialNumber(NEW_SERIAL_NUMBER);
+        assertEquals("Serial numbers should be equal", NEW_SERIAL_NUMBER, client.getSerialNumber());
     }
 
     @Test
     public void testGetId() throws Exception {
-        assertEquals("Ids should be equal", ID, student.getId());
+        assertEquals("Ids should be equal", ID, client.getId());
     }
 
     @Test
     public void testSetId() throws Exception {
-        student.setId(NEW_ID);
-        assertEquals("Ids should be equal", NEW_ID, student.getId());
+        client.setId(NEW_ID);
+        assertEquals("Ids should be equal", NEW_ID, client.getId());
     }
 
-    @Ignore
     @Test
     public void testGetName() throws Exception {
-        fail("Not tested yet.");
+        assertEquals("Names should be equal", NAME, client.getName());
     }
 
-    @Ignore
     @Test
     public void testSetName() throws Exception {
-        fail("Not tested yet.");
+        client.setName(NEW_NAME);
+        assertEquals("Names should be equal", NEW_NAME, client.getName());
     }
 
-    @Ignore
-    @Test
-    public void testGetGroup() throws Exception {
-        fail("Not tested yet.");
-    }
-
-    @Ignore
-    @Test
-    public void testSetGroup() throws Exception {
-        fail("Not tested yet.");
-    }
 }

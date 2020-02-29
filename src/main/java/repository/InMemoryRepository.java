@@ -29,8 +29,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
 
     @Override
     public Iterable<T> findAll() {
-        Set<T> allEntities = entities.entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toSet());
-        return allEntities;
+        return entities.entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toSet());
     }
 
     @Override
