@@ -3,6 +3,7 @@ package repository;
 import domain.Book;
 import domain.validators.BookValidator;
 import domain.validators.Validator;
+import domain.validators.ValidatorException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,6 +49,7 @@ public class BookInMemoryRepositoryTest {
     private Book book_name;
     private Book book_author;
     private Book book_year;
+    private Book book_update;
 
     @Before
     public void setUp() throws Exception{
@@ -71,6 +73,9 @@ public class BookInMemoryRepositoryTest {
         book_year = new Book(SN3, NAME3, AUTHOR2, WRONG_YEAR);
         book_year.setId(ID7);
 
+        book_update = new Book(SN3, NAME3, AUTHOR1, YEAR2);
+        book_update.setId(ID1);
+
         repo.save(book1);
         repo.save(book2);
 
@@ -90,6 +95,13 @@ public class BookInMemoryRepositoryTest {
         book_name = null;
         book_author = null;
         book_year = null;
+        book_update = null;
+    }
+
+    @Test
+    public void testFindOne() throws Exception {
+        assertEquals("It should find one book", book1, repo.findOne(ID1).get());
+        assertEquals("It should find no book", Optional.empty(), repo.findOne(15L));
     }
 
     @Test
@@ -101,6 +113,33 @@ public class BookInMemoryRepositoryTest {
     @Test
     public void testFindAll() {
         assertEquals("There should be two books", books, repo.findAll());
+    }
 
+    @Test
+    public void testDelete() throws Exception {
+        assertEquals("Should delete book", book2, repo.delete(ID2).get());
+        assertEquals("Should not find book", Optional.empty(), repo.delete(ID2));
+    }
+
+    @Test
+    public void testUpdate() throws Exception {
+        assertEquals("Should update book", book_update, repo.update(book_update).get());
+        assertEquals("Should not find book", Optional.empty(), repo.update(book3));
+    }
+
+    @Test(expected = ValidatorException.class)
+    public void testSaveException() throws Exception {
+        repo.save(book_serial);
+        repo.save(book_name);
+        repo.save(book_author);
+        repo.save(book_year);
+    }
+
+    @Test(expected = ValidatorException.class)
+    public void testUpdateException() throws Exception {
+        repo.update(book_serial);
+        repo.update(book_name);
+        repo.update(book_author);
+        repo.update(book_year);
     }
 }

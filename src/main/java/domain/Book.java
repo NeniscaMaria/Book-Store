@@ -65,11 +65,6 @@ public class Book extends BaseEntity<Long>{
                 Objects.equals(author, book.author);
     }
 
-//    @Override
-//    public int hashCode() {
-//        return Objects.hash(serialNumber, name, author, year);
-//    }
-
 
     @Override
     public int hashCode() {
