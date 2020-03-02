@@ -53,6 +53,7 @@ public class BookInMemoryRepositoryTest {
     public void setUp() throws Exception{
         valid = new BookValidator();
         repo = new InMemoryRepository<>(valid);
+        books = new HashSet();
 
         book1 = new Book(SN1, NAME1, AUTHOR1, YEAR1);
         book1.setId(ID1);
