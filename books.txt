@@ -7,3 +7,4 @@
 77,3226,Roadside Picnic,Arkady Strugatsky; Boris Strugatsky,1972
 45,9993,Dezordinea Preventiva,Matei Visniec,2011
 44,4,Johnny got his gun,Dalton Trumbo,1939
+54,54,Maus,Art Spigelman,1991

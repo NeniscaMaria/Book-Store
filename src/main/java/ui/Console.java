@@ -1,5 +1,6 @@
 package ui;
 
+import domain.Book;
 import domain.Client;
 import domain.validators.BookValidator;
 import domain.validators.Validator;
@@ -144,24 +145,28 @@ public class Console {
     }
 
     private void printAllBooks() {
+        // Print all books from repository
         Set<domain.Book> books = bookService.getAllBooks();
         books.stream().forEach(System.out::println);
     }
 
     private void addBook() {
-        domain.Book book = readBook();
-        if (book != null) {
-            try {
-                if (bookService.addBook(book).isPresent())
-                    System.out.println("A book with this ID already exists.");
-            } catch (ValidatorException e) {
+        // Save book to repository
+        Optional<Book> book = readBook();
+
+        book.ifPresent(b->{
+            try{
+                Optional<Book> book2 = bookService.addBook(b);
+                book2.ifPresent(b2->System.out.println("A book with this ID already exists."));
+            }
+            catch (ValidatorException e) {
                 System.out.println(e.getMessage());
             }
-        }else
-            System.out.println("Please try again.");
+        });
     }
 
-    private domain.Book readBook() {
+    private Optional<domain.Book> readBook() {
+        // Input book from keyboard
         System.out.println("Please enter a new book: ");
 
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -180,12 +185,12 @@ public class Console {
             domain.Book book = new domain.Book(serialNumber, name, author, year);
             book.setId(id);
 
-            return book;
+            return Optional.of(book);
         } catch (IOException ex) {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
         }
-        return null;
+        return Optional.empty();
     }
 }

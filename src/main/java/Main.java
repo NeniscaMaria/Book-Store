@@ -53,6 +53,11 @@ public class Main {
         ui.Console console = new ui.Console(clientService, bookService);
         console.runConsole();
     }
+
+//    private static void runTests(){
+//
+//    }
+
     public static void main(String args[]) {
         System.out.println("Choose storage option:");
         System.out.println("1.In memory");
