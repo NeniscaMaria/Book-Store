@@ -22,7 +22,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     public Optional<T> findOne(ID id) {
         if(id==null)
             throw new IllegalArgumentException("ID must not be null");
-        return Optional.ofNullable(entities.get(id));
+        return Optional.ofNullable(entities.get(id)); //get returns null if no mapping of the key found
         //.orElseThrow(new IllegalArgumentException("ID must not be null"));
     }
 
@@ -34,7 +34,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     @Override
     public Optional<T> save(T entity) throws ValidatorException {//the validator check if the entity is null
         validator.validate(entity);
-        return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity));
+        return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity)); //returns current value if entity present
     }
 
     @Override
@@ -42,12 +42,13 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
         if (id == null) {
             throw new IllegalArgumentException("ID must not be null");
         }
-        return Optional.ofNullable(entities.remove(id));
+        return Optional.ofNullable(entities.remove(id));//null if there was no mapping for key
     }
 
     @Override
     public Optional<T> update(T entity) throws ValidatorException {//the validator checks if the entity is null
         validator.validate(entity);
         return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> entity));
+        //returns null if no such entity found in map
     }
 }

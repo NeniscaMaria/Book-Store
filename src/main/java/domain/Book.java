@@ -11,6 +11,7 @@ public class Book extends BaseEntity<Long>{
     private String name;
     private String author;
     private int year;
+    //add the price 'cause we ned to sell them
 
     public Book() {
     }
