@@ -13,18 +13,6 @@ import service.ClientService;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-/**
- * I1:
- * <li>F1: add student</li>
- * <li>F2: print all students</li>
- * <li>in memory repo</li>
- *
- * I2:
- * <li>in file repo</li>
- * <li>F3: print students whose name contain a given string</li>
- */
-
-
 public class Main {
     private static void runInMemory(){
         //DESCR: runs the program and saves everything in the memory

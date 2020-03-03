@@ -42,7 +42,7 @@ public class BookValidator implements Validator<domain.Book>  {
         if(entity.getYear() < 0 || entity.getYear() > Calendar.getInstance().get(Calendar.YEAR))
             throw new ValidatorException("Please enter a valid year");
 
-        if(entity.getPrice() < 0)
+        if(entity.getPrice() <= 0)
             throw new ValidatorException("Please enter a valid price");
 
         
