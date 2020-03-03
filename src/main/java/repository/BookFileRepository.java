@@ -35,9 +35,10 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
                 String serialNumber = items.get(1);
                 String name = items.get((2));
                 String author = items.get((3));
+                double price = Double.parseDouble(items.get((4)));
                 int year = Integer.parseInt(items.get((4)));
 
-                domain.Book book = new domain.Book(serialNumber, name, author, year);
+                domain.Book book = new domain.Book(serialNumber, name, author, year,price);
                 book.setId(id);
 
                 try {
@@ -69,7 +70,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
             bufferedWriter.newLine();
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName() + "," + entity.getAuthor() + "," + entity.getYear());
+                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice());
         } catch (IOException e) {
             e.printStackTrace();
         }

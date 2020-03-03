@@ -17,12 +17,14 @@ public class BookTest {
     private static final String NEW_NAME = "new_book";
     private static final String AUTHOR = "author1";
     private static final String NEW_AUTHOR = "new_author";
+    private static final double PRICE = 20.5;
+    private static final double NEW_PRICE = 30.2;
     private static final int YEAR = 2013;
     private static final int NEW_YEAR = 2018;
 
     @Before
     public void setUp() throws Exception {
-        book = new Book(SERIAL_NUMBER, NAME, AUTHOR, YEAR);
+        book = new Book(SERIAL_NUMBER, NAME, AUTHOR, YEAR,PRICE);
         book.setId(ID);
     }
 
@@ -84,6 +86,17 @@ public class BookTest {
     public void testSetYear() throws Exception {
         book.setYear(NEW_YEAR);
         assertEquals("Years should be equal", NEW_YEAR, book.getYear());
+    }
+
+    @Test
+    public void testGetPrice() throws Exception {
+        assertEquals("Prices should be equal", String.valueOf(PRICE), String.valueOf(book.getPrice()));
+    }
+
+    @Test
+    public void testSetPrice() throws Exception {
+        book.setPrice(NEW_PRICE);
+        assertEquals("Prices should be equal", String.valueOf(NEW_PRICE), String.valueOf(book.getPrice()));
     }
 
 }

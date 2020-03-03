@@ -11,16 +11,24 @@ public class Book extends BaseEntity<Long>{
     private String name;
     private String author;
     private int year;
-    //add the price 'cause we ned to sell them
-
+    private double price;
     public Book() {
     }
 
-    public Book(String serialNumber, String name, String author, int year) {
+    public Book(String serialNumber, String name, String author, int year, double price) {
         this.serialNumber = serialNumber;
         this.name = name;
         this.author = author;
         this.year = year;
+        this.price = price;
+    }
+
+    public double getPrice(){
+        return this.price;
+    }
+
+    public void setPrice(double priceFromUser){
+        this.price=priceFromUser;
     }
 
     public String getSerialNumber() {
@@ -54,6 +62,7 @@ public class Book extends BaseEntity<Long>{
     public void setYear(int year) {
         this.year = year;
     }
+
 
     @Override
     public boolean equals(Object o) {

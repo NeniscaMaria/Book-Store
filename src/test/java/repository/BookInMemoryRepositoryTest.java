@@ -37,6 +37,9 @@ public class BookInMemoryRepositoryTest {
     private static final int YEAR2 = 2010;
     private static final int YEAR3 = 450;
     private static final int WRONG_YEAR = 2025;
+    private static final double PRICE1 = 10.2;
+    private static final double PRICE2 = 30.2;
+    private static final double PRICE3 = 40.2;
 
 
     private InMemoryRepository<Long, Book> repo;
@@ -57,23 +60,23 @@ public class BookInMemoryRepositoryTest {
         repo = new InMemoryRepository<>(valid);
         books = new HashSet();
 
-        book1 = new Book(SN1, NAME1, AUTHOR1, YEAR1);
+        book1 = new Book(SN1, NAME1, AUTHOR1, YEAR1,PRICE1);
         book1.setId(ID1);
-        book2 = new Book(SN2, NAME2, AUTHOR2, YEAR2);
+        book2 = new Book(SN2, NAME2, AUTHOR2, YEAR2,PRICE2);
         book2.setId(ID2);
-        book3 = new Book(SN3, NAME3, AUTHOR3, YEAR3);
+        book3 = new Book(SN3, NAME3, AUTHOR3, YEAR3,PRICE3);
         book3.setId(ID3);
 
-        book_serial = new Book(WRONG_SN, NAME1, AUTHOR1, YEAR1);
+        book_serial = new Book(WRONG_SN, NAME1, AUTHOR1, YEAR1,PRICE1);
         book_serial.setId(ID4);
-        book_name = new Book(SN2, WRONG_NAME, AUTHOR2, YEAR2);
+        book_name = new Book(SN2, WRONG_NAME, AUTHOR2, YEAR2,PRICE2);
         book_name.setId(ID5);
-        book_author = new Book(SN3, NAME3, WRONG_AUTHOR, YEAR3);
+        book_author = new Book(SN3, NAME3, WRONG_AUTHOR, YEAR3,PRICE3);
         book_author.setId(ID6);
-        book_year = new Book(SN3, NAME3, AUTHOR2, WRONG_YEAR);
+        book_year = new Book(SN3, NAME3, AUTHOR2, WRONG_YEAR,PRICE1);
         book_year.setId(ID7);
 
-        book_update = new Book(SN3, NAME3, AUTHOR1, YEAR2);
+        book_update = new Book(SN3, NAME3, AUTHOR1, YEAR2,PRICE1);
         book_update.setId(ID1);
 
         repo.save(book1);

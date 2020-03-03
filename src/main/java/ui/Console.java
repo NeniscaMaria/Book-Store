@@ -181,8 +181,10 @@ public class Console {
             String author = bufferRead.readLine();
             System.out.println("Year: ");
             int year = Integer.parseInt(bufferRead.readLine());
+            System.out.println("Price: ");
+            double price = Double.parseDouble(bufferRead.readLine());
 
-            domain.Book book = new domain.Book(serialNumber, name, author, year);
+            domain.Book book = new domain.Book(serialNumber, name, author, year, price);
             book.setId(id);
 
             return Optional.of(book);
