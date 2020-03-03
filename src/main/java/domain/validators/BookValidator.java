@@ -11,8 +11,11 @@ public class BookValidator implements Validator<domain.Book>  {
     private Optional<Boolean> validName(String name){
         // Name can't contain numbers, special characters
         // If multiple authors, they are separate by ';'
-        // We can have a dot in name eg:J.K. Rolling
-        return Optional.of(name.contains("1234567890=+_[]{}()~`!@#$%^&*<>,/\\?"));
+        return Optional.of(name.contains("1234567890=+_[]{}()~`!@#$%^&*<>,/?"));
+    }
+    private boolean isSerialNumberValid(String number){//no spaces in the serial number and no special characters
+        String[] arrOfStr = number.split(" ", 3);
+        return arrOfStr.length==1 && !number.contains("!,.:;?/(){}[]@#$%^&*_+=-");
     }
 
     @Override
@@ -24,14 +27,14 @@ public class BookValidator implements Validator<domain.Book>  {
         if(entity.getId() < 0)
             throw new ValidatorException("Please enter a non-negative ID.");
 
-        if(entity.getSerialNumber().equals("0")) //serial number can be anything, but you need to check that it is without spaces
-            throw new ValidatorException("Please enter a non-zero serial number.");
+        if(entity.getSerialNumber().equals("0") || !isSerialNumberValid(entity.getSerialNumber()))
+            throw new ValidatorException("Please enter a valid serial number.");
 
         if(checkNull(entity.getName()))
-            throw new ValidatorException("Please enter a non-null name.");
+            throw new ValidatorException("Please enter a valid name.");
 
         if(checkNull(entity.getAuthor()))
-            throw new ValidatorException("Please enter a non-null author name.");
+            throw new ValidatorException("Please enter a valid author name.");
         //Optional<Boolean> e = validName(entity.getAuthor());
         //this cannot work because in optional we will always have a value : true/false.
         //e.ifPresent(c->{throw new ValidatorException("Please enter a valid author name.");});

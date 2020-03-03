@@ -72,6 +72,7 @@ public class Book extends BaseEntity<Long>{
         return year == book.year &&
                 Objects.equals(serialNumber, book.serialNumber) &&
                 Objects.equals(name, book.name) &&
+                Objects.equals(price, book.price) &&
                 Objects.equals(author, book.author);
     }
 
@@ -82,6 +83,7 @@ public class Book extends BaseEntity<Long>{
         result = 31 * result + name.hashCode();
         result = 31 * result + author.hashCode();
         result = 31 * result + year;
+        result = 31 * result + (int)price; //cast the double to an int so that we get a valid hash code
         return result;
     }
 
@@ -92,6 +94,7 @@ public class Book extends BaseEntity<Long>{
                 ", name='" + name + '\'' +
                 ", author=" + author + '\'' +
                 ", year=" + year + '\'' +
+                ", price=" + price + '\'' +
                 "} " + super.toString();
     }
 }
