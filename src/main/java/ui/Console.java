@@ -175,7 +175,7 @@ public class Console {
             Long id = Long.parseLong(bufferRead.readLine());
             System.out.println("Serial Number: ");
             String serialNumber = bufferRead.readLine();
-            System.out.println("Name: ");
+            System.out.println("Title: ");
             String name = bufferRead.readLine();
             System.out.println("Author: ");
             String author = bufferRead.readLine();

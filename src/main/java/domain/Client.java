@@ -46,7 +46,7 @@ public class Client extends domain.BaseEntity<Long> {
 
     @Override
     public String toString() {
-        return "Student{" +
+        return "Client{" +
                 "serialNumber='" + serialNumber + '\'' +
                 ", name='" + name + '\'' +
                 "} " + super.toString();

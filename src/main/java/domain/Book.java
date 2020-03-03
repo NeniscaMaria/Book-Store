@@ -91,7 +91,7 @@ public class Book extends BaseEntity<Long>{
     public String toString() {
         return "Book{" +
                 "serialNumber='" + serialNumber + '\'' +
-                ", name='" + name + '\'' +
+                ", title='" + name + '\'' +
                 ", author=" + author + '\'' +
                 ", year=" + year + '\'' +
                 ", price=" + price + '\'' +
