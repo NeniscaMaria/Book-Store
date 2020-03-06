@@ -8,16 +8,16 @@ public class Book extends BaseEntity<Long>{
     author (String), year of publication (int)
      */
     private String serialNumber;
-    private String name;
+    private String title;
     private String author;
     private int year;
     private double price;
     public Book() {
     }
 
-    public Book(String serialNumber, String name, String author, int year, double price) {
+    public Book(String serialNumber, String title, String author, int year, double price) {
         this.serialNumber = serialNumber;
-        this.name = name;
+        this.title = title;
         this.author = author;
         this.year = year;
         this.price = price;
@@ -39,12 +39,12 @@ public class Book extends BaseEntity<Long>{
         this.serialNumber = serialNumber;
     }
 
-    public String getName() {
-        return name;
+    public String getTitle() {
+        return title;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getAuthor() {
@@ -71,7 +71,7 @@ public class Book extends BaseEntity<Long>{
         Book book = (Book) o;
         return year == book.year &&
                 Objects.equals(serialNumber, book.serialNumber) &&
-                Objects.equals(name, book.name) &&
+                Objects.equals(title, book.title) &&
                 Objects.equals(price, book.price) &&
                 Objects.equals(author, book.author);
     }
@@ -80,7 +80,7 @@ public class Book extends BaseEntity<Long>{
     @Override
     public int hashCode() {
         int result = serialNumber.hashCode();
-        result = 31 * result + name.hashCode();
+        result = 31 * result + title.hashCode();
         result = 31 * result + author.hashCode();
         result = 31 * result + year;
         result = 31 * result + (int)price; //cast the double to an int so that we get a valid hash code
@@ -89,12 +89,12 @@ public class Book extends BaseEntity<Long>{
 
     @Override
     public String toString() {
-        return "Book{" +
+        return super.toString() + "Book{" +
                 "serialNumber='" + serialNumber + '\'' +
-                ", title='" + name + '\'' +
+                ", title='" + title + '\'' +
                 ", author=" + author + '\'' +
                 ", year=" + year + '\'' +
                 ", price=" + price + '\'' +
-                "} " + super.toString();
+                "} ";
     }
 }

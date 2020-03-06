@@ -57,13 +57,13 @@ public class BookTest {
 
     @Test
     public void testGetName() throws Exception {
-        assertEquals("Names should be be the same", NAME, book.getName());
+        assertEquals("Names should be be the same", NAME, book.getTitle());
     }
 
     @Test
     public void testSetName() throws Exception {
-        book.setName(NEW_NAME);
-        assertEquals("Names should be the same", NEW_NAME, book.getName());
+        book.setTitle(NEW_NAME);
+        assertEquals("Names should be the same", NEW_NAME, book.getTitle());
     }
 
     @Test

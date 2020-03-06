@@ -30,7 +30,7 @@ public class BookValidator implements Validator<domain.Book>  {
         if(entity.getSerialNumber().equals("0") || !isSerialNumberValid(entity.getSerialNumber()))
             throw new ValidatorException("Please enter a valid serial number.");
 
-        if(checkNull(entity.getName()))
+        if(checkNull(entity.getTitle()))
             throw new ValidatorException("Please enter a valid name.");
 
         if(checkNull(entity.getAuthor()))

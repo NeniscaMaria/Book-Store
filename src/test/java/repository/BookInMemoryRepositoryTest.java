@@ -21,6 +21,7 @@ public class BookInMemoryRepositoryTest {
     private static final Long ID5 = 5L;
     private static final Long ID6 = 6L;
     private static final Long ID7 = 7L;
+    private static final Long ID8 = 8L;
     private static final String SN1 = "123";
     private static final String SN2 = "213";
     private static final String SN3 = "231";
@@ -40,6 +41,7 @@ public class BookInMemoryRepositoryTest {
     private static final double PRICE1 = 10.2;
     private static final double PRICE2 = 30.2;
     private static final double PRICE3 = 40.2;
+    private static final double WRONG_PRICE = -40.2;
 
 
     private InMemoryRepository<Long, Book> repo;
@@ -52,6 +54,7 @@ public class BookInMemoryRepositoryTest {
     private Book book_name;
     private Book book_author;
     private Book book_year;
+    private Book book_price;
     private Book book_update;
 
     @Before
@@ -75,6 +78,11 @@ public class BookInMemoryRepositoryTest {
         book_author.setId(ID6);
         book_year = new Book(SN3, NAME3, AUTHOR2, WRONG_YEAR,PRICE1);
         book_year.setId(ID7);
+        book_year = new Book(SN3, NAME3, AUTHOR2, WRONG_YEAR,PRICE1);
+        book_year.setId(ID7);
+        book_price = new Book(SN1, NAME1, AUTHOR2, YEAR3, WRONG_PRICE);
+        book_price.setId(ID8);
+
 
         book_update = new Book(SN3, NAME3, AUTHOR1, YEAR2,PRICE1);
         book_update.setId(ID1);
@@ -99,6 +107,7 @@ public class BookInMemoryRepositoryTest {
         book_author = null;
         book_year = null;
         book_update = null;
+        book_price = null;
     }
 
     @Test
@@ -123,6 +132,7 @@ public class BookInMemoryRepositoryTest {
         assertEquals("Should delete book", book2, repo.delete(ID2).get());
         assertEquals("Should not find book", Optional.empty(), repo.delete(ID2));
     }
+
 
     @Test
     public void testUpdate() throws Exception {
