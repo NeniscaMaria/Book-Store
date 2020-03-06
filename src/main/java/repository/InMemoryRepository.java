@@ -22,8 +22,8 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     public Optional<T> findOne(ID id) {
         if(id==null)
             throw new IllegalArgumentException("ID must not be null");
-        return Optional.ofNullable(entities.get(id)); //get returns null if no mapping of the key found
-        //.orElseThrow(new IllegalArgumentException("ID must not be null"));
+        return Optional.ofNullable(entities.get(id)); // returns null if no mapping of the key found
+        //.orElseThrow(()->new IllegalArgumentException("ID must not be null"));
     }
 
     @Override
