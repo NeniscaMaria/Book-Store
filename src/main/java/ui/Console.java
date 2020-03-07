@@ -53,6 +53,9 @@ public class Console {
                     case 6:
                         filterBooks();
                         break;
+                    case 9:
+                        updateClient();
+                        break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                     }
@@ -133,6 +136,19 @@ public class Console {
             System.out.println("Please input a valid format.");
         }
         return Optional.empty();
+    }
+
+    private void updateClient(){
+        Optional<Client> client = readClient();
+        client.ifPresent(c->{
+            try {
+                Optional<Client> result = clientService.updateClient(c);
+                result.ifPresent(r -> {
+                    throw new ValidatorException("Client updated successfully!");});
+                throw new ValidatorException("A client with this ID was not found!");
+            } catch (ValidatorException e) {
+                System.out.println(e.getMessage());
+            }});
     }
 
     // ----------------

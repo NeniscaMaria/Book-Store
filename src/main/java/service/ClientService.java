@@ -21,6 +21,10 @@ public class ClientService {
         return repository.save(client);
     }
 
+    public Optional<Client> updateClient(domain.Client client) throws ValidatorException {
+        return repository.update(client);
+    }
+
     public Set<domain.Client> getAllClients() {
         Iterable<domain.Client> clients = repository.findAll();
         return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());

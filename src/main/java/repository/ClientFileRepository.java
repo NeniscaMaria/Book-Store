@@ -1,5 +1,6 @@
 package repository;
 
+import domain.Client;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
 
@@ -66,5 +67,23 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public Optional<Client> update(Client client){
+        Optional<Client> res = super.update(client);
+        res.ifPresent(r->{
+            Path path = Paths.get(fileName);
+            Iterable<Client> clients = super.findAll();
+            try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.WRITE)) {
+                for(Client entity : clients) {
+                    bufferedWriter.write(
+                            entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
+                    bufferedWriter.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return res;
     }
 }
