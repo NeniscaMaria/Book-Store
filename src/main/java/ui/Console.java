@@ -56,6 +56,7 @@ public class Console {
 
                     case 10:
                         updateBook();
+                        break;
                     case 9:
                         updateClient();
                         break;
@@ -189,7 +190,8 @@ public class Console {
         book.ifPresent(b->{
             try{
                 Optional<Book> book2 = bookService.updateBook(b);
-                book2.ifPresent(b2->System.out.println("The book with this ID does not exists."));
+                book2.ifPresent(b2->{throw new ValidatorException("Book update successful");});
+                throw new ValidatorException("The book with this ID does not exist.");
             }
             catch (ValidatorException e) {
                 System.out.println(e.getMessage());
