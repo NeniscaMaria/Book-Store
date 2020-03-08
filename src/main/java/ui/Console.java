@@ -53,6 +53,18 @@ public class Console {
                     case 6:
                         filterBooks();
                         break;
+                    case 7:
+//                        deleteClient();
+                        break;
+                    case 8:
+//                        deleteBook();
+                        break;
+                    case 9:
+//                        updateClient();
+                        break;
+                    case 10:
+                        updateBook();
+                        break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                     }
@@ -158,6 +170,19 @@ public class Console {
             try{
                 Optional<Book> book2 = bookService.addBook(b);
                 book2.ifPresent(b2->System.out.println("A book with this ID already exists."));
+            }
+            catch (ValidatorException e) {
+                System.out.println(e.getMessage());
+            }
+        });
+    }
+
+    private void updateBook(){
+        Optional<Book> book = readBook();
+        book.ifPresent(b->{
+            try{
+                Optional<Book> book2 = bookService.updateBook(b);
+                book2.ifPresent(b2->System.out.println("The book with this ID does not exists."));
             }
             catch (ValidatorException e) {
                 System.out.println(e.getMessage());

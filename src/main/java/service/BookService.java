@@ -19,16 +19,24 @@ public class BookService {
 
     public Optional<Book> addBook(domain.Book book) throws ValidatorException {
         // Add given book to the repository
+        // Return Optional null if the entity was added, otherwise return the entity with the same id
         return repository.save(book);
     }
 
     public Set<Book> getAllBooks() {
         // Return all books from the repository
+        // Return all books
         Iterable<domain.Book> books = repository.findAll();
         return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
     }
 
     public Set<domain.Book> filterBooksByName(String s) {
         return null;
+    }
+
+    public Optional<Book> updateBook(Book book){
+        // Update the book with the same id as the one given
+        // Return Optional null if the entity was updated, otherwise the given entity (if the id does not exist)
+        return repository.update(book);
     }
 }
