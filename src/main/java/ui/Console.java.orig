@@ -53,11 +53,22 @@ public class Console {
                     case 6:
                         filterBooks();
                         break;
-
+<<<<<<< HEAD
+                    case 7:
+//                        deleteClient();
+                        break;
+                    case 8:
+//                        deleteBook();
+                        break;
+                    case 9:
+//                        updateClient();
+                        break;
                     case 10:
                         updateBook();
+=======
                     case 9:
                         updateClient();
+>>>>>>> 8d9eac0984b08851e96039ed955042626581db64
                         break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
