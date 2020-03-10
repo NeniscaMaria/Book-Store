@@ -22,6 +22,7 @@ public class Console {
         this.clientService = studentService;
         this.bookService = bookService;
     }
+    //gitk and git gui in console
 
     public void runConsole() {
         boolean finished=false;
@@ -53,7 +54,6 @@ public class Console {
                     case 6:
                         filterBooks();
                         break;
-
                     case 10:
                         updateBook();
                         break;
@@ -90,9 +90,19 @@ public class Console {
     //******************************************************************************************************************
     //Client functions:
     private void filterClients() {
-        System.out.println("filtered clients (name containing 's2'):");
-        Set<domain.Client> students = clientService.filterClientsByName("s2");
-        students.stream().forEach(System.out::println);
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("Filter after: ");
+            String name = bufferRead.readLine();
+            System.out.println("filtered clients (name containing "+name+" ):");
+            Set<domain.Client> students = clientService.filterClientsByName(name);
+            students.stream().forEach(System.out::println);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }catch (NumberFormatException ex){
+            System.out.println("Please input a valid format.");
+        }
+
     }
 
     private void printAllClients() {
@@ -150,6 +160,7 @@ public class Console {
                 result.ifPresent(r -> {
                     throw new ValidatorException("Client updated successfully!");});
                 throw new ValidatorException("A client with this ID was not found!");
+
             } catch (ValidatorException e) {
                 System.out.println(e.getMessage());
             }});
