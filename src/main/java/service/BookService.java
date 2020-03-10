@@ -33,7 +33,7 @@ public class BookService {
 
         Set<Book> bookSet = new HashSet<>();
         books.forEach(bookSet::add);
-        bookSet.removeIf(book -> !book.getName().contains(s));
+        bookSet.removeIf(book -> !book.getName().contains(s.toLowerCase()) || !book.getName().contains(s.toUpperCase()));
         return bookSet;
     }
 }
