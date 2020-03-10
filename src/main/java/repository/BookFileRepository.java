@@ -4,6 +4,7 @@ import domain.Book;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
 
+import javax.swing.text.html.Option;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -62,15 +63,41 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
         return Optional.empty();
     }
 
+    public Optional<Book> update(Book book){
+        Optional<Book> b = super.update(book);
+        b.ifPresent(
+                bb -> {
+                    Path path = Paths.get(fileName);
+                    Iterable<Book> books = super.findAll();
+                    try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.WRITE)) {
+                        books.forEach(entity -> {
+                            try {
+
+                                bufferedWriter.write(
+                                        entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice());
+                                bufferedWriter.newLine();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+        );
+        return b;
+    }
+
     // Save data to file
     // in: entity (Book)
     private void saveToFile(domain.Book entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
-            bufferedWriter.newLine();
+
             bufferedWriter.write(
                     entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice());
+            bufferedWriter.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
