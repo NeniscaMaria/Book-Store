@@ -9,6 +9,7 @@ import domain.validators.ValidatorException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLOutput;
 import java.util.InputMismatchException;
 import java.util.Optional;
 import java.util.Scanner;
@@ -53,6 +54,9 @@ public class Console {
                         break;
                     case 6:
                         filterBooks();
+                        break;
+                    case 7:
+                        deleteClient();
                         break;
                     case 10:
                         updateBook();
@@ -103,6 +107,20 @@ public class Console {
             System.out.println("Please input a valid format.");
         }
 
+    }
+
+    private void deleteClient(){
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("ID: ");
+            Long id = Long.parseLong(bufferRead.readLine());
+            Optional<Client> client = clientService.removeClient(id);
+            client.ifPresent(c -> {System.out.println("Client removed successfully."); });
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }catch (NumberFormatException ex){
+            System.out.println("Please input a valid format.");
+        }
     }
 
     private void printAllClients() {
