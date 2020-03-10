@@ -29,18 +29,17 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
         try {//Files.lines(path) return a stream that contains the lines in the file
             Files.lines(path).forEach(line -> {
                 List<String> items = Arrays.asList(line.split(","));
-
-                Long id = Long.valueOf(items.get(0));
-                String serialNumber = items.get(1);
-                String name = items.get((2));
-
-                domain.Client student = new domain.Client(serialNumber, name);
-                student.setId(id);
-
-                try {
-                    super.save(student);
-                } catch (ValidatorException e) {
-                    e.printStackTrace();
+                if(items.size()==3) {
+                    Long id = Long.valueOf(items.get(0));
+                    String serialNumber = items.get(1);
+                    String name = items.get((2));
+                    domain.Client student = new domain.Client(serialNumber, name);
+                    student.setId(id);
+                    try {
+                        super.save(student);
+                    } catch (ValidatorException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
         } catch (IOException ex) {
@@ -61,9 +60,11 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     private void saveToFile(domain.Client entity) {
         Path path = Paths.get(fileName);
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+
             bufferedWriter.write(
                     entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
             bufferedWriter.newLine();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
