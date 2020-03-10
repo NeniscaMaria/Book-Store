@@ -1,2 +1,2 @@
-12,12,Johnny got his gun,Dalton Trumbo,1939,17.99
-45,45,Paradise lost,John Milton,1667,30.0
+12,12,Johnny got his gun,Dalton Trumbo,1939,17.99,300
+45,45,Paradise lost,John Milton,1667,30.0,400

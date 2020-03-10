@@ -159,8 +159,17 @@ public class Console {
     // Books
 
     private void filterBooks() {
-        System.out.println("filtered books (name containing 's2'):");
-        Set<domain.Book> books = bookService.filterBooksByName("s2");
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Filter: ");
+        try {
+            String filter = bufferRead.readLine();
+            Set<Book> filteredBooks = bookService.filterBooksByTitle(filter);
+            filteredBooks.forEach(System.out::println);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        Set<domain.Book> books = bookService.filterBooksByTitle("s2");
         books.stream().forEach(System.out::println);
     }
 
@@ -217,8 +226,10 @@ public class Console {
             int year = Integer.parseInt(bufferRead.readLine());
             System.out.println("Price: ");
             double price = Double.parseDouble(bufferRead.readLine());
+            System.out.println("In stock: ");
+            int stock = Integer.parseInt(bufferRead.readLine());
 
-            domain.Book book = new domain.Book(serialNumber, name, author, year, price);
+            domain.Book book = new domain.Book(serialNumber, name, author, year, price, stock);
             book.setId(id);
 
             return Optional.of(book);
