@@ -81,7 +81,7 @@ public class Book extends BaseEntity<Long>{
                 ", year=" + year +
                 ", price=" + price +
                 ", inStock=" + inStock +
-                '}';
+                "} " + super.toString();
     }
 
     @Override

@@ -76,7 +76,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
                             try {
 
                                 bufferedWriter.write(
-                                        entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice());
+                                        entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice()+","+entity.getInStock());
                                 bufferedWriter.newLine();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -98,7 +98,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
 
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice());
+                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice()+","+entity.getInStock());
             bufferedWriter.newLine();
         } catch (IOException e) {
             e.printStackTrace();
