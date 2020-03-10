@@ -28,7 +28,12 @@ public class BookService {
         return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
     }
 
-    public Set<domain.Book> filterBooksByName(String s) {
-        return null;
+    public Set<domain.Book> filterBooksByTitle(String s) {
+        Iterable<Book> books = repository.findAll();
+
+        Set<Book> bookSet = new HashSet<>();
+        books.forEach(bookSet::add);
+        bookSet.removeIf(book -> !book.getName().contains(s));
+        return bookSet;
     }
 }

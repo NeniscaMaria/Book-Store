@@ -35,10 +35,12 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
                 String serialNumber = items.get(1);
                 String name = items.get((2));
                 String author = items.get((3));
-                double price = Double.parseDouble(items.get((4)));
                 int year = Integer.parseInt(items.get((4)));
+                double price = Double.parseDouble(items.get((5)));
+                int stock = Integer.parseInt(items.get((6)));
 
-                domain.Book book = new domain.Book(serialNumber, name, author, year,price);
+
+                domain.Book book = new domain.Book(serialNumber, name, author, year, price, stock);
                 book.setId(id);
 
                 try {

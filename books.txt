@@ -1,10 +1,10 @@
-1,432,booky,john,1566
-4,231,book of books,jack,2019
-2,2345,Last Wish,Andrzej Sapkowski,1993
-32,23342,Watchmen,Alan Moore,1986
-12,54343,Steppenwolf,Herman Hesse,1927
-34,2211,The Trial,Franz Kafka,1925
-77,3226,Roadside Picnic,Arkady Strugatsky; Boris Strugatsky,1972
-45,9993,Dezordinea Preventiva,Matei Visniec,2011
-44,4,Johnny got his gun,Dalton Trumbo,1939
-54,54,Maus,Art Spigelman,1991
+1,432,booky,john,1566,100
+4,231,book of books,jack,2019,1000
+2,2345,Last Wish,Andrzej Sapkowski,1993,70
+32,23342,Watchmen,Alan Moore,1986,1000
+12,54343,Steppenwolf,Herman Hesse,1927,420
+34,2211,The Trial,Franz Kafka,1925,123
+77,3226,Roadside Picnic,Arkady Strugatsky; Boris Strugatsky,1972,34
+45,9993,Dezordinea Preventiva,Matei Visniec,2011,400
+44,4,Johnny got his gun,Dalton Trumbo,1939,320
+54,54,Maus,Art Spigelman,1991,400

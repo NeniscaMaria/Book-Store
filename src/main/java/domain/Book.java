@@ -12,15 +12,18 @@ public class Book extends BaseEntity<Long>{
     private String author;
     private int year;
     private double price;
+    private int inStock;
     public Book() {
     }
 
-    public Book(String serialNumber, String name, String author, int year, double price) {
+    public Book(String serialNumber, String name, String author, int year, double price, int inStock) {
         this.serialNumber = serialNumber;
         this.name = name;
         this.author = author;
         this.year = year;
         this.price = price;
+        this.inStock = inStock;
+
     }
 
     public double getPrice(){
@@ -63,6 +66,25 @@ public class Book extends BaseEntity<Long>{
         this.year = year;
     }
 
+    public int getInStock() {
+        return inStock;
+    }
+
+    public void setInStock(int inStock) {
+        this.inStock = inStock;
+    }
+
+    @Override
+    public String toString() {
+        return "Book{" +
+                "serialNumber='" + serialNumber + '\'' +
+                ", name='" + name + '\'' +
+                ", author='" + author + '\'' +
+                ", year=" + year +
+                ", price=" + price +
+                ", inStock=" + inStock +
+                '}';
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -70,12 +92,12 @@ public class Book extends BaseEntity<Long>{
         if (o == null || getClass() != o.getClass()) return false;
         Book book = (Book) o;
         return year == book.year &&
-                Objects.equals(serialNumber, book.serialNumber) &&
-                Objects.equals(name, book.name) &&
-                Objects.equals(price, book.price) &&
-                Objects.equals(author, book.author);
+                Double.compare(book.price, price) == 0 &&
+                inStock == book.inStock &&
+                serialNumber.equals(book.serialNumber) &&
+                name.equals(book.name) &&
+                author.equals(book.author);
     }
-
 
     @Override
     public int hashCode() {
@@ -84,17 +106,8 @@ public class Book extends BaseEntity<Long>{
         result = 31 * result + author.hashCode();
         result = 31 * result + year;
         result = 31 * result + (int)price; //cast the double to an int so that we get a valid hash code
+        result = 31 * result + inStock;
         return result;
     }
 
-    @Override
-    public String toString() {
-        return "Book{" +
-                "serialNumber='" + serialNumber + '\'' +
-                ", title='" + name + '\'' +
-                ", author=" + author + '\'' +
-                ", year=" + year + '\'' +
-                ", price=" + price + '\'' +
-                "} " + super.toString();
-    }
 }
