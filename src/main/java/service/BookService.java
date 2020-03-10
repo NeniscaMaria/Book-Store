@@ -25,13 +25,18 @@ public class BookService {
 
     public Set<Book> getAllBooks() {
         // Return all books from the repository
-        // Return all books
         Iterable<domain.Book> books = repository.findAll();
         return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
     }
 
-    public Set<domain.Book> filterBooksByName(String s) {
-        return null;
+    public Set<domain.Book> filterBooksByTitle(String s) {
+        // Return the books that contain the given string
+        Iterable<Book> books = repository.findAll();
+
+        Set<Book> bookSet = new HashSet<>();
+        books.forEach(bookSet::add);
+        bookSet.removeIf(book -> !book.getTitle().contains(s));
+        return bookSet;
     }
 
     public Optional<Book> updateBook(Book book){

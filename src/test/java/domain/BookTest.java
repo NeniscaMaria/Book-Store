@@ -21,10 +21,12 @@ public class BookTest {
     private static final double NEW_PRICE = 30.2;
     private static final int YEAR = 2013;
     private static final int NEW_YEAR = 2018;
+    private static final int STOCK = 20;
+    private static final int NEW_STOCK = 18;
 
     @Before
     public void setUp() throws Exception {
-        book = new Book(SERIAL_NUMBER, NAME, AUTHOR, YEAR,PRICE);
+        book = new Book(SERIAL_NUMBER, NAME, AUTHOR, YEAR, PRICE, STOCK);
         book.setId(ID);
     }
 
@@ -99,4 +101,14 @@ public class BookTest {
         assertEquals("Prices should be equal", String.valueOf(NEW_PRICE), String.valueOf(book.getPrice()));
     }
 
+    @Test
+    public void testSetStock() throws Exception{
+        book.setInStock(NEW_STOCK);
+        assertEquals("Stocks should be equal", NEW_STOCK, book.getInStock());
+    }
+
+    @Test
+    public void testGetStock() throws Exception{
+        assertEquals("Stocks should be equal", String.valueOf(STOCK), String.valueOf(book.getInStock()));
+    }
 }
