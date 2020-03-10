@@ -38,8 +38,10 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
                 String author = items.get((3));
                 int year = Integer.parseInt(items.get((4)));
                 double price = Double.parseDouble(items.get((5)));
+                int stock = Integer.parseInt(items.get((6)));
 
-                domain.Book book = new domain.Book(serialNumber, name, author, year, price);
+
+                domain.Book book = new domain.Book(serialNumber, name, author, year, price, stock);
                 book.setId(id);
 
                 try {
@@ -74,7 +76,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
                             try {
 
                                 bufferedWriter.write(
-                                        entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice());
+                                        entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice()+","+entity.getInStock());
                                 bufferedWriter.newLine();
                             } catch (IOException e) {
                                 e.printStackTrace();
@@ -96,7 +98,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
 
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice());
+                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice()+","+entity.getInStock());
             bufferedWriter.newLine();
         } catch (IOException e) {
             e.printStackTrace();
