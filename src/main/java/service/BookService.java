@@ -2,8 +2,12 @@ package service;
 
 import domain.Book;
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
 import repository.Repository;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -17,7 +21,7 @@ public class BookService {
         this.repository = repository;
     }
 
-    public Optional<Book> addBook(domain.Book book) throws ValidatorException {
+    public Optional<Book> addBook(domain.Book book) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException {
         // Add given book to the repository
         // Return Optional null if the entity was added, otherwise return the entity with the same id
         return repository.save(book);

@@ -5,7 +5,10 @@ import domain.Client;
 import domain.validators.BookValidator;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +25,7 @@ public class Console {
         this.clientService = studentService;
         this.bookService = bookService;
     }
+    //gitk and git gui in console
 
     public void runConsole() {
         boolean finished=false;
@@ -53,12 +57,14 @@ public class Console {
                     case 6:
                         filterBooks();
                         break;
-
-                    case 10:
-                        updateBook();
+                    case 7:
+                        deleteClient();
                         break;
                     case 9:
                         updateClient();
+                        break;
+                    case 10:
+                        updateBook();
                         break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
@@ -90,9 +96,33 @@ public class Console {
     //******************************************************************************************************************
     //Client functions:
     private void filterClients() {
-        System.out.println("filtered clients (name containing 's2'):");
-        Set<domain.Client> students = clientService.filterClientsByName("s2");
-        students.stream().forEach(System.out::println);
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("Filter after: ");
+            String name = bufferRead.readLine();
+            System.out.println("filtered clients (name containing "+name+" ):");
+            Set<domain.Client> students = clientService.filterClientsByName(name);
+            students.stream().forEach(System.out::println);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }catch (NumberFormatException ex){
+            System.out.println("Please input a valid format.");
+        }
+
+    }
+
+    private void deleteClient(){
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("ID: ");
+            Long id = Long.parseLong(bufferRead.readLine());
+            Optional<Client> client = clientService.removeClient(id);
+            client.ifPresent(c -> {System.out.println("Client removed successfully."); });
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }catch (NumberFormatException ex){
+            System.out.println("Please input a valid format.");
+        }
     }
 
     private void printAllClients() {
@@ -110,7 +140,7 @@ public class Console {
             try {
                 Optional<Client> result = clientService.addClient(c);
                 result.ifPresent(r-> System.out.println("A client with this ID already exists."));
-            } catch (ValidatorException e) {
+            } catch (ValidatorException | ParserConfigurationException | TransformerException | SAXException | IOException e) {
                 System.out.println(e.getMessage());
             }});
     }
@@ -150,6 +180,7 @@ public class Console {
                 result.ifPresent(r -> {
                     throw new ValidatorException("Client updated successfully!");});
                 throw new ValidatorException("A client with this ID was not found!");
+
             } catch (ValidatorException e) {
                 System.out.println(e.getMessage());
             }});
@@ -190,6 +221,8 @@ public class Console {
             }
             catch (ValidatorException e) {
                 System.out.println(e.getMessage());
+            } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
+                e.printStackTrace();
             }
         });
     }

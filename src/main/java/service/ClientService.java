@@ -2,8 +2,12 @@ package service;
 
 import domain.Client;
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
 import repository.Repository;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -17,8 +21,12 @@ public class ClientService {
         this.repository = repository;
     }
 
-    public Optional<Client> addClient(domain.Client client) throws ValidatorException {
+    public Optional<Client> addClient(domain.Client client) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException {
         return repository.save(client);
+    }
+
+    public Optional<Client> removeClient(Long ID){
+        return repository.delete(ID);
     }
 
     public Optional<Client> updateClient(domain.Client client) throws ValidatorException {
@@ -35,11 +43,6 @@ public class ClientService {
      */
     public Set<domain.Client> filterClientsByName(String s) {
         Iterable<domain.Client> clients = repository.findAll();
-        //version 1
-//        Set<domain.Client> filteredStudents = StreamSupport.stream(clients.spliterator(), false)
-//                .filter(client -> client.getName().contains(s)).collect(Collectors.toSet());
-
-        //version 2
         Set<domain.Client> filteredClients= new HashSet<>();
         clients.forEach(filteredClients::add);
         filteredClients.removeIf(student -> !student.getName().contains(s));
