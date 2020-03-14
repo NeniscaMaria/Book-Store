@@ -54,6 +54,12 @@ public class Console {
                     case 6:
                         filterBooks();
                         break;
+<<<<<<< HEAD
+=======
+                    case 7:
+                        deleteClient();
+                        break;
+>>>>>>> feature/deleteClient
                     case 10:
                         updateBook();
                         break;
@@ -103,6 +109,23 @@ public class Console {
             System.out.println("Please input a valid format.");
         }
 
+<<<<<<< HEAD
+=======
+    }
+
+    private void deleteClient(){
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("ID: ");
+            Long id = Long.parseLong(bufferRead.readLine());
+            Optional<Client> client = clientService.removeClient(id);
+            client.ifPresent(c -> {System.out.println("Client removed successfully."); });
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }catch (NumberFormatException ex){
+            System.out.println("Please input a valid format.");
+        }
+>>>>>>> feature/deleteClient
     }
 
     private void printAllClients() {

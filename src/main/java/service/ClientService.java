@@ -21,6 +21,10 @@ public class ClientService {
         return repository.save(client);
     }
 
+    public Optional<Client> removeClient(Long ID){
+        return repository.delete(ID);
+    }
+
     public Optional<Client> updateClient(domain.Client client) throws ValidatorException {
         return repository.update(client);
     }

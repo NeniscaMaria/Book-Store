@@ -5,5 +5,3 @@
 =======
 1,bk1,Black Beauty,Anna Sewell,1877,20.99
 12,12,Johnny got his gun,Dalton Trumbo,1939,17.99
-45,45,Paradise lost,John Milton,1667,30.0
->>>>>>> implemented filter client after name

@@ -123,4 +123,9 @@ public class InMemoryRepositoryTest {
         repository.update(wrongSerial);
         repository.update(wrongName);
     }
+
+    @Test
+    public void delete() {
+    }
+
 }
