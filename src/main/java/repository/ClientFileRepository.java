@@ -3,7 +3,10 @@ package repository;
 import domain.Client;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,7 +51,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     }
 
     @Override
-    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException {
+    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException {
         Optional<domain.Client> optional = super.save(entity);
         if (optional.isPresent()) {
             return optional;
