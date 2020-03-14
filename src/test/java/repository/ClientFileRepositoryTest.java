@@ -3,20 +3,17 @@ package repository;
 import domain.Client;
 import domain.validators.ClientValidator;
 import domain.validators.Validator;
+import domain.validators.ValidatorException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import domain.validators.ValidatorException;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
 
-
-public class InMemoryRepositoryTest {
+public class ClientFileRepositoryTest {
     private static final Long ID1 = 1L;
     private static final Long ID2 = 2L;
     private static final Long ID3 = 3L;
@@ -30,7 +27,7 @@ public class InMemoryRepositoryTest {
     private static final String NAME3 = "NewClient NewName";
     private static final String WRONG_NAME = "Name";
 
-    private InMemoryRepository<Long, Client> repository;
+    private ClientFileRepository repository;
     private Validator<Client> validator;
     private Client client1;
     private Client client2;
@@ -41,10 +38,12 @@ public class InMemoryRepositoryTest {
 
     private HashSet allClients;
 
+    private String filename;
     @Before
     public void setUp() throws Exception {
+        filename="testClients.txt";
         validator = new ClientValidator();
-        repository = new InMemoryRepository<>(validator);
+        repository = new ClientFileRepository(validator,filename);
         client1 = new Client(SERIAL_NUMBER1,NAME1);
         client1.setId(ID1);
         client2 = new Client(SERIAL_NUMBER2,NAME2);
@@ -83,36 +82,13 @@ public class InMemoryRepositoryTest {
     }
 
     @Test
-    public void testFindOne() throws Exception {
-        assertEquals("It should find one client",client1,repository.findOne(ID1).get()); //call get to obtain the value from the optional
-        assertEquals("It should find none", Optional.empty(),repository.findOne(5L));
-    }
-
-    @Test
-    public void testFindAll() throws Exception {
-        assertEquals("There should be 2 clients", allClients,repository.findAll());
-    }
-
-    @Test
-    public void testSave() throws Exception {
-        assertEquals("It should save the client",Optional.empty(),repository.save(client3));
+    public void save() {
+        assertEquals("It should save the client", Optional.empty(),repository.save(client3));
         assertEquals("It should not save the client",client3,repository.save(client3).get());
     }
 
-    @Test(expected = ValidatorException.class)
-    public void testSaveException() throws Exception {
-        repository.save(wrongName);
-        repository.save(wrongSerial);
-    }
-
     @Test
-    public void testDelete() throws Exception {
-        assertEquals("Should delete it",client2,repository.delete(ID2).get());
-        assertEquals("Should not find it",Optional.empty(),repository.delete(ID2));
-    }
-
-    @Test
-    public void testUpdate() throws Exception {
+    public void update() {
         assertEquals("Should update it",updateClient,repository.update(updateClient).get());
         assertEquals("Should not find it",Optional.empty(),repository.update(client3));
     }
@@ -124,10 +100,14 @@ public class InMemoryRepositoryTest {
         repository.update(wrongName);
     }
 
+    @Test(expected = ValidatorException.class)
+    public void testSaveException() throws Exception {
+        repository.save(wrongName);
+        repository.save(wrongSerial);
+    }
     @Test
     public void delete() {
         assertEquals("Should delete it",client1,repository.delete(ID1).get());
         assertEquals("Should not find it",Optional.empty(),repository.delete(ID1));
     }
-
 }
