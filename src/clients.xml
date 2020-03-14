@@ -1,18 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<clients>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><clients>
     <client>
         <ID>1</ID>
         <SerialNo>sn01</SerialNo>
-        <Name>Pop Alina</Name>
+        <Name>Pop Ion</Name>
+    </client>
+    <client>
+        <ID>2</ID>
+        <SerialNo>sn02</SerialNo>
+        <Name>Ionescu Mara</Name>
     </client>
     <client>
         <ID>3</ID>
         <SerialNo>sn03</SerialNo>
-        <Name>Ionescu Mara</Name>
-    </client>
-    <client>
-        <ID>4</ID>
-        <SerialNo>sn04</SerialNo>
-        <Name>Ionescu Marcel</Name>
+        <Name>Popescu Marcel</Name>
     </client>
 </clients>

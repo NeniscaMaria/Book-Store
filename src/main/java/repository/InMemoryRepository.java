@@ -37,7 +37,7 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
     }
 
     @Override
-    public Optional<T> save(T entity) throws ValidatorException, ParserConfigurationException, IOException, SAXException, TransformerException {//the validator check if the entity is null
+    public Optional<T> save(T entity) throws ValidatorException {//the validator check if the entity is null
         validator.validate(entity);
         return Optional.ofNullable(entities.putIfAbsent(entity.getId(), entity)); //returns current value if entity present
     }

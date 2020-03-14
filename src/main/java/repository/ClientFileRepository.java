@@ -52,8 +52,9 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     }
 
     @Override
-    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException {
-        Optional<domain.Client> optional = super.save(entity);
+    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException{
+        Optional<Client> optional = null;
+        optional = super.save(entity);
         if (optional.isPresent()) {
             return optional;
         }

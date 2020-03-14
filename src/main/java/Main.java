@@ -4,10 +4,7 @@ import domain.validators.BookValidator;
 import domain.validators.ClientValidator;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
-import repository.BookFileRepository;
-import repository.ClientFileRepository;
-import repository.InMemoryRepository;
-import repository.Repository;
+import repository.*;
 import service.BookService;
 import service.ClientService;
 import java.util.InputMismatchException;
@@ -41,12 +38,25 @@ public class Main {
         ui.Console console = new ui.Console(clientService, bookService);
         console.runConsole();
     }
-    
+
+    private static void runWithXML(){
+        Validator<Client> studentValidator = new ClientValidator();
+        Repository<Long, Client> clientRepository = new ClientXMLRepository(studentValidator, "src/clients.xml");
+        ClientService clientService = new ClientService(clientRepository);
+
+        Validator<Book> bookValidator = new BookValidator();
+        Repository<Long, Book> bookRepository = new BookFileRepository(bookValidator, "books.txt"); //.xml to be added later
+        BookService bookService = new BookService(bookRepository);
+
+        ui.Console console = new ui.Console(clientService, bookService);
+        console.runConsole();
+    }
 
     public static void main(String args[]) {
         System.out.println("Choose storage option:");
         System.out.println("1.In memory");
-        System.out.println("2.In files");
+        System.out.println("2.In .txt files");
+        System.out.println("3.In XML files");
         boolean finished = false;
         while(!finished) {
             try {
@@ -62,6 +72,9 @@ public class Main {
                         runInFiles();
                         finished = true;
                         break;
+                    case 3:
+                        runWithXML();
+                        finished=true;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                 }
