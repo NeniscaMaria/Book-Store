@@ -9,6 +9,8 @@ import javax.swing.text.html.Option;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.FilterWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -72,25 +74,14 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
 
     public Optional<Book> update(Book book){
         Optional<Book> b = super.update(book);
-        b.ifPresent(
-                bb -> {
-                    Path path = Paths.get(fileName);
-                    Iterable<Book> books = super.findAll();
-                    try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.WRITE)) {
-                        books.forEach(entity -> {
-                            try {
+        b.ifPresent(bb -> {saveAllToFile();});
+        return b;
+    }
 
-                                bufferedWriter.write(
-                                        entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice()+","+entity.getInStock());
-                                bufferedWriter.newLine();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+    public Optional<Book> delete(Long bookID){
+        Optional<Book> b = super.delete(bookID);
+        b.ifPresent(
+                bb -> {saveAllToFile();}
         );
         return b;
     }
@@ -105,6 +96,25 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
             bufferedWriter.write(
                     entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice()+","+entity.getInStock());
             bufferedWriter.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Re-writes the document
+    private void saveAllToFile(){
+        Path path = Paths.get(fileName);
+        Iterable<Book> books = super.findAll();
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName))) {
+            books.forEach(entity -> {
+                try {
+                    bufferedWriter.write(
+                            entity.getId() + "," + entity.getSerialNumber() + "," + entity.getTitle() + "," + entity.getAuthor() + "," + entity.getYear()+","+entity.getPrice()+","+entity.getInStock());
+                    bufferedWriter.newLine();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }

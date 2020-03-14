@@ -8,12 +8,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.FileWriter;
 import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 
-public class BookInMemoryRepositoryTest {
+public class BookFileRepositoryTest {
     private static final Long ID1 = 1L;
     private static final Long ID2 = 2L;
     private static final Long ID3 = 3L;
@@ -23,6 +24,7 @@ public class BookInMemoryRepositoryTest {
     private static final Long ID7 = 7L;
     private static final Long ID8 = 8L;
     private static final Long ID9 = 9L;
+    private static final Long ID10 = 10L;
     private static final String SN1 = "123";
     private static final String SN2 = "213";
     private static final String SN3 = "231";
@@ -47,9 +49,9 @@ public class BookInMemoryRepositoryTest {
     private static final double PRICE2 = 30.2;
     private static final double PRICE3 = 40.2;
     private static final double WRONG_PRICE = -40.2;
+    private String filepath = "testBooks.txt";
 
-
-    private InMemoryRepository<Long, Book> repo;
+    private BookFileRepository repo;
     private Validator<Book> valid;
     private HashSet books;
     private Book book1;
@@ -64,8 +66,9 @@ public class BookInMemoryRepositoryTest {
 
     @Before
     public void setUp() throws Exception{
+        FileWriter fw = new FileWriter(filepath,false);
         valid = new BookValidator();
-        repo = new InMemoryRepository<>(valid);
+        repo = new BookFileRepository(valid, filepath);
         books = new HashSet();
 
         book1 = new Book(SN1, NAME1, AUTHOR1, YEAR1, PRICE1, STOCK1);
@@ -91,8 +94,8 @@ public class BookInMemoryRepositoryTest {
         book_price.setId(ID9);
 
 
-        book_update = new Book(SN3, NAME3, AUTHOR1, YEAR2, PRICE1, STOCK1);
-        book_update.setId(ID1);
+        book_update = new Book(SN3, NAME3, AUTHOR1, YEAR2, PRICE1, WRONG_STOCK);
+        book_update.setId(ID10);
 
         repo.save(book1);
         repo.save(book2);
@@ -115,6 +118,7 @@ public class BookInMemoryRepositoryTest {
         book_year = null;
         book_update = null;
         book_price = null;
+        FileWriter fw = new FileWriter(filepath,false);
     }
 
     @Test
@@ -143,8 +147,8 @@ public class BookInMemoryRepositoryTest {
 
     @Test
     public void testUpdate() throws Exception {
-        assertEquals("Should update book", book_update, repo.update(book_update).get());
-        assertEquals("Should not find book", Optional.empty(), repo.update(book3));
+        assertEquals("Should update book", book1, repo.update(book1).get());
+        assertEquals("Should not find book", Optional.empty(), repo.update(book_update));
     }
 
     @Test(expected = ValidatorException.class)
