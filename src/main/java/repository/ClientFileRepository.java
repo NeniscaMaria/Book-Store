@@ -73,7 +73,10 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     private void writeAllToFile(){
         Path path = Paths.get(fileName);
         Iterable<Client> clients = super.findAll();
-        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.WRITE)) {
+        for(Client entity : clients) {
+            System.out.println(entity.toString());
+        }
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING)) {
             for(Client entity : clients) {
                 bufferedWriter.write(
                         entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
