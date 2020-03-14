@@ -57,6 +57,9 @@ public class Console {
                     case 7:
                         deleteClient();
                         break;
+                    case 8:
+                        deleteBook();
+                        break;
                     case 9:
                         updateClient();
                         break;
@@ -185,6 +188,7 @@ public class Console {
 
     // ----------------
     // Books
+    // ----------------
 
     private void filterBooks() {
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -223,6 +227,8 @@ public class Console {
     }
 
     private void updateBook(){
+        // Update one or more attributes of the given book
+        // IDs (read) must match
         Optional<Book> book = readBook();
         book.ifPresent(b->{
             try{
@@ -235,6 +241,35 @@ public class Console {
             }
         });
     }
+
+    private void deleteBook(){
+        // Delete the book with the same ID (read)
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("ID: ");
+
+        try {
+            Long id = Long.parseLong(bufferRead.readLine());
+            Optional<Book> book = bookService.deleteBook(id);
+            book.ifPresent(b2->{throw new ValidatorException("Book delete successful");});
+            throw new ValidatorException("The book with this ID does not exist.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Optional<Book> findOneBook(){
+        // Return the book with the same ID (read) if it exists
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("ID: ");
+        try {
+            Long id = Long.parseLong(bufferRead.readLine());
+            return bookService.findOneBook(id);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
 
     private Optional<domain.Book> readBook() {
         // Input book from keyboard

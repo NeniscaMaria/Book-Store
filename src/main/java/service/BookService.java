@@ -44,4 +44,15 @@ public class BookService {
         // Return Optional null if the entity was updated, otherwise the given entity (if the id does not exist)
         return repository.update(book);
     }
+
+    public Optional<Book> deleteBook(Long bookID) throws ValidatorException {
+        // Delete the book with the given id from repository
+        // Return Optional null if the entity was deleted, otherwise return the entity with the same id
+        return repository.delete(bookID);
+    }
+
+    public Optional<Book> findOneBook(Long bookID){
+        return repository.findOne(bookID);
+    }
+
 }
