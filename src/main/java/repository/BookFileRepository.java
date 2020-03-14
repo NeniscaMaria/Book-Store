@@ -3,8 +3,11 @@ package repository;
 import domain.Book;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
 
 import javax.swing.text.html.Option;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,11 +60,13 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
 
     @Override
     public Optional<Book> save(domain.Book entity) throws ValidatorException {
-        Optional<domain.Book> optional = super.save(entity);
+        Optional<Book> optional = null;
+        optional = super.save(entity);
         if (optional.isPresent()) {
             return optional;
         }
         saveToFile(entity);
+
         return Optional.empty();
     }
 

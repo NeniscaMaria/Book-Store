@@ -3,7 +3,10 @@ package repository;
 import domain.Client;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,6 +16,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 
 public class ClientFileRepository extends InMemoryRepository<Long, domain.Client> {
@@ -48,8 +52,9 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     }
 
     @Override
-    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException {
-        Optional<domain.Client> optional = super.save(entity);
+    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException{
+        Optional<Client> optional = null;
+        optional = super.save(entity);
         if (optional.isPresent()) {
             return optional;
         }
@@ -74,11 +79,15 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
         Path path = Paths.get(fileName);
         Iterable<Client> clients = super.findAll();
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING)) {
-            for(Client entity : clients) {
-                bufferedWriter.write(
-                        entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
-                bufferedWriter.newLine();
-            }
+            StreamSupport.stream(clients.spliterator(), false)
+                    .forEach(entity->{
+                        try {
+                            bufferedWriter.write(
+                                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
+                            bufferedWriter.newLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }});
         } catch (IOException e) {
             e.printStackTrace();
         }

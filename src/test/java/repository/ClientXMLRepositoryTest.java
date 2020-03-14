@@ -11,9 +11,10 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-public class ClientFileRepositoryTest {
+
+public class ClientXMLRepositoryTest {
     private static final Long ID1 = 1L;
     private static final Long ID2 = 2L;
     private static final Long ID3 = 3L;
@@ -27,7 +28,7 @@ public class ClientFileRepositoryTest {
     private static final String NAME3 = "NewClient NewName";
     private static final String WRONG_NAME = "Name";
 
-    private ClientFileRepository repository;
+    private ClientXMLRepository repository;
     private Validator<Client> validator;
     private Client client1;
     private Client client2;
@@ -41,9 +42,9 @@ public class ClientFileRepositoryTest {
     private String filename;
     @Before
     public void setUp() throws Exception {
-        filename="testClients.txt";
+        filename="testClient.xml";
         validator = new ClientValidator();
-        repository = new ClientFileRepository(validator,filename);
+        repository = new ClientXMLRepository(validator,filename);
         client1 = new Client(SERIAL_NUMBER1,NAME1);
         client1.setId(ID1);
         client2 = new Client(SERIAL_NUMBER2,NAME2);
@@ -83,32 +84,19 @@ public class ClientFileRepositoryTest {
     }
 
     @Test
-    public void save() {
+    public void testSave1() {
         assertEquals("It should save the client", Optional.empty(),repository.save(client3));
         assertEquals("It should not save the client",client3,repository.save(client3).get());
     }
 
     @Test
-    public void update() {
+    public void testUpdate1() {
         assertEquals("Should update it",updateClient,repository.update(updateClient).get());
-        assertEquals("Should not find it",Optional.empty(),repository.update(client3));
     }
 
-
-    @Test(expected = ValidatorException.class)
-    public void testUpdateException() throws Exception {
-        repository.update(wrongSerial);
-        repository.update(wrongName);
-    }
-
-    @Test(expected = ValidatorException.class)
-    public void testSaveException() throws Exception {
-        repository.save(wrongName);
-        repository.save(wrongSerial);
-    }
     @Test
-    public void delete() {
-        assertEquals("Should delete it",client1,repository.delete(ID1).get());
+    public void testDelete1() {
+        assertEquals("Should delete it",ID1,repository.delete(ID1).get().getId());
         assertEquals("Should not find it",Optional.empty(),repository.delete(ID1));
     }
 }

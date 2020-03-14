@@ -5,7 +5,10 @@ import domain.Client;
 import domain.validators.BookValidator;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -137,7 +140,7 @@ public class Console {
             try {
                 Optional<Client> result = clientService.addClient(c);
                 result.ifPresent(r-> System.out.println("A client with this ID already exists."));
-            } catch (ValidatorException e) {
+            } catch (ValidatorException | ParserConfigurationException | TransformerException | SAXException | IOException e) {
                 System.out.println(e.getMessage());
             }});
     }
@@ -218,6 +221,8 @@ public class Console {
             }
             catch (ValidatorException e) {
                 System.out.println(e.getMessage());
+            } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
+                e.printStackTrace();
             }
         });
     }

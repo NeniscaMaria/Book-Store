@@ -1,6 +1,12 @@
 package repository;
 
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import java.io.IOException;
 import java.util.Optional;
 
 public interface Repository<ID, T extends domain.BaseEntity<ID>> {
@@ -21,7 +27,7 @@ public interface Repository<ID, T extends domain.BaseEntity<ID>> {
      THROWS: IllegalArgumentException if the given entity is null.
             ValidatorException if the entity is not valid.
      */
-    Optional<T> save(T entity) throws ValidatorException;
+    Optional<T> save(T entity) throws ValidatorException, ParserConfigurationException, IOException, SAXException, TransformerException;
 
     /*DESCR:Removes the entity with the given id.
      PRE: param id must not be null.
