@@ -19,8 +19,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.StreamSupport;
 
 public class ClientXMLRepository extends InMemoryRepository<Long,Client> {
     private String fileName;
@@ -119,15 +123,61 @@ public class ClientXMLRepository extends InMemoryRepository<Long,Client> {
                 new StreamResult(new File(fileName)));
     }
 
-    private void writeAllToFile(){
-        return;
-    }
-
     public Optional<Client> update(Client client){
-        return null;
+        Optional<Client> res = super.update(client);
+        res.ifPresent(r-> {
+            try {
+                Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileName);
+                Element root = document.getDocumentElement();
+                NodeList children = root.getChildNodes();
+
+                IntStream.range(0, children.getLength())
+                        .mapToObj(index -> children.item(index))
+                        .filter(node -> node instanceof Element)
+                        .filter(node-> createClientFromElement((Element)node).getId()==client.getId())
+                        .map(node->{
+                            Node parent = node.getParentNode();
+                            parent.removeChild(node);
+                            Node newNode = clientToNode(client,document);
+                            parent.appendChild(newNode);
+
+                            Transformer transformer= null;
+                            try {
+                                transformer = TransformerFactory
+                                        .newInstance()
+                                        .newTransformer();
+                                transformer.transform(new DOMSource(document),
+                                        new StreamResult(new File(fileName)));
+                            } catch (TransformerException e) {
+                                e.printStackTrace();
+                            }
+                            return null;
+                        });
+            } catch (SAXException | IOException | ParserConfigurationException e) {
+                e.printStackTrace();
+            }});
+        return res;
     }
 
     public Optional<Client> delete(Long ID){
-        return null;
+        Optional<Client> res = super.delete(ID);
+        res.ifPresent(r->{
+            try {
+                Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(fileName);
+                Element root = document.getDocumentElement();
+                NodeList children = root.getChildNodes();
+
+                IntStream.range(0, children.getLength())
+                        .mapToObj(index -> children.item(index))
+                        .filter(node -> node instanceof Element)
+                        .filter(node-> createClientFromElement((Element)node).getId()==ID)
+                        .map(node->{
+                            Node parent = node.getParentNode();
+                            parent.removeChild(node);
+                            return null;});
+            } catch (SAXException | IOException | ParserConfigurationException e) {
+                e.printStackTrace();
+            }});
+        return res;
     }
 }
