@@ -1,8 +1,5 @@
 package domain;
 
-import jdk.internal.net.http.common.Pair;
-
-import java.util.Map;
 import java.util.Objects;
 
 public class Purchase extends BaseEntity<Long>{
