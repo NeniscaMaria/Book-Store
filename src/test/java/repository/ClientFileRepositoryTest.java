@@ -70,6 +70,7 @@ public class ClientFileRepositoryTest {
 
     @After
     public void tearDown() throws Exception {
+        filename=null;
         validator = null;
         repository = null;
         client1 = null;
