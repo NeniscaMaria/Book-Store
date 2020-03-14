@@ -54,17 +54,14 @@ public class Console {
                     case 6:
                         filterBooks();
                         break;
-<<<<<<< HEAD
-=======
                     case 7:
                         deleteClient();
                         break;
->>>>>>> feature/deleteClient
-                    case 10:
-                        updateBook();
-                        break;
                     case 9:
                         updateClient();
+                        break;
+                    case 10:
+                        updateBook();
                         break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
@@ -109,8 +106,6 @@ public class Console {
             System.out.println("Please input a valid format.");
         }
 
-<<<<<<< HEAD
-=======
     }
 
     private void deleteClient(){
@@ -125,7 +120,6 @@ public class Console {
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
         }
->>>>>>> feature/deleteClient
     }
 
     private void printAllClients() {
