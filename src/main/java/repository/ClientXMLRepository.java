@@ -174,6 +174,16 @@ public class ClientXMLRepository extends InMemoryRepository<Long,Client> {
                         .map(node->{
                             Node parent = node.getParentNode();
                             parent.removeChild(node);
+                            Transformer transformer= null;
+                            try {
+                                transformer = TransformerFactory
+                                        .newInstance()
+                                        .newTransformer();
+                                transformer.transform(new DOMSource(document),
+                                        new StreamResult(new File(fileName)));
+                            } catch (TransformerException e) {
+                                e.printStackTrace();
+                            }
                             return null;});
             } catch (SAXException | IOException | ParserConfigurationException e) {
                 e.printStackTrace();
