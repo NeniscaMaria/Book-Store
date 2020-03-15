@@ -13,76 +13,147 @@ import org.junit.Test;
 import service.BookService;
 import service.ClientService;
 
+import java.io.FileWriter;
 import java.util.HashSet;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 
 public class PurchaseFileRepositoryTest {
-    private Book book;
-    private Client client;
-    private Book book2;
-    private Client client2;
-    private Purchase purchase;
-    private Purchase purchase2;
 
-    private static final Long ID = 1L;
-    private static final Long NEW_ID = 2L;
-    private static final Long ID_CLIENT = 1L;
-    private static final Long ID_CLIENT2 = 2L;
-    private static final Long ID_BOOK1 = 1L;
-    private static final Long ID_BOOK2 = 2L;
-    private static final int NR_BOOKS = 20;
-    private static final int NR_BOOKS2 = 18;
-    private  String filename;
-    private HashSet allPurchases;
+    private static final Long ID1 = 1L;
+    private static final Long ID2 = 2L;
+    private static final Long ID3 = 3L;
+    private static final Long ID5 = 5L;
 
-    private Validator<Client> validClient;
-    private Validator<Book> validBook;
-    private Validator<Purchase> validPurchase;
+    private static final int NRBOOKS1 = 188;
+    private static final int NRBOOKS2 = 210;
+    private static final int NRBOOKS3 = 450;
+    private static final int WRONG_NRBOOKS = 2000;
 
     private ClientFileRepository repoClient;
-    private BookFileRepository repoBook;
+    private Validator<Client> validClient;
+    private ClientService clientService;
 
-    private ClientService cs;
-    private BookService bs;
+    private BookFileRepository repoBook;
+    private Validator<Book> validBook;
+    private BookService bookService;
+
+    private PurchaseFileRepository repoPurchase;
+    private Validator<Purchase> validPurchase;
+
+    private Book book1;
+    private Book book2;
+    private Client client1;
+    private Client client2;
+    private Purchase purchase1;
+    private Purchase purchase2;
+    private Purchase purchase3;
+    private Purchase purchase_books;
+
+    private HashSet purchases;
+
+    private String fileClients;
+    private String fileBooks;
+    private String filePurchase;
+
 
     @Before
     public void setUp() throws Exception {
-        filename = "purchaseTest.txt";
+        fileClients = "testClients.txt";
+        fileBooks = "testBooks.txt";
+        filePurchase = "testPurchases.txt";
+        FileWriter fw1 = new FileWriter(fileBooks,false);
+        FileWriter fw2 = new FileWriter(fileClients,false);
+        FileWriter fw3 = new FileWriter(filePurchase,false);
+
 
         validClient = new ClientValidator();
         validBook = new BookValidator();
 
+        purchases = new HashSet();
+        validClient = new ClientValidator();
+        validBook = new BookValidator();
+
+        repoClient = new ClientFileRepository(validClient, fileClients);
+        repoBook = new BookFileRepository(validBook, fileBooks);
+
+        clientService = new ClientService(repoClient);
+        bookService = new BookService(repoBook);
 
 
-        client = new Client();
-        client.setId(ID_CLIENT);
-        book = new Book();
-        book.setId(ID_BOOK1);
-        purchase = new Purchase(ID_CLIENT, ID_BOOK1, NR_BOOKS);
-        purchase.setId(ID);
+        client1 = new Client("123", "a b");
+        client1.setId(ID1);
 
-        client2 = new Client();
-        client.setId(ID_CLIENT);
-        book2 = new Book();
-        book2.setId(ID_BOOK2);
-        purchase = new Purchase(ID_CLIENT2, ID_BOOK2, NR_BOOKS2);
-        purchase.setId(ID);
+        client2 = new Client("143", "a b");
+        client2.setId(ID2);
+
+        clientService.addClient(client1);
+        clientService.addClient(client2);
+
+        book1 = new Book("123", "a", "a", 1888, 34.5, 100);
+        book1.setId(ID1);
+        book1.setInStock(NRBOOKS2);
+
+        book2 = new Book("193", "a", "a", 1888, 34.5, 100);
+        book2.setId(ID2);
+        book2.setInStock(NRBOOKS3);
+
+        bookService.addBook(book1);
+        bookService.addBook(book2);
+
+        validPurchase = new PurchaseValidator(clientService, bookService);
+        repoPurchase = new PurchaseFileRepository(validPurchase, filePurchase);
+
+        purchase1 = new Purchase(ID1, ID1, NRBOOKS2);
+        purchase1.setId(ID1);
+
+        purchase2 = new Purchase(ID1, ID2, NRBOOKS2);
+        purchase2.setId(ID2);
+        purchase3 = new Purchase(ID2, ID2, NRBOOKS1);
+        purchase3.setId(ID3);
+        purchase_books = new Purchase(ID2, ID1, WRONG_NRBOOKS);
+        purchase_books.setId(ID5);
+
+        repoPurchase.save(purchase1);
+        repoPurchase.save(purchase2);
+
+        purchases.add(purchase1);
+        purchases.add(purchase2);
+
     }
 
     @After
     public void tearDown() throws Exception {
+        FileWriter fw1 = new FileWriter(fileBooks,false);
+        FileWriter fw2 = new FileWriter(fileClients,false);
+        FileWriter fw3 = new FileWriter(filePurchase,false);
     }
 
     @Test
+    public void testFindAll() {
+        assertEquals("There should be two books", purchases, repoPurchase.findAll());
+    }
+
+
+    @Test
     public void save() {
+        assertEquals("Purchase should be saved", Optional.empty(), repoPurchase.save(purchase3));
+        assertEquals("Purchase should not be saved", purchase3, repoPurchase.save(purchase3).get());
+
     }
 
     @Test
     public void update() {
+        assertEquals("Should delete purchase", purchase2, repoPurchase.delete(ID2).get());
+        assertEquals("Should not find purchase", Optional.empty(), repoPurchase.delete(ID2));
+
     }
 
     @Test
     public void delete() {
+        assertEquals("Should update purchase", purchase2, repoPurchase.update(purchase2).get());
+        assertEquals("Should not find purchase", Optional.empty(), repoPurchase.update(purchase3));
+
     }
 }

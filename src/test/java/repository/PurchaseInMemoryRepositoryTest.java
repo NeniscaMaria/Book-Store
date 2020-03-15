@@ -116,6 +116,12 @@ public class PurchaseInMemoryRepositoryTest {
     }
 
     @Test
+    public void testFindAll() {
+        assertEquals("There should be two books", purchases, repoPurchase.findAll());
+    }
+
+
+    @Test
     public void save() {
         assertEquals("Purchase should be saved", Optional.empty(), repoPurchase.save(purchase3));
         assertEquals("Purchase should not be saved", purchase3, repoPurchase.save(purchase3).get());
