@@ -45,13 +45,16 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
         Node IDNode = purchaseElement.getElementsByTagName("ID").item(0);
         Long ID = Long.parseLong(IDNode.getTextContent());
 
-        Node serialNoNode = purchaseElement.getElementsByTagName("SerialNo").item(0);
-        String serialNo = serialNoNode.getTextContent();
+        Node clientIDNode = purchaseElement.getElementsByTagName("clientID").item(0);
+        Long clientID = Long.parseLong(clientIDNode.getTextContent());
 
-        Node nameNode = purchaseElement.getElementsByTagName("Name").item(0);
-        String name = nameNode.getTextContent();
+        Node bookIDNode = purchaseElement.getElementsByTagName("bookID").item(0);
+        Long bookID = Long.parseLong(bookIDNode.getTextContent());
 
-        Purchase purchase = new Purchase(serialNo,name);
+        Node nrBooksNode = purchaseElement.getElementsByTagName("nrBooks").item(0);
+        int nrBooks = Integer.parseInt(nrBooksNode.getTextContent());
+
+        Purchase purchase = new Purchase(clientID,bookID,nrBooks);
         purchase.setId(ID);
         return purchase;
     }
@@ -65,7 +68,7 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
         document.getDocumentElement().normalize();
         Element root = document.getDocumentElement();
 
-        NodeList children = document.getElementsByTagName("client");
+        NodeList children = document.getElementsByTagName("purchase");
         IntStream.range(0, children.getLength())
                 .mapToObj(children::item)
                 .filter(node -> node.getNodeType()==Node.ELEMENT_NODE)
@@ -73,18 +76,22 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
     }
 
     private Node purchaseToNode(Purchase purchase, Document document){
-        Element purchaseElement = document.createElement("client");
+        Element purchaseElement = document.createElement("purchase");
         Element IDElement = document.createElement("ID");
         IDElement.setTextContent(purchase.getId().toString());
         purchaseElement.appendChild(IDElement);
 
-        Element serialNoElement = document.createElement("SerialNo");
-        serialNoElement.setTextContent(purchase.getSerialNumber());
-        purchaseElement.appendChild(serialNoElement);
+        Element clientIDelement = document.createElement("clientID");
+        clientIDelement.setTextContent(purchase.getClientID().toString());
+        purchaseElement.appendChild(clientIDelement);
 
-        Element nameElement = document.createElement("Name");
-        nameElement.setTextContent(purchase.getName());
-        purchaseElement.appendChild(nameElement);
+        Element bookIDElement = document.createElement("bookID");
+        bookIDElement.setTextContent(purchase.getBookID().toString());
+        purchaseElement.appendChild(bookIDElement);
+
+        Element nrBooksElement= document.createElement("nrBooks");
+        nrBooksElement.setTextContent(Integer.toString(purchase.getNrBooks()));
+        purchaseElement.appendChild(nrBooksElement);
 
         return purchaseElement;
     }
@@ -99,7 +106,7 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
                 return optional;
             }
             saveToFile(entity);
-        } catch (ParserConfigurationException | IOException | SAXException | TransformerException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
         }
         return Optional.empty();

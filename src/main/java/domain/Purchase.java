@@ -3,40 +3,38 @@ package domain;
 import java.util.Objects;
 
 public class Purchase extends BaseEntity<Long>{
-    // Purchase receives a Client, Book and a number of books
-    // the client wishes to purchase
 
-    Client client;
-    Book book;
-    int nrBooks;
+    private Long clientID;
+    private Long bookID;
+    private int nrBooks;
 
     public Purchase() {
     }
 
-    public Purchase(Client client, Book book, int nrBooks) {
-        this.client = client;
-        this.book = book;
+    public Purchase(Long clientID, Long bookID, int nrBooks) {
+        this.clientID = clientID;
+        this.bookID = bookID;
         this.nrBooks = nrBooks;
     }
 
-    public Client getClient() {
-        return client;
+    public Long getClientID() {
+        return clientID;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public Book getBook() {
-        return book;
-    }
-
-    public void setBook(Book book) {
-        this.book = book;
+    public Long getBookID() {
+        return bookID;
     }
 
     public int getNrBooks() {
         return nrBooks;
+    }
+
+    public void setClientID(Long clientID) {
+        this.clientID = clientID;
+    }
+
+    public void setBookID(Long bookID) {
+        this.bookID = bookID;
     }
 
     public void setNrBooks(int nrBooks) {
@@ -49,21 +47,21 @@ public class Purchase extends BaseEntity<Long>{
         if (o == null || getClass() != o.getClass()) return false;
         Purchase purchase = (Purchase) o;
         return nrBooks == purchase.nrBooks &&
-                Objects.equals(client, purchase.client) &&
-                Objects.equals(book, purchase.book);
+                clientID.equals(purchase.clientID) &&
+                bookID.equals(purchase.bookID);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(client, book, nrBooks);
+        return Objects.hash(clientID, bookID, nrBooks);
     }
 
     @Override
     public String toString() {
         return "Purchase{" +
-                "client=" + client +
-                ", book=" + book +
+                "clientID=" + clientID +
+                ", bookID=" + bookID +
                 ", nrBooks=" + nrBooks +
-                '}' + super.toString();
+                '}';
     }
 }
