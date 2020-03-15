@@ -1,15 +1,15 @@
 import domain.Book;
 import domain.Client;
 import domain.Purchase;
-import domain.validators.BookValidator;
-import domain.validators.ClientValidator;
-import domain.validators.Validator;
-import domain.validators.ValidatorException;
+import domain.validators.*;
+import org.xml.sax.SAXException;
 import repository.*;
 import service.BookService;
 import service.ClientService;
 import service.PurchaseService;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -24,7 +24,11 @@ public class Main {
         Repository<Long, Book> bookRepository = new InMemoryRepository<>(bookValidator);
         BookService bookService = new BookService(bookRepository);
 
-        ui.Console console = new ui.Console(clientService, bookService);
+        Validator<Purchase> purchaseValidator = new PurchaseValidator();
+        Repository<Long, Purchase> purchaseRepository = new InMemoryRepository<>(purchaseValidator);
+        PurchaseService purchaseService = new PurchaseService(purchaseRepository);
+
+        ui.Console console = new ui.Console(clientService, bookService, purchaseService);
         console.runConsole();
     }
 
@@ -46,7 +50,7 @@ public class Main {
         console.runConsole();
     }
 
-    private static void runWithXML(){
+    private static void runWithXML() throws ParserConfigurationException, SAXException, IOException {
         Validator<Client> studentValidator = new ClientValidator();
         Repository<Long, Client> clientRepository = new ClientXMLRepository(studentValidator, "src/clients.xml");
         ClientService clientService = new ClientService(clientRepository);
@@ -55,7 +59,11 @@ public class Main {
         Repository<Long, Book> bookRepository = new BookFileRepository(bookValidator, "books.txt"); //.xml to be added later
         BookService bookService = new BookService(bookRepository);
 
-        ui.Console console = new ui.Console(clientService, bookService);
+        Validator<Purchase> purchaseValidator = new PurchaseValidator();
+        Repository<Long, Purchase> purchaseRepository = new PurchaseXMLRepository(purchaseValidator,"purchases.xml");
+        PurchaseService purchaseService = new PurchaseService(purchaseRepository);
+
+        ui.Console console = new ui.Console(clientService, bookService, purchaseService);
         console.runConsole();
     }
 
@@ -85,7 +93,7 @@ public class Main {
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                 }
-            } catch (ValidatorException ve) {
+            } catch (ValidatorException | ParserConfigurationException | SAXException | IOException ve) {
                 System.out.println(ve.getMessage());
             }catch(InputMismatchException e ){
                 System.out.println("Please input a number.");

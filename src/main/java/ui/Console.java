@@ -6,6 +6,7 @@ import domain.validators.BookValidator;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
+import service.PurchaseService;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -20,10 +21,12 @@ import java.util.Set;
 public class Console {
     private service.ClientService clientService;
     private service.BookService bookService;
+    private service.PurchaseService purchaseService;
 
-    public Console(service.ClientService studentService, service.BookService bookService) {
+    public Console(service.ClientService studentService, service.BookService bookService, PurchaseService purchaseService) {
         this.clientService = studentService;
         this.bookService = bookService;
+        this.purchaseService=purchaseService;
     }
     //gitk and git gui in console
 
@@ -69,6 +72,18 @@ public class Console {
                     case 10:
                         updateBook();
                         break;
+                    case 11:
+                        addPurchase();
+                        break;
+                    case 12:
+                        displayPurchases();
+                        break;
+                    case 13:
+                        updatePurchase();
+                        break;
+                    case 14:
+                        deletePurchase();
+                        break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                     }
@@ -94,6 +109,10 @@ public class Console {
         System.out.println("8.Delete book.");
         System.out.println("9.Update client.");
         System.out.println("10.Update book.");
+        System.out.println("11.Buy a book.");
+        System.out.println("12.Show all purchases.");
+        System.out.println("13.Update purchase.");
+        System.out.println("14.Delete purchase.");
     }
 
     //******************************************************************************************************************
@@ -307,5 +326,23 @@ public class Console {
             System.out.println("Please input a valid format.");
         }
         return Optional.empty();
+    }
+    //******************************************************************************************************************
+    //PURCHASES
+    private void addPurchase(){
+
+    }
+
+    private void displayPurchases(){
+        Set<domain.Purchase> purchases = purchaseService.getAllPurchases();
+        purchases.stream().forEach(System.out::println);
+    }
+
+    private void updatePurchase(){
+
+    }
+
+    private void deletePurchase(){
+
     }
 }

@@ -11,4 +11,8 @@ public class ValidatorException extends RuntimeException {
     public ValidatorException(Throwable cause) {
         super(cause);
     }
+
+    public ValidatorException() {
+        super("Entity is null");
+    }
 }
