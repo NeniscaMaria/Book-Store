@@ -1,5 +1,6 @@
 import domain.Book;
 import domain.Client;
+import domain.Purchase;
 import domain.validators.BookValidator;
 import domain.validators.ClientValidator;
 import domain.validators.Validator;
@@ -35,7 +36,11 @@ public class Main {
         Repository<Long, Book> bookRepository = new BookFileRepository(bookValidator, "books.txt");
         BookService bookService = new BookService(bookRepository);
 
-        ui.Console console = new ui.Console(clientService, bookService);
+        Validator<Purchase> purchaseValidator = new PurchaseValidator();
+        Repository<Long, Purchase> purchaseRepository = new PurchaseFileRepository(purchaseValidator, "purchase.txt");
+        PurchaseService purchaseService = new PurchaseService(purchaseRepository);
+
+        ui.Console console = new ui.Console(clientService, bookService, purchaseService);
         console.runConsole();
     }
 

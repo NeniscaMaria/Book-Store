@@ -1,6 +1,6 @@
 <purchases>
     <purchase>
-        <id>1</id>
+        <ID>1</ID>
         <clientID>1</clientID>
         <bookID>1</bookID>
         <nrBooks>1</nrBooks>

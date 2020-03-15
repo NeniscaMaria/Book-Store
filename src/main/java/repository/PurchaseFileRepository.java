@@ -29,11 +29,12 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
         try {//Files.lines(path) return a stream that contains the lines in the file
             Files.lines(path).forEach(line -> {
                 List<String> items = Arrays.asList(line.split(","));
-                if(items.size()==3) {
+                if(items.size()==4) {
                     Long id = Long.valueOf(items.get(0));
                     Long clientID = Long.valueOf(items.get(1));
                     Long bookID = Long.valueOf(items.get((2)));
-                    domain.Purchase purchase = new Purchase(clientID, bookID);
+                    int nrBooks = Integer.parseInt(items.get(3));
+                    domain.Purchase purchase = new Purchase(clientID, bookID,nrBooks);
                     purchase.setId(id);
                     try {
                         super.save(purchase);
@@ -63,7 +64,7 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
 
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
+                    entity.getId() + "," + entity.getClientID() + "," + entity.getBookID()+","+entity.getNrBooks());
             bufferedWriter.newLine();
 
         } catch (IOException e) {
@@ -79,7 +80,7 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
                     .forEach(entity->{
                         try {
                             bufferedWriter.write(
-                                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
+                                    entity.getId() + "," + entity.getClientID() + "," + entity.getBookID()+","+entity.getNrBooks());
                             bufferedWriter.newLine();
                         } catch (IOException e) {
                             e.printStackTrace();
