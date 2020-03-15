@@ -17,6 +17,7 @@ public class Purchase extends BaseEntity<Long>{
         this.nrBooks = nrBooks;
     }
 
+
     public Long getClientID() {
         return clientID;
     }
@@ -62,6 +63,6 @@ public class Purchase extends BaseEntity<Long>{
                 "clientID=" + clientID +
                 ", bookID=" + bookID +
                 ", nrBooks=" + nrBooks +
-                '}';
+                "} " + super.toString();
     }
 }
