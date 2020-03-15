@@ -56,7 +56,7 @@ public class Main {
         ClientService clientService = new ClientService(clientRepository);
 
         Validator<Book> bookValidator = new BookValidator();
-        Repository<Long, Book> bookRepository = new BookFileRepository(bookValidator, "books.txt"); //.xml to be added later
+        Repository<Long, Book> bookRepository = new BookXMLRepository(bookValidator, "books.xml");
         BookService bookService = new BookService(bookRepository);
 
         Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
