@@ -1,5 +1,6 @@
 package repository;
 
+import domain.Book;
 import domain.Client;
 import domain.Purchase;
 import domain.validators.Validator;
@@ -24,9 +25,9 @@ import java.util.stream.IntStream;
 public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
     private String filename;
 
-    public PurchaseXMLRepository(Validator<Purchase> validator, String filename) throws IOException, SAXException, ParserConfigurationException {
+    public PurchaseXMLRepository(Validator<Purchase> validator, String fileName) throws IOException, SAXException, ParserConfigurationException {
         super(validator);
-        this.filename = filename;
+        this.filename = fileName;
         loadData();
     }
 

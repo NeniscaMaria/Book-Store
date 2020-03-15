@@ -1,5 +1,6 @@
 package service;
 
+import domain.Book;
 import domain.Client;
 import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -48,5 +50,8 @@ public class ClientService {
         filteredClients.removeIf(student -> !student.getName().contains(s));
 
         return filteredClients;
+    }
+    public Optional<Client> findOneClient(Long clientID){
+        return repository.findOne(clientID);
     }
 }

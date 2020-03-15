@@ -17,14 +17,14 @@ public class Main {
     private static void runInMemory(){
         //DESCR: runs the program and saves everything in the memory
         Validator<Client> studentValidator = new ClientValidator();
-        Repository<Long, Client> studentRepository = new InMemoryRepository<>(studentValidator);
-        ClientService clientService = new ClientService(studentRepository);
+        Repository<Long, Client> clientRepository = new InMemoryRepository<>(studentValidator);
+        ClientService clientService = new ClientService(clientRepository);
 
         Validator<Book> bookValidator = new BookValidator();
         Repository<Long, Book> bookRepository = new InMemoryRepository<>(bookValidator);
         BookService bookService = new BookService(bookRepository);
 
-        Validator<Purchase> purchaseValidator = new PurchaseValidator();
+        Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
         Repository<Long, Purchase> purchaseRepository = new InMemoryRepository<>(purchaseValidator);
         PurchaseService purchaseService = new PurchaseService(purchaseRepository);
 
@@ -42,7 +42,7 @@ public class Main {
         Repository<Long, Book> bookRepository = new BookFileRepository(bookValidator, "books.txt");
         BookService bookService = new BookService(bookRepository);
 
-        Validator<Purchase> purchaseValidator = new PurchaseValidator();
+        Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
         Repository<Long, Purchase> purchaseRepository = new PurchaseFileRepository(purchaseValidator, "purchase.txt");
         PurchaseService purchaseService = new PurchaseService(purchaseRepository);
 
@@ -59,7 +59,7 @@ public class Main {
         Repository<Long, Book> bookRepository = new BookFileRepository(bookValidator, "books.txt"); //.xml to be added later
         BookService bookService = new BookService(bookRepository);
 
-        Validator<Purchase> purchaseValidator = new PurchaseValidator();
+        Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
         Repository<Long, Purchase> purchaseRepository = new PurchaseXMLRepository(purchaseValidator,"purchases.xml");
         PurchaseService purchaseService = new PurchaseService(purchaseRepository);
 
