@@ -8,6 +8,8 @@ import domain.validators.ValidatorException;
 import repository.*;
 import service.BookService;
 import service.ClientService;
+import service.PurchaseService;
+
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
