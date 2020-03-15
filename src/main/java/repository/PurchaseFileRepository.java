@@ -1,0 +1,103 @@
+package repository;
+
+import domain.Purchase;
+import domain.validators.Validator;
+import domain.validators.ValidatorException;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
+    private String fileName;
+
+    public PurchaseFileRepository(Validator<Purchase> validator, String fileName) {
+        super(validator);
+        this.fileName = fileName;
+        loadData();
+    }
+
+    private void loadData() {
+        Path path = Paths.get(fileName);
+        try {//Files.lines(path) return a stream that contains the lines in the file
+            Files.lines(path).forEach(line -> {
+                List<String> items = Arrays.asList(line.split(","));
+                if(items.size()==3) {
+                    Long id = Long.valueOf(items.get(0));
+                    Long clientID = Long.valueOf(items.get(1));
+                    Long bookID = Long.valueOf(items.get((2)));
+                    domain.Purchase purchase = new Purchase(clientID, bookID);
+                    purchase.setId(id);
+                    try {
+                        super.save(purchase);
+                    } catch (ValidatorException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public Optional<Purchase> save(domain.Purchase entity) throws ValidatorException{
+        Optional<Purchase> optional = null;
+        optional = super.save(entity);
+        if (optional.isPresent()) {
+            return optional;
+        }
+        saveToFile(entity);
+        return Optional.empty();
+    }
+
+    private void saveToFile(domain.Purchase entity) {
+        Path path = Paths.get(fileName);
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
+
+            bufferedWriter.write(
+                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
+            bufferedWriter.newLine();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeAllToFile(){
+        Path path = Paths.get(fileName);
+        Iterable<Purchase> clients = super.findAll();
+        try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING)) {
+            StreamSupport.stream(clients.spliterator(), false)
+                    .forEach(entity->{
+                        try {
+                            bufferedWriter.write(
+                                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
+                            bufferedWriter.newLine();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }});
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Optional<Purchase> update(Purchase purchase){
+        Optional<Purchase> res = super.update(purchase);
+        res.ifPresent(r->{this.writeAllToFile();});
+        return res;
+    }
+
+    public Optional<Purchase> delete(Long ID){
+        Optional<Purchase> res = super.delete(ID);
+        res.ifPresent(r->{this.writeAllToFile();});
+        return res;
+    }
+}

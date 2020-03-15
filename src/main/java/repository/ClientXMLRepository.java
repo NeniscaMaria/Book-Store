@@ -142,7 +142,6 @@ public class ClientXMLRepository extends InMemoryRepository<Long,Client> {
                         .forEach(node->{
                             Node parent = node.getParentNode();
                             Node newNode = clientToNode(client,document);
-                            System.out.println("hi from update");
                             parent.replaceChild(newNode,node);
                             Transformer transformer= null;
                             saveAllToFile(document);
@@ -167,7 +166,6 @@ public class ClientXMLRepository extends InMemoryRepository<Long,Client> {
                         .filter(node -> node instanceof Element)
                         .filter(node-> createClientFromElement((Element)node).getId()==ID)
                         .forEach(node->{
-                            System.out.println("hi from delete");
                             Node parent = node.getParentNode();
                             parent.removeChild(node);
                             Transformer transformer= null;
