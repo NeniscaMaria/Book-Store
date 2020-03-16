@@ -63,9 +63,6 @@ public class PurchaseFileRepositoryTest {
         fileClients = "testClients.txt";
         fileBooks = "testBooks.txt";
         filePurchase = "testPurchases.txt";
-        FileWriter fw1 = new FileWriter(fileBooks,false);
-        FileWriter fw2 = new FileWriter(fileClients,false);
-        FileWriter fw3 = new FileWriter(filePurchase,false);
 
 
         validClient = new ClientValidator();
@@ -125,9 +122,18 @@ public class PurchaseFileRepositoryTest {
 
     @After
     public void tearDown() throws Exception {
-        FileWriter fw1 = new FileWriter(fileBooks,false);
-        FileWriter fw2 = new FileWriter(fileClients,false);
-        FileWriter fw3 = new FileWriter(filePurchase,false);
+        // delete the new entries from the file,
+        // otherwise it won't work the next time
+        // you run the tests
+        repoPurchase.delete(ID1);
+        repoPurchase.delete(ID2);
+        repoPurchase.delete(ID3);
+
+        clientService.removeClient(ID1);
+        clientService.removeClient(ID2);
+
+        bookService.deleteBook(ID1);
+        bookService.deleteBook(ID2);
     }
 
     @Test
@@ -144,15 +150,15 @@ public class PurchaseFileRepositoryTest {
     }
 
     @Test
-    public void update() {
+    public void delete() {
         assertEquals("Should delete purchase", purchase2, repoPurchase.delete(ID2).get());
         assertEquals("Should not find purchase", Optional.empty(), repoPurchase.delete(ID2));
 
     }
 
     @Test
-    public void delete() {
-        assertEquals("Should update purchase", purchase2, repoPurchase.update(purchase2).get());
+    public void update() {
+        assertEquals("Should update purchase", purchase1, repoPurchase.update(purchase1).get());
         assertEquals("Should not find purchase", Optional.empty(), repoPurchase.update(purchase3));
 
     }

@@ -66,7 +66,6 @@ public class BookFileRepositoryTest {
 
     @Before
     public void setUp() throws Exception{
-        FileWriter fw = new FileWriter(filepath,false);
         valid = new BookValidator();
         repo = new BookFileRepository(valid, filepath);
         books = new HashSet();
@@ -107,6 +106,10 @@ public class BookFileRepositoryTest {
 
     @After
     public void tearDown() throws Exception{
+        repo.delete(ID1);
+        repo.delete(ID2);
+        repo.delete(ID3);
+
         repo = null;
         valid = null;
         book1 = null;
@@ -118,7 +121,7 @@ public class BookFileRepositoryTest {
         book_year = null;
         book_update = null;
         book_price = null;
-        FileWriter fw = new FileWriter(filepath,false);
+
     }
 
     @Test
