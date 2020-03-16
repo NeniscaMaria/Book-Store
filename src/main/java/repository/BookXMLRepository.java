@@ -1,7 +1,6 @@
 package repository;
 
 import domain.Book;
-import domain.Client;
 import domain.validators.Validator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -44,6 +43,7 @@ public class BookXMLRepository extends InMemoryRepository<Long, Book> {
         }
     }
     private Book createBookFromElement(Element book){
+
         Node IDNode = book.getElementsByTagName("id").item(0);
         Long ID = Long.parseLong(IDNode.getTextContent());
 
@@ -72,9 +72,9 @@ public class BookXMLRepository extends InMemoryRepository<Long, Book> {
 
     private void loadData() {
         File file = new File(filename);
-        Document document = null;
+
         try {
-            document = DocumentBuilderFactory
+            Document document = DocumentBuilderFactory
                     .newInstance()
                     .newDocumentBuilder()
                     .parse(file);
@@ -95,7 +95,7 @@ public class BookXMLRepository extends InMemoryRepository<Long, Book> {
 
     private Node bookToNode(Book book, Document document){
         Element bookElement = document.createElement("book");
-        Element IDElement = document.createElement("ID");
+        Element IDElement = document.createElement("id");
         IDElement.setTextContent(book.getId().toString());
         bookElement.appendChild(IDElement);
 

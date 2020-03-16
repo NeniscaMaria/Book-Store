@@ -8,13 +8,12 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.FileWriter;
 import java.util.HashSet;
 import java.util.Optional;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
-public class BookFileRepositoryTest {
+public class BookXMLRepositoryTest {
     private static final Long ID1 = 1L;
     private static final Long ID2 = 2L;
     private static final Long ID3 = 3L;
@@ -49,9 +48,9 @@ public class BookFileRepositoryTest {
     private static final double PRICE2 = 30.2;
     private static final double PRICE3 = 40.2;
     private static final double WRONG_PRICE = -40.2;
-    private String filepath = "testBooks.txt";
+    private String filepath = "testBooks.xml";
 
-    private BookFileRepository repo;
+    private BookXMLRepository repo;
     private Validator<Book> valid;
     private HashSet books;
     private Book book1;
@@ -67,7 +66,7 @@ public class BookFileRepositoryTest {
     @Before
     public void setUp() throws Exception{
         valid = new BookValidator();
-        repo = new BookFileRepository(valid, filepath);
+        repo = new BookXMLRepository(valid, filepath);
         books = new HashSet();
 
         book1 = new Book(SN1, NAME1, AUTHOR1, YEAR1, PRICE1, STOCK1);
@@ -169,6 +168,4 @@ public class BookFileRepositoryTest {
         repo.update(book_author);
         repo.update(book_year);
     }
-
-
 }

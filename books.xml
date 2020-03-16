@@ -8,4 +8,4 @@
 		<price>20.33</price>
 		<stock>100</stock>
 	</book>
-<book><id>1</id><serialNo>343</serialNo><title>Paradise Lost</title><author>John Milton</author><year>1667</year><price>12.0</price><stock>300</stock></book></books>
+<book><id>2</id><serialNo>343</serialNo><title>Paradise Lost</title><author>John Milton</author><year>1667</year><price>12.0</price><stock>300</stock></book></books>

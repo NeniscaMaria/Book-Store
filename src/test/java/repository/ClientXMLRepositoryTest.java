@@ -71,6 +71,12 @@ public class ClientXMLRepositoryTest {
 
     @After
     public void tearDown() throws Exception {
+        // delete the new entries from the file,
+        // otherwise it won't work the next time
+        // you run the tests
+        repository.delete(ID2);
+        repository.delete(ID3);
+
         filename=null;
         validator = null;
         repository = null;
