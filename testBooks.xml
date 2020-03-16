@@ -1,11 +1,1 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><books>
-	<book>
-		<id>34</id>
-		<serialNo>34</serialNo>
-		<title>Stories</title>
-		<author>Lev Tolstoi</author>
-		<year>1888</year>
-		<price>20.33</price>
-		<stock>100</stock>
-	</book>
-</books>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><books/>
