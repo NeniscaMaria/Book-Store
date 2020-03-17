@@ -25,6 +25,10 @@ public class PurchaseService {
         return repository.save(purchase);
     }
 
+    public void removeClients(Long ID) throws IOException, SAXException, ParserConfigurationException {
+        repository.removeEntitiesWithClientID(ID);
+    }
+
     public Optional<Purchase> removePurchase(Long ID){
         return repository.delete(ID);
     }

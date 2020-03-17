@@ -1,3 +1,2 @@
 4,44,Ionescu Marcel
-1,11,Pop Alina
 3,33,Ionescu Mara

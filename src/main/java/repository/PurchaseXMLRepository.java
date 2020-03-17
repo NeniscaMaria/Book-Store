@@ -31,6 +31,28 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
         loadData();
     }
 
+    @Override
+    public void removeEntitiesWithClientID(Long ID) throws ParserConfigurationException, IOException, SAXException {
+        if (ID == null) {
+            throw new IllegalArgumentException("ID must not be null");
+        }
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
+        Element root = document.getDocumentElement();
+        NodeList children = root.getChildNodes();
+
+        entities.values().stream().filter(p-> p.getClientID().equals(ID)). //we remained only with the purchaseID s of the client with ID
+                forEach(p->{  entities.remove(p.getId());   });
+
+        IntStream.range(0, children.getLength())
+                .mapToObj(children::item)
+                .filter(node -> node instanceof Element)
+                .filter(node-> createPurchaseFromElement((Element)node).getClientID()==ID)
+                .forEach(node->{
+                    Node parent = node.getParentNode();
+                    parent.removeChild(node);
+                    saveAllToFile(document);});
+    }
+
     private void saveAllToFile(Document document){
         try {
             Transformer transformer = TransformerFactory
@@ -166,7 +188,6 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
                         .forEach(node->{
                             Node parent = node.getParentNode();
                             parent.removeChild(node);
-                            Transformer transformer= null;
                             saveAllToFile(document);});
             } catch (SAXException | IOException | ParserConfigurationException e) {
                 e.printStackTrace();

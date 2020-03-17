@@ -12,9 +12,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
@@ -24,6 +23,17 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
         super(validator);
         this.fileName = fileName;
         loadData();
+    }
+
+    @Override
+    public void removeEntitiesWithClientID(Long ID){
+        if (ID == null) {
+            throw new IllegalArgumentException("ID must not be null");
+        }
+        List<Purchase> valuesToRemove = entities.values().stream().filter(p-> p.getClientID().equals(ID)) //we remained only with the purchaseID s of the client with ID
+                .collect(Collectors.toList());
+        entities.values().removeAll(valuesToRemove);
+        this.writeAllToFile();
     }
 
     private void loadData() {

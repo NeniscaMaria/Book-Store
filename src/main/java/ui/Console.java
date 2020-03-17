@@ -89,6 +89,9 @@ public class Console {
                     case 15:
                         filterPurchases();
                         break;
+                    case 16:
+                        getReport();
+                        break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                     }
@@ -119,6 +122,7 @@ public class Console {
         System.out.println("13.Update purchase.");
         System.out.println("14.Delete purchase.");
         System.out.println("15.Filter purchases.");
+        System.out.println("16.Report.");
     }
 
     //******************************************************************************************************************
@@ -146,7 +150,8 @@ public class Console {
             Long id = Long.parseLong(bufferRead.readLine());
             Optional<Client> client = clientService.removeClient(id);
             client.ifPresent(c -> {System.out.println("Client removed successfully."); });
-        } catch (IOException ex) {
+            purchaseService.removeClients(id);
+        } catch (IOException | SAXException | ParserConfigurationException ex) {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
@@ -416,6 +421,11 @@ public class Console {
             e.printStackTrace();
         }
 
+    }
+    //******************************************************************************************************************
+
+    private void getReport(){
+        //getting
     }
 
 

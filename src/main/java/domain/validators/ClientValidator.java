@@ -1,7 +1,7 @@
 package domain.validators;
 
 public class ClientValidator implements Validator<domain.Client> {
-    private boolean checkNull(String stringToBeChecked){
+    private boolean checkNull(String stringToBeChecked){ //checks if the string is valid, i.emit is not empty
         return stringToBeChecked.equals("") || stringToBeChecked.equals(" ");
     }
     private boolean isNameValid(String name){ //a person has at least 2 names and there must not be any special characters or numbers in the name
