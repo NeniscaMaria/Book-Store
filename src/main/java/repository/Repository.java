@@ -44,4 +44,6 @@ public interface Repository<ID, T extends domain.BaseEntity<ID>> {
              ValidatorException if the entity is not valid.
      */
     Optional<T> update(T entity) throws ValidatorException;
+
+    void removeEntitiesWithClientID(ID id) throws ParserConfigurationException, IOException, SAXException;
 }

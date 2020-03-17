@@ -15,10 +15,11 @@ import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.InputMismatchException;
-import java.util.Optional;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class Console {
     private service.ClientService clientService;
@@ -89,6 +90,9 @@ public class Console {
                     case 15:
                         filterPurchases();
                         break;
+                    case 16:
+                        getReport();
+                        break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                     }
@@ -119,6 +123,7 @@ public class Console {
         System.out.println("13.Update purchase.");
         System.out.println("14.Delete purchase.");
         System.out.println("15.Filter purchases.");
+        System.out.println("16.Report.");
     }
 
     //******************************************************************************************************************
@@ -146,7 +151,8 @@ public class Console {
             Long id = Long.parseLong(bufferRead.readLine());
             Optional<Client> client = clientService.removeClient(id);
             client.ifPresent(c -> {System.out.println("Client removed successfully."); });
-        } catch (IOException ex) {
+            purchaseService.removeClients(id);
+        } catch (IOException | SAXException | ParserConfigurationException ex) {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
@@ -443,6 +449,29 @@ public class Console {
             e.printStackTrace();
         }
 
+    }
+    //******************************************************************************************************************
+
+    private void getReport(){
+        //getting how many books are in stock
+        long nrBooksInStock = StreamSupport.stream(bookService.getAllBooks().spliterator(), false)
+                .map(Book::getInStock).count();
+        System.out.println("Total books in storage : "+nrBooksInStock);
+
+        //getting how many books were sold
+        long soldBooks = StreamSupport.stream(purchaseService.getAllPurchases().spliterator(),false).
+                map(Purchase::getNrBooks).count();
+        System.out.println("Number of books sold : "+soldBooks);
+
+        //the client that bought from us more often
+        //mapping clientID to how many books he/she bought
+        Map<Long, Integer> clientIDtoBooksBought = purchaseService.getAllPurchases().stream()
+                .collect(Collectors.groupingBy(Purchase::getClientID,Collectors.summingInt(Purchase::getNrBooks)));
+        //getting the maximum bought books
+        clientIDtoBooksBought.entrySet().stream()
+                .max(Comparator.comparing(Map.Entry::getValue))
+                .ifPresent(e-> System.out.println("The "+
+                        clientService.findOneClient(e.getKey()).get() + " bought the most books: "+e.getValue()));
     }
 
 

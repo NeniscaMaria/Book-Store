@@ -19,7 +19,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
@@ -29,6 +31,29 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
         super(validator);
         this.filename = fileName;
         loadData();
+    }
+
+    @Override
+    public void removeEntitiesWithClientID(Long ID) throws ParserConfigurationException, IOException, SAXException {
+        if (ID == null) {
+            throw new IllegalArgumentException("ID must not be null");
+        }
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(filename);
+        Element root = document.getDocumentElement();
+        NodeList children = root.getChildNodes();
+
+        List<Purchase> valuesToRemove = entities.values().stream().filter(p-> p.getClientID().equals(ID)) //we remained only with the purchaseID s of the client with ID
+                .collect(Collectors.toList());
+        entities.values().removeAll(valuesToRemove);
+
+        IntStream.range(0, children.getLength())
+                .mapToObj(children::item)
+                .filter(node -> node instanceof Element)
+                .filter(node-> createPurchaseFromElement((Element)node).getClientID()==ID)
+                .forEach(node->{
+                    Node parent = node.getParentNode();
+                    parent.removeChild(node);
+                    saveAllToFile(document);});
     }
 
     private void saveAllToFile(Document document){
@@ -166,7 +191,6 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
                         .forEach(node->{
                             Node parent = node.getParentNode();
                             parent.removeChild(node);
-                            Transformer transformer= null;
                             saveAllToFile(document);});
             } catch (SAXException | IOException | ParserConfigurationException e) {
                 e.printStackTrace();

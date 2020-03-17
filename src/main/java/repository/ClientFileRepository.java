@@ -28,7 +28,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
         loadData();
     }
 
-    private void loadData() {
+    private void loadData() { //loads data from file to memory
         Path path = Paths.get(fileName);
         try {//Files.lines(path) return a stream that contains the lines in the file
             Files.lines(path).forEach(line -> {
@@ -63,6 +63,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     }
 
     private void saveToFile(domain.Client entity) {
+        //writes changes to file
         Path path = Paths.get(fileName);
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
 
@@ -76,6 +77,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     }
 
     private void writeAllToFile(){
+        //rewrites the whole file
         Path path = Paths.get(fileName);
         Iterable<Client> clients = super.findAll();
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING)) {
@@ -94,12 +96,13 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     }
 
     public Optional<Client> update(Client client){
+        //updates a client
         Optional<Client> res = super.update(client);
         res.ifPresent(r->{this.writeAllToFile();});
         return res;
     }
 
-    public Optional<Client> delete(Long ID){
+    public Optional<Client> delete(Long ID){//delete a client
         Optional<Client> res = super.delete(ID);
         res.ifPresent(r->{this.writeAllToFile();});
         return res;

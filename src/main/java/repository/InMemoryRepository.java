@@ -1,7 +1,12 @@
 package repository;
 
+import domain.Purchase;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -9,11 +14,11 @@ import java.util.stream.Collectors;
 
 public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements repository.Repository<ID, T> {
 
-    private Map<ID, T> entities;
+    protected Map<ID, T> entities;
     private Validator<T> validator;
 
     public InMemoryRepository(Validator<T> validator) {
-        this.validator = validator;
+        this.validator=validator;
         entities = new HashMap<>();
     }
 
@@ -49,5 +54,10 @@ public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements 
         validator.validate(entity);
         return Optional.ofNullable(entities.computeIfPresent(entity.getId(), (k, v) -> entity));//if successful returns entity it should return null
         //returns null if no such entity found in map
+    }
+
+    @Override
+    public void removeEntitiesWithClientID(ID id) throws ParserConfigurationException, IOException, SAXException {
+        return;
     }
 }
