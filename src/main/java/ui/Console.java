@@ -398,6 +398,19 @@ public class Console {
             Purchase purchase = new Purchase(idClient, idBook, nrBooks);
             purchase.setId(id);
 
+            Optional<Book> book = bookService.findOneBook(idBook);
+
+            book.ifPresent(b->{
+                int nr = b.getInStock();
+                b.setInStock(nr - nrBooks);
+
+                Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock());
+                newBook.setId(b.getId());
+                bookService.updateBook(newBook);
+
+            });
+
+
             return Optional.of(purchase);
         } catch (IOException ex) {
             ex.printStackTrace();
