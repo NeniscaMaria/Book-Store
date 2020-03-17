@@ -46,4 +46,8 @@ public class PurchaseService {
 
         return filteredPurchases;
     }
+
+    public Optional<Purchase> findOnePurchase(Long purchaseID){
+        return repository.findOne(purchaseID);
+    }
 }

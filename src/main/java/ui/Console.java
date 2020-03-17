@@ -371,7 +371,21 @@ public class Console {
             System.out.println("ID: ");
             Long id = Long.parseLong(bufferRead.readLine());
             Optional<Purchase> purchase = purchaseService.removePurchase(id);
-            purchase.ifPresent(p->System.out.println("Purchase removed successfully"));
+            purchase.ifPresent(p->{
+                System.out.println("Purchase removed successfully");
+                int nr = p.getNrBooks();
+                Long idBook = p.getBookID();
+
+                Book b =  bookService.findOneBook(idBook).get();
+
+                Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock() + nr);
+                newBook.setId(b.getId());
+
+                bookService.updateBook(newBook);
+
+            });
+
+
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -1,3 +1,3 @@
-2,433,Paradise Lost,Paradise Lost,1667,23.5,395
 45,100,Crime and Punishment,Fyodor Dostoevsky,1866,50.0,50
+2,433,Paradise Lost,Paradise Lost,1667,23.5,400
 44,300,Watchmen,Alan Moore,1987,25.99,150
