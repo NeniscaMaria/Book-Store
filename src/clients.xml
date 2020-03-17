@@ -5,11 +5,6 @@
         <Name>Pop Ion</Name>
     </client>
     <client>
-        <ID>2</ID>
-        <SerialNo>sn02</SerialNo>
-        <Name>Ionescu Mara</Name>
-    </client>
-    <client>
         <ID>3</ID>
         <SerialNo>sn03</SerialNo>
         <Name>Popescu Marcel</Name>

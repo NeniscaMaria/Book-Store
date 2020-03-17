@@ -22,6 +22,8 @@ public class PurchaseValidator implements Validator<Purchase> {
     }
 
     private boolean isBookInSock(Long ID, int nrBooks){ //checks if there are enough books in stock for this operation to take place
+        if (nrBooks==0)
+            return false;
         Optional<Book> book = books.findOneBook(ID);
         //we know here for sure that the book exists because we check if the book exists before we call this function
         return book.get().getInStock()>=nrBooks;
@@ -41,7 +43,7 @@ public class PurchaseValidator implements Validator<Purchase> {
                 throw new ValidatorException("This book does not exist.");
             //validate the stock
             if (!isBookInSock(entity.getBookID(),entity.getNrBooks()))
-                throw new ValidatorException("We don't have that many books of this type in stock.");
+                throw new ValidatorException("We don't have that many books of this type in stock or you selected 0 books.");
 
         });
     }

@@ -19,7 +19,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
@@ -40,8 +42,9 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
         Element root = document.getDocumentElement();
         NodeList children = root.getChildNodes();
 
-        entities.values().stream().filter(p-> p.getClientID().equals(ID)). //we remained only with the purchaseID s of the client with ID
-                forEach(p->{  entities.remove(p.getId());   });
+        List<Purchase> valuesToRemove = entities.values().stream().filter(p-> p.getClientID().equals(ID)) //we remained only with the purchaseID s of the client with ID
+                .collect(Collectors.toList());
+        entities.values().removeAll(valuesToRemove);
 
         IntStream.range(0, children.getLength())
                 .mapToObj(children::item)
