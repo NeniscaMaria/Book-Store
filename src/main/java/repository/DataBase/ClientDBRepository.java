@@ -34,6 +34,7 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
         String cmd = "select * from Clients where id = ?";
         Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(cmd);
+        preparedStatement.setLong(1,id);
         ResultSet resultSet = preparedStatement.executeQuery();
         while (resultSet.next()) {
             String name = resultSet.getString("name");
