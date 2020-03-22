@@ -19,9 +19,9 @@ import java.util.Optional;
 import static org.junit.Assert.*;
 
 public class ClientDBRepositoryTest {
-    private static final Long ID1 = 1L;
-    private static final Long ID2 = 2L;
-    private static final Long ID3 = 3L;
+    private static final Long ID1 = 199L;
+    private static final Long ID2 = 299L;
+    private static final Long ID3 = 399L;
     private static final String SERIAL_NUMBER1 = "sn01";
     private static final String SERIAL_NUMBER2 = "sn02";
     private static final String SERIAL_NUMBER3 = "sn03";
@@ -73,6 +73,9 @@ public class ClientDBRepositoryTest {
 
     @After
     public void tearDown() throws Exception {
+//        repository.delete(ID1);
+//        repository.delete(ID2);
+//        repository.delete(ID3);
         validator = null;
         repository = null;
         client1 = null;
