@@ -46,7 +46,7 @@ public class ClientDBRepositoryTest {
     @Before
     public void setUp() throws Exception {
         validator = new ClientValidator();
-        repository = new ClientDBRepositoryTest<>(validator);
+        repository = new ClientDBRepository(validator);
         client1 = new Client(SERIAL_NUMBER1,NAME1);
         client1.setId(ID1);
         client2 = new Client(SERIAL_NUMBER2,NAME2);

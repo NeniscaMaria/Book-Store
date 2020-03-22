@@ -5,7 +5,11 @@ import domain.validators.*;
 import org.xml.sax.SAXException;
 import repository.*;
 import repository.DataBase.BookDataBaseRepository;
+//<<<<<<< HEAD
+//=======
 import repository.DataBase.ClientDBRepository;
+//>>>>>>> 3ec221699fc819ef3e66019419cfef54fa50f723
+import repository.DataBase.PurchaseDataBaseRepository;
 import service.BookService;
 import service.ClientService;
 import service.PurchaseService;
@@ -78,7 +82,24 @@ public class Main {
         BookService bookService = new BookService(bookRepository);
 
         Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
-        Repository<Long, Purchase> purchaseRepository = new PurchaseFileRepository(purchaseValidator,"purchase.txt");
+        Repository<Long, Purchase> purchaseRepository = new PurchaseDataBaseRepository(purchaseValidator, bookRepository);
+        PurchaseService purchaseService = new PurchaseService(purchaseRepository);
+
+        ui.Console console = new ui.Console(clientService, bookService, purchaseService);
+        console.runConsole();
+    }
+
+    private static void runWithDataBase() throws ParserConfigurationException, SAXException, IOException {
+        Validator<Client> studentValidator = new ClientValidator();
+        Repository<Long, Client> clientRepository = new InMemoryRepository<>(studentValidator);
+        ClientService clientService = new ClientService(clientRepository);
+
+        Validator<Book> bookValidator = new BookValidator();
+        Repository<Long, Book> bookRepository = new BookDataBaseRepository(bookValidator);
+        BookService bookService = new BookService(bookRepository);
+
+        Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
+        Repository<Long, Purchase> purchaseRepository = new InMemoryRepository<>(purchaseValidator);
         PurchaseService purchaseService = new PurchaseService(purchaseRepository);
 
         ui.Console console = new ui.Console(clientService, bookService, purchaseService);
@@ -90,7 +111,8 @@ public class Main {
         System.out.println("1.In memory");
         System.out.println("2.In .txt files");
         System.out.println("3.In XML files");
-        System.out.println("4. With JDBC");
+        System.out.println("4.With JDBC");
+
         boolean finished = false;
         while(!finished) {
             try {

@@ -397,21 +397,21 @@ public class Console {
             System.out.println("ID: ");
             Long id = Long.parseLong(bufferRead.readLine());
             Optional<Purchase> purchase = purchaseService.removePurchase(id);
-            purchase.ifPresent(p->{
-                try {
-                    System.out.println("Purchase removed successfully");
-                    int nr = p.getNrBooks();
-                    Long idBook = p.getBookID();
-
-                    Book b = bookService.findOneBook(idBook).get();
-
-                    Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock() + nr);
-                    newBook.setId(b.getId());
-
-                    bookService.updateBook(newBook);
-                }catch(SQLException e){
-                    System.out.println(e);
-                }
+            purchase.ifPresent(p->{System.out.println("Purchase removed successfully");
+//                try {
+//
+//                    int nr = p.getNrBooks();
+//                    Long idBook = p.getBookID();
+//
+//                    Book b = bookService.findOneBook(idBook).get();
+//
+//                    Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock() + nr);
+//                    newBook.setId(b.getId());
+//
+//                    bookService.updateBook(newBook);
+//                }catch(SQLException e){
+//                    System.out.println(e);
+//                }
 
             });
 
@@ -442,25 +442,25 @@ public class Console {
             Purchase purchase = new Purchase(idClient, idBook, nrBooks);
             purchase.setId(id);
 
-            Optional<Book> book = bookService.findOneBook(idBook);
+//            Optional<Book> book = bookService.findOneBook(idBook);
+//
+//            book.ifPresent(b->{
+//                try {
+//                    int nr = b.getInStock();
+//                    b.setInStock(nr - nrBooks);
+//
+//                    Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock());
+//                    newBook.setId(b.getId());
+//                    bookService.updateBook(newBook);
+//                }catch (SQLException e){
+//                    System.out.println(e);
+//                }
 
-            book.ifPresent(b->{
-                try {
-                    int nr = b.getInStock();
-                    b.setInStock(nr - nrBooks);
-
-                    Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock());
-                    newBook.setId(b.getId());
-                    bookService.updateBook(newBook);
-                }catch (SQLException e){
-                    System.out.println(e);
-                }
-
-            });
+//            });
 
 
             return Optional.of(purchase);
-        } catch (IOException | SQLException ex) {
+        } catch (IOException ex) {
             ex.printStackTrace();
         }
         return Optional.empty();

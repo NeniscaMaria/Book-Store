@@ -15,8 +15,11 @@ import java.util.*;
 
 public class ClientDBRepository implements SortingRepository<Long, Client> {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/Clientstore";
-    private static final String USER = System.getProperty("username");
+//    private static final String URL = "jdbc:postgresql://localhost:5432/Clientstore";
+//    private static final String USER = System.getProperty("username");
+//    private static final String PASSWORD = System.getProperty("password");
+    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
+    private static final String USER = System.getProperty("postgres");
     private static final String PASSWORD = System.getProperty("password");
     private Validator<Client> validator;
 
