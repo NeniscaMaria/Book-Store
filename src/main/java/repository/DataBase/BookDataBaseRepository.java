@@ -3,6 +3,7 @@ package repository.DataBase;
 import domain.Book;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
+import org.postgresql.util.PSQLException;
 import org.xml.sax.SAXException;
 import repository.SortingRepository;
 import repository.DataBase.implementation.Sort;
@@ -16,15 +17,14 @@ import java.util.*;
 
 public class BookDataBaseRepository implements SortingRepository<Long, Book> {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/books";
-    private static final String USER = System.getProperty("username");
+//    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore";
+    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
+    private static final String USER = System.getProperty("postgres");
     private static final String PASSWORD = System.getProperty("password");
-    protected Map<Long, Book> entities;
     private Validator<Book> validator;
 
     public BookDataBaseRepository(Validator<Book> validator) {
         this.validator=validator;
-        entities = new HashMap<>();
     }
 
     @Override
@@ -35,7 +35,29 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
     @Override
     public Optional<Book> findOne(Long id) {
         String cmd = "select * from Books where id = ?";
+        try {
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement preparedStatement = connection.prepareStatement(cmd);
+            preparedStatement.setLong(1, id);
 
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()) {
+                String serialNumber = resultSet.getString("serialNumber");
+                String title = resultSet.getString("title");
+                String author = resultSet.getString("author");
+                int year = resultSet.getInt("year");
+                double price = resultSet.getDouble("price");
+                int stock = resultSet.getInt("inStock");
+
+                Book b = new Book(serialNumber, title, author, year, price, stock);
+                b.setId(id);
+
+                return Optional.of(b);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return Optional.empty();
     }
 
@@ -55,7 +77,7 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
                 String author = resultSet.getString("author");
                 int year = resultSet.getInt("year");
                 double price = resultSet.getDouble("price");
-                int stock = resultSet.getInt("stock");
+                int stock = resultSet.getInt("inStock");
 
                 Book b = new Book(serialNumber, title, author, year, price, stock);
                 b.setId(id);
@@ -72,23 +94,29 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
 
     @Override
     public Optional<Book> save(Book entity) throws ValidatorException, ParserConfigurationException, IOException, SAXException, TransformerException {
-        String cmd = "insert into Books(serialNumber, title, author, year, price, stock)" +
-                "values(?, ?, ?, ?, ?, ?)";
+        String cmd = "insert into Books(id, serialNumber, title, author, year, price, inStock)" +
+                "values(?, ?, ?, ?, ?, ?, ?)";
 
-        saveToDataBase(entity, cmd);
-//        try {
-//            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-//            PreparedStatement preparedStatement = connection.prepareStatement(cmd);
-//            preparedStatement.setString(1, entity.getSerialNumber());
-//            preparedStatement.setString(2, entity.getTitle());
-//            preparedStatement.setString(3, entity.getAuthor());
-//            preparedStatement.setInt(4, entity.getYear());
-//            preparedStatement.setDouble(5, entity.getPrice());
-//            preparedStatement.setInt(6, entity.getInStock());
-//            preparedStatement.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
+        try {
+            Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
+            PreparedStatement preparedStatement = connection.prepareStatement(cmd);
+            preparedStatement.setLong(1, entity.getId());
+            preparedStatement.setString(2, entity.getSerialNumber());
+            preparedStatement.setString(3, entity.getTitle());
+            preparedStatement.setString(4, entity.getAuthor());
+            preparedStatement.setInt(5, entity.getYear());
+            preparedStatement.setDouble(6, entity.getPrice());
+            preparedStatement.setInt(7, entity.getInStock());
+            try{
+                preparedStatement.executeUpdate();
+            }
+            catch (PSQLException e){
+                return Optional.of(entity);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         return Optional.empty();
     }
@@ -100,38 +128,35 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
 
         Connection connection = null;
         try {
+            Optional<Book> b = findOne(id);
             connection = DriverManager.getConnection(URL, USER, PASSWORD);
-            PreparedStatement preparedStatement =
-                    connection.prepareStatement(sql);
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setLong(1, id);
-            preparedStatement.executeUpdate();
+            int rows = preparedStatement.executeUpdate();
+            if (rows > 0){
+                return b;
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-
+//        return findOne(id);
         return Optional.empty();
     }
 
     @Override
     public Optional<Book> update(Book entity) throws ValidatorException {
 
-        String cmd = "update Books" +
-                "set serialNumber = ?," +
-                "title = ?" +
-                "author = ?" +
-                "year = ?" +
-                "price = ?" +
-                "stock = ?" +
-                "where id = ?";
+        String cmd = "update Books " +
+                "set serialNumber = ?, " +
+                "title = ?, " +
+                "author = ?, " +
+                "year = ?, " +
+                "price = ?, " +
+                "inStock = ? " +
+                "where id = ?;";
 
-        saveToDataBase(entity, cmd);
-
-
-        return Optional.empty();
-    }
-
-    private void saveToDataBase(Book entity, String cmd){
         try {
             Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
             PreparedStatement preparedStatement = connection.prepareStatement(cmd);
@@ -141,11 +166,21 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
             preparedStatement.setInt(4, entity.getYear());
             preparedStatement.setDouble(5, entity.getPrice());
             preparedStatement.setInt(6, entity.getInStock());
-            preparedStatement.executeUpdate();
+            preparedStatement.setLong(7, entity.getId());
+            int rows = preparedStatement.executeUpdate();
+            if (rows > 0){
+                return Optional.of(entity);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+
+        return Optional.empty();
     }
+
+
 
     @Override
     public void removeEntitiesWithClientID(Long id) throws ParserConfigurationException, IOException, SAXException {

@@ -4,6 +4,7 @@ import domain.Purchase;
 import domain.validators.*;
 import org.xml.sax.SAXException;
 import repository.*;
+import repository.DataBase.BookDataBaseRepository;
 import service.BookService;
 import service.ClientService;
 import service.PurchaseService;
@@ -67,11 +68,29 @@ public class Main {
         console.runConsole();
     }
 
+    private static void runWithDataBase() throws ParserConfigurationException, SAXException, IOException {
+        Validator<Client> studentValidator = new ClientValidator();
+        Repository<Long, Client> clientRepository = new InMemoryRepository<>(studentValidator);
+        ClientService clientService = new ClientService(clientRepository);
+
+        Validator<Book> bookValidator = new BookValidator();
+        Repository<Long, Book> bookRepository = new BookDataBaseRepository(bookValidator);
+        BookService bookService = new BookService(bookRepository);
+
+        Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
+        Repository<Long, Purchase> purchaseRepository = new InMemoryRepository<>(purchaseValidator);
+        PurchaseService purchaseService = new PurchaseService(purchaseRepository);
+
+        ui.Console console = new ui.Console(clientService, bookService, purchaseService);
+        console.runConsole();
+    }
+
     public static void main(String args[]) {
         System.out.println("Choose storage option:");
         System.out.println("1.In memory");
         System.out.println("2.In .txt files");
         System.out.println("3.In XML files");
+        System.out.println("4.In DataBase");
         boolean finished = false;
         while(!finished) {
             try {
@@ -89,6 +108,9 @@ public class Main {
                         break;
                     case 3:
                         runWithXML();
+                        finished=true;
+                    case 4:
+                        runWithDataBase();
                         finished=true;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
