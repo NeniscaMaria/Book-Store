@@ -15,6 +15,7 @@ import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -140,6 +141,8 @@ public class Console {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
     }
@@ -152,7 +155,7 @@ public class Console {
             Optional<Client> client = clientService.removeClient(id);
             client.ifPresent(c -> {System.out.println("Client removed successfully."); });
             purchaseService.removeClients(id);
-        } catch (IOException | SAXException | ParserConfigurationException ex) {
+        } catch (IOException | SAXException | ParserConfigurationException | SQLException ex) {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
@@ -161,9 +164,12 @@ public class Console {
 
     private void printAllClients() {
         //DESCR: function that prints all the clients saved until now
-
-        Set<domain.Client> students = clientService.getAllClients();
-        students.stream().forEach(System.out::println);
+        try {
+            Set<domain.Client> students = clientService.getAllClients();
+            students.stream().forEach(System.out::println);
+        }catch(SQLException se){
+            System.out.println(se);
+        }
     }
 
     private void addClient() {
@@ -174,7 +180,7 @@ public class Console {
             try {
                 Optional<Client> result = clientService.addClient(c);
                 result.ifPresent(r-> System.out.println("A client with this ID already exists."));
-            } catch (ValidatorException | ParserConfigurationException | TransformerException | SAXException | IOException e) {
+            } catch (ValidatorException | ParserConfigurationException | TransformerException | SAXException | IOException | SQLException e) {
                 System.out.println(e.getMessage());
             }});
     }
@@ -215,7 +221,7 @@ public class Console {
                     throw new ValidatorException("Client updated successfully!");});
                 throw new ValidatorException("A client with this ID was not found!");
 
-            } catch (ValidatorException e) {
+            } catch (ValidatorException | SQLException e) {
                 System.out.println(e.getMessage());
             }});
     }
@@ -231,15 +237,19 @@ public class Console {
             String filter = bufferRead.readLine();
             Set<Book> filteredBooks = bookService.filterBooksByTitle(filter);
             filteredBooks.forEach(System.out::println);
-        } catch (IOException e) {
+        } catch (IOException |SQLException e) {
             e.printStackTrace();
         }
     }
 
     private void printAllBooks() {
         // Print all books from repository
-        Set<domain.Book> books = bookService.getAllBooks();
-        books.stream().forEach(System.out::println);
+        try {
+            Set<domain.Book> books = bookService.getAllBooks();
+            books.stream().forEach(System.out::println);
+        }catch(SQLException e){
+            System.out.println(e);
+        }
     }
 
     private void addBook() {
@@ -253,7 +263,7 @@ public class Console {
             }
             catch (ValidatorException e) {
                 System.out.println(e.getMessage());
-            } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
+            } catch (IOException | ParserConfigurationException | SAXException | TransformerException | SQLException e) {
                 e.printStackTrace();
             }
         });
@@ -269,7 +279,7 @@ public class Console {
                 book2.ifPresent(b2->{throw new ValidatorException("Book updated successfully");});
                 throw new ValidatorException("The book with this ID does not exist.");
             }
-            catch (ValidatorException e) {
+            catch (ValidatorException | SQLException e) {
                 System.out.println(e.getMessage());
             }
         });
@@ -285,7 +295,7 @@ public class Console {
             Optional<Book> book = bookService.deleteBook(id);
             book.ifPresent(b2->{throw new ValidatorException("Book removed successfully");});
             throw new ValidatorException("The book with this ID does not exist.");
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -297,7 +307,7 @@ public class Console {
         try {
             Long id = Long.parseLong(bufferRead.readLine());
             return bookService.findOneBook(id);
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
@@ -349,7 +359,7 @@ public class Console {
                 Optional<Purchase> pur = purchaseService.addPurchase(p);
                 pur.ifPresent(pp -> System.out.println("A purchase with this ID already exists"));
 
-            } catch (ParserConfigurationException | TransformerException | SAXException | IOException e) {
+            } catch (ParserConfigurationException | TransformerException | SAXException | IOException |SQLException  e) {
                 e.printStackTrace();
             }
 
@@ -357,17 +367,27 @@ public class Console {
     }
 
     private void displayPurchases(){
-        Set<domain.Purchase> purchases = purchaseService.getAllPurchases();
-        purchases.stream().forEach(System.out::println);
+        try {
+            Set<domain.Purchase> purchases = purchaseService.getAllPurchases();
+            purchases.stream().forEach(System.out::println);
+        }catch (SQLException e){
+            System.out.println(e);
+        }
     }
 
     private void updatePurchase(){
 
         Optional<Purchase> purchase = readPurchase();
         purchase.ifPresent(p->{
-            Optional<Purchase> pp = purchaseService.updatePurchase(p);
-            pp.ifPresent(ppp -> {throw new ValidatorException("Purchase updated successfully");});
-            throw new ValidatorException("This purchase was not found successfully");
+            try {
+                Optional<Purchase> pp = purchaseService.updatePurchase(p);
+                pp.ifPresent(ppp -> {
+                    throw new ValidatorException("Purchase updated successfully");
+                });
+                throw new ValidatorException("This purchase was not found successfully");
+            }catch(SQLException e){
+                System.out.println(e);
+            }
         });
     }
 
@@ -378,21 +398,25 @@ public class Console {
             Long id = Long.parseLong(bufferRead.readLine());
             Optional<Purchase> purchase = purchaseService.removePurchase(id);
             purchase.ifPresent(p->{
-                System.out.println("Purchase removed successfully");
-                int nr = p.getNrBooks();
-                Long idBook = p.getBookID();
+                try {
+                    System.out.println("Purchase removed successfully");
+                    int nr = p.getNrBooks();
+                    Long idBook = p.getBookID();
 
-                Book b =  bookService.findOneBook(idBook).get();
+                    Book b = bookService.findOneBook(idBook).get();
 
-                Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock() + nr);
-                newBook.setId(b.getId());
+                    Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock() + nr);
+                    newBook.setId(b.getId());
 
-                bookService.updateBook(newBook);
+                    bookService.updateBook(newBook);
+                }catch(SQLException e){
+                    System.out.println(e);
+                }
 
             });
 
 
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
 
@@ -421,18 +445,22 @@ public class Console {
             Optional<Book> book = bookService.findOneBook(idBook);
 
             book.ifPresent(b->{
-                int nr = b.getInStock();
-                b.setInStock(nr - nrBooks);
+                try {
+                    int nr = b.getInStock();
+                    b.setInStock(nr - nrBooks);
 
-                Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock());
-                newBook.setId(b.getId());
-                bookService.updateBook(newBook);
+                    Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock());
+                    newBook.setId(b.getId());
+                    bookService.updateBook(newBook);
+                }catch (SQLException e){
+                    System.out.println(e);
+                }
 
             });
 
 
             return Optional.of(purchase);
-        } catch (IOException ex) {
+        } catch (IOException | SQLException ex) {
             ex.printStackTrace();
         }
         return Optional.empty();
@@ -445,7 +473,7 @@ public class Console {
             Long filter = Long.parseLong(bufferRead.readLine());
             Set<Purchase> filteredPurchase = purchaseService.filterPurchasesByClientID(filter);
             filteredPurchase.forEach(System.out::println);
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
 
@@ -453,25 +481,33 @@ public class Console {
     //******************************************************************************************************************
 
     private void getReport(){
-        //getting how many books are in stock
-        long nrBooksInStock = StreamSupport.stream(bookService.getAllBooks().spliterator(), false)
-                .map(Book::getInStock).count();
-        System.out.println("Total books in storage : "+nrBooksInStock);
+        try {
+            //getting how many books are in stock
+            long nrBooksInStock = StreamSupport.stream(bookService.getAllBooks().spliterator(), false)
+                    .map(Book::getInStock).count();
+            System.out.println("Total books in storage : " + nrBooksInStock);
 
-        //getting how many books were sold
-        long soldBooks = StreamSupport.stream(purchaseService.getAllPurchases().spliterator(),false).
-                map(Purchase::getNrBooks).count();
-        System.out.println("Number of books sold : "+soldBooks);
+            //getting how many books were sold
+            long soldBooks = StreamSupport.stream(purchaseService.getAllPurchases().spliterator(), false).
+                    map(Purchase::getNrBooks).count();
+            System.out.println("Number of books sold : " + soldBooks);
 
-        //the client that bought from us more often
-        //mapping clientID to how many books he/she bought
-        Map<Long, Integer> clientIDtoBooksBought = purchaseService.getAllPurchases().stream()
-                .collect(Collectors.groupingBy(Purchase::getClientID,Collectors.summingInt(Purchase::getNrBooks)));
-        //getting the maximum bought books
-        clientIDtoBooksBought.entrySet().stream()
-                .max(Comparator.comparing(Map.Entry::getValue))
-                .ifPresent(e-> System.out.println("The "+
-                        clientService.findOneClient(e.getKey()).get() + " bought the most books: "+e.getValue()));
+            //the client that bought from us more often
+            //mapping clientID to how many books he/she bought
+            Map<Long, Integer> clientIDtoBooksBought = purchaseService.getAllPurchases().stream()
+                    .collect(Collectors.groupingBy(Purchase::getClientID, Collectors.summingInt(Purchase::getNrBooks)));
+            //getting the maximum bought books
+            clientIDtoBooksBought.entrySet().stream()
+                    .max(Comparator.comparing(Map.Entry::getValue))
+                    .ifPresent(e -> { try{
+                        System.out.println("The " + clientService.findOneClient(e.getKey()).get() + " bought the most books: " + e.getValue());
+                    }catch(SQLException se){
+                        System.out.println(se);
+                    }
+                    });
+        }catch(SQLException e){
+            System.out.println(e);
+        }
     }
 
 
