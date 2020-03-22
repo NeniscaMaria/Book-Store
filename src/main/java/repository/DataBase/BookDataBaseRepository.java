@@ -17,14 +17,11 @@ import java.util.*;
 
 public class BookDataBaseRepository implements SortingRepository<Long, Book> {
 
-//<<<<<<< HEAD
 //    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore";
     private static final String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
     private static final String USER = System.getProperty("postgres");
-//=======
 //    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore";
-//    private static final String USER = System.getProperty("username");
-//>>>>>>> 3ec221699fc819ef3e66019419cfef54fa50f723
+
     private static final String PASSWORD = System.getProperty("password");
     private Validator<Book> validator;
 

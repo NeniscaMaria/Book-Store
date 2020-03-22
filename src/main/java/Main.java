@@ -9,6 +9,7 @@ import repository.DataBase.BookDataBaseRepository;
 //=======
 import repository.DataBase.ClientDBRepository;
 //>>>>>>> 3ec221699fc819ef3e66019419cfef54fa50f723
+import repository.DataBase.PurchaseDataBaseRepository;
 import service.BookService;
 import service.ClientService;
 import service.PurchaseService;
@@ -81,7 +82,7 @@ public class Main {
         BookService bookService = new BookService(bookRepository);
 
         Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
-        Repository<Long, Purchase> purchaseRepository = new PurchaseFileRepository(purchaseValidator,"purchase.txt");
+        Repository<Long, Purchase> purchaseRepository = new PurchaseDataBaseRepository(purchaseValidator, bookRepository);
         PurchaseService purchaseService = new PurchaseService(purchaseRepository);
 
         ui.Console console = new ui.Console(clientService, bookService, purchaseService);
@@ -110,11 +111,8 @@ public class Main {
         System.out.println("1.In memory");
         System.out.println("2.In .txt files");
         System.out.println("3.In XML files");
-//<<<<<<< HEAD
-//        System.out.println("4.In DataBase");
-//=======
-        System.out.println("4. With JDBC");
-//>>>>>>> 3ec221699fc819ef3e66019419cfef54fa50f723
+        System.out.println("4.With JDBC");
+
         boolean finished = false;
         while(!finished) {
             try {
@@ -133,17 +131,11 @@ public class Main {
                     case 3:
                         runWithXML();
                         finished=true;
-//<<<<<<< HEAD
-//                    case 4:
-//                        runWithDataBase();
-//                        finished=true;
-//=======
                         break;
                     case 4:
                         runJDBC();
                         finished=true;
                         break;
-//>>>>>>> 3ec221699fc819ef3e66019419cfef54fa50f723
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                 }
