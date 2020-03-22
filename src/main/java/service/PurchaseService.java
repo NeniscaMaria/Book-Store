@@ -8,6 +8,7 @@ import repository.Repository;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class PurchaseService {
         this.repository = repository;
     }
 
-    public Optional<Purchase> addPurchase(domain.Purchase purchase) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException {
+    public Optional<Purchase> addPurchase(domain.Purchase purchase) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
         return repository.save(purchase);
     }
 
@@ -29,20 +30,20 @@ public class PurchaseService {
         repository.removeEntitiesWithClientID(ID);
     }
 
-    public Optional<Purchase> removePurchase(Long ID){
+    public Optional<Purchase> removePurchase(Long ID) throws SQLException {
         return repository.delete(ID);
     }
 
-    public Optional<Purchase> updatePurchase(domain.Purchase purchase) throws ValidatorException {
+    public Optional<Purchase> updatePurchase(domain.Purchase purchase) throws ValidatorException, SQLException {
         return repository.update(purchase);
     }
 
-    public Set<Purchase> getAllPurchases() {
+    public Set<Purchase> getAllPurchases() throws SQLException {
         Iterable<domain.Purchase> purchases= repository.findAll();
         return StreamSupport.stream(purchases.spliterator(), false).collect(Collectors.toSet());
     }
 
-    public Set<domain.Purchase> filterPurchasesByClientID(Long clientID) {
+    public Set<domain.Purchase> filterPurchasesByClientID(Long clientID) throws SQLException {
         Iterable<domain.Purchase> purchases = repository.findAll();
         Set<domain.Purchase> filteredPurchases= new HashSet<>();
         purchases.forEach(filteredPurchases::add);
@@ -51,7 +52,7 @@ public class PurchaseService {
         return filteredPurchases;
     }
 
-    public Optional<Purchase> findOnePurchase(Long purchaseID){
+    public Optional<Purchase> findOnePurchase(Long purchaseID) throws SQLException {
         return repository.findOne(purchaseID);
     }
 }

@@ -16,7 +16,7 @@ import java.util.*;
 
 public class BookDataBaseRepository implements SortingRepository<Long, Book> {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/books";
+    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore";
     private static final String USER = System.getProperty("username");
     private static final String PASSWORD = System.getProperty("password");
     protected Map<Long, Book> entities;
