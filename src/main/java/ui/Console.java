@@ -452,7 +452,7 @@ public class Console {
     }
     //******************************************************************************************************************
 
-    private void getReport(){
+    private void getReport(){//move in service
         //getting how many books are in stock
         long nrBooksInStock = StreamSupport.stream(bookService.getAllBooks().spliterator(), false)
                 .map(Book::getInStock).count();
