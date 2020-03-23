@@ -18,15 +18,20 @@ import java.util.*;
 public class BookDataBaseRepository implements SortingRepository<Long, Book> {
 
 //    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore";
-    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
-    private static final String USER = System.getProperty("postgres");
+    private String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
+    private String USER = System.getProperty("postgres");
 //    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore";
 
-    private static final String PASSWORD = System.getProperty("password");
+    private String PASSWORD = System.getProperty("password");
     private Validator<Book> validator;
 
     public BookDataBaseRepository(Validator<Book> validator) {
         this.validator=validator;
+    }
+
+    public BookDataBaseRepository(Validator<Book> validator, String URL) {
+        this.validator=validator;
+        this.URL = URL;
     }
 
     @Override
@@ -53,9 +58,12 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
 
                 Book b = new Book(serialNumber, title, author, year, price, stock);
                 b.setId(id);
-
+                connection.close();
                 return Optional.of(b);
             }
+
+            connection.close();
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -84,6 +92,9 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
                 Book b = new Book(serialNumber, title, author, year, price, stock);
                 b.setId(id);
                 result.add(b);
+
+                connection.close();
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -113,8 +124,12 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
                 preparedStatement.executeUpdate();
             }
             catch (PSQLException e){
+                connection.close();
                 return Optional.of(entity);
             }
+
+            connection.close();
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -139,6 +154,7 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
                 return b;
             }
 
+            connection.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -173,6 +189,7 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
             if (rows > 0){
                 return Optional.of(entity);
             }
+            connection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -188,4 +205,6 @@ public class BookDataBaseRepository implements SortingRepository<Long, Book> {
     public void removeEntitiesWithClientID(Long id) throws ParserConfigurationException, IOException, SAXException {
 
     }
+
+
 }

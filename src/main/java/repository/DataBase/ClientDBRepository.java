@@ -3,6 +3,7 @@ package repository.DataBase;
 import domain.Client;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
+import org.postgresql.util.PSQLException;
 import org.xml.sax.SAXException;
 import repository.SortingRepository;
 import repository.DataBase.implementation.Sort;
@@ -18,13 +19,17 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
 //    private static final String URL = "jdbc:postgresql://localhost:5432/Clientstore";
 //    private static final String USER = System.getProperty("username");
 //    private static final String PASSWORD = System.getProperty("password");
-    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
-    private static final String USER = System.getProperty("postgres");
-    private static final String PASSWORD = System.getProperty("password");
+    private String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
+    private String USER = System.getProperty("postgres");
+    private String PASSWORD = System.getProperty("password");
     private Validator<Client> validator;
 
     public ClientDBRepository(Validator<Client> validator) {
         this.validator=validator;
+    }
+    public ClientDBRepository(Validator<Client> validator, String URL) {
+        this.validator=validator;
+        this.URL = URL;
     }
 
     @Override
@@ -39,14 +44,15 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
         PreparedStatement preparedStatement = connection.prepareStatement(cmd);
         preparedStatement.setLong(1,id);
         ResultSet resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
+        if (resultSet.next()) {
             String name = resultSet.getString("name");
             String serialNumber = resultSet.getString("serialNumber");
             Client client = new Client(serialNumber, name);
             client.setId(id);
+            connection.close();
             return Optional.of(client);
         }
-
+        connection.close();
         return Optional.empty();
     }
 
@@ -67,6 +73,7 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
             client.setId(id);
             result.add(client);
         }
+        connection.close();
         return result;
     }
 
@@ -79,10 +86,28 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
         preparedStatement.setLong(1, entity.getId());
         preparedStatement.setString(2, entity.getSerialNumber());
         preparedStatement.setString(3, entity.getName());
-        if(preparedStatement.executeUpdate()==0)
-            return Optional.empty();
-        else
-            return Optional.of(new Client());
+        try{
+            preparedStatement.executeUpdate();
+        }
+        catch (PSQLException e){
+            connection.close();
+            return Optional.of(entity);
+        }
+
+        connection.close();
+
+        return Optional.empty();
+//        if(preparedStatement.executeUpdate()==0) {
+//            connection.close();
+//
+//            return Optional.of(entity);
+//        }
+//
+//        else {
+//            connection.close();
+//            return Optional.empty();
+//
+//        }
     }
 
 
@@ -90,13 +115,19 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
     public Optional<Client> delete(Long id) throws SQLException {
         String sql = "delete from Clients where id=?";
 
+        Optional<Client> c = findOne(id);
         Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(sql);
         preparedStatement.setLong(1, id);
-        if(preparedStatement.executeUpdate()==0)
+        if (preparedStatement.executeUpdate() == 0) {
+            connection.close();
+
             return Optional.empty();
-        else
-            return Optional.of(new Client());
+        } else {
+            connection.close();
+            return c;
+//            return Optional.of(new Client());
+        }
     }
 
     @Override
@@ -109,10 +140,18 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
         preparedStatement.setString(1, entity.getName());
         preparedStatement.setString(2, entity.getSerialNumber());
         preparedStatement.setLong(3, entity.getId());
-        if(preparedStatement.executeUpdate()==0)
+        if(preparedStatement.executeUpdate()==0) {
+            connection.close();
+
             return Optional.empty();
-        else
-            return Optional.of(new Client());
+        }
+        else {
+            connection.close();
+
+            return Optional.of(entity);
+        }
+
+
     }
 
     @Override
