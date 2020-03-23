@@ -15,9 +15,6 @@ import java.util.*;
 
 public class ClientDBRepository implements SortingRepository<Long, Client> {
 
-//    private static final String URL = "jdbc:postgresql://localhost:5432/Clientstore";
-//    private static final String USER = System.getProperty("username");
-//    private static final String PASSWORD = System.getProperty("password");
     private static final String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
     private static final String USER = System.getProperty("postgres");
     private static final String PASSWORD = System.getProperty("password");
@@ -71,18 +68,24 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
     }
 
     @Override
-    public Optional<Client> save(Client entity) throws ValidatorException, ParserConfigurationException, IOException, SAXException, TransformerException, SQLException {
+    public Optional<Client> save(Client entity) throws ValidatorException {
         String cmd = "insert into Clients(id,serialNumber,name)" +
                 "values(?, ?, ?)";
-        Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
-        PreparedStatement preparedStatement = connection.prepareStatement(cmd);
-        preparedStatement.setLong(1, entity.getId());
-        preparedStatement.setString(2, entity.getSerialNumber());
-        preparedStatement.setString(3, entity.getName());
-        if(preparedStatement.executeUpdate()==0)
-            return Optional.empty();
-        else
-            return Optional.of(new Client());
+        validator.validate(entity);
+        PreparedStatement preparedStatement;
+        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
+            preparedStatement = connection.prepareStatement(cmd);
+            preparedStatement.setLong(1, entity.getId());
+            preparedStatement.setString(2, entity.getSerialNumber());
+            preparedStatement.setString(3, entity.getName());
+            if (preparedStatement.executeUpdate() != 0)
+                return Optional.empty();
+            else
+                return Optional.of(new Client());
+        }catch (SQLException se){
+            System.out.println(se);
+        }
+        return Optional.of(new Client());
     }
 
 
@@ -101,7 +104,7 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
 
     @Override
     public Optional<Client> update(Client entity) throws ValidatorException, SQLException {
-
+        validator.validate(entity);
         String sql = "update Clients set name=?, serialnumber=? where id=?";
 
         Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);

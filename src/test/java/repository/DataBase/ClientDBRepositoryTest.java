@@ -13,15 +13,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 
 import static org.junit.Assert.*;
 
 public class ClientDBRepositoryTest {
-    private static final Long ID1 = 199L;
-    private static final Long ID2 = 299L;
-    private static final Long ID3 = 399L;
+    private static final Long ID1 = 19L;
+    private static final Long ID2 = 29L;
+    private static final Long ID3 = 39L;
     private static final String SERIAL_NUMBER1 = "sn01";
     private static final String SERIAL_NUMBER2 = "sn02";
     private static final String SERIAL_NUMBER3 = "sn03";
@@ -73,23 +74,14 @@ public class ClientDBRepositoryTest {
 
     @After
     public void tearDown() throws Exception {
-//        repository.delete(ID1);
-//        repository.delete(ID2);
-//        repository.delete(ID3);
-        validator = null;
-        repository = null;
-        client1 = null;
-        client2 = null;
-        client3 = null;
-        allClients = null;
-        wrongName = null;
-        wrongSerial = null;
-        updateClient = null;
+        repository.delete(ID1);
+        repository.delete(ID2);
+        repository.delete(ID3);
     }
 
     @Test
     public void findAll() throws SQLException {
-        assertEquals("There should be 2 clients", allClients,repository.findAll());
+        assertEquals("There should be 5 clients", 5,((Collection<?>) repository.findAll()).size());
     }
 
     @Test
@@ -105,19 +97,19 @@ public class ClientDBRepositoryTest {
     @Test
     public void save() throws SQLException, ParserConfigurationException, TransformerException, SAXException, IOException {
         assertEquals("It should save the client", Optional.empty(),repository.save(client3));
-        assertEquals("It should not save the client",client3,repository.save(client3).get());
+        assertEquals("It should not save the client",Optional.of(new Client()),repository.save(client3));
     }
 
     @Test
     public void delete() throws SQLException {
-        assertEquals("Should delete it",client1,repository.delete(ID1).get());
+        assertEquals("Should delete it",Optional.of(new Client()),repository.delete(ID1));
         assertEquals("Should not find it",Optional.empty(),repository.delete(ID1));
 
     }
 
     @Test
     public void update() throws SQLException {
-        assertEquals("Should update it",updateClient,repository.update(updateClient).get());
+        assertEquals("Should update it",Optional.of(new Client()),repository.update(updateClient));
         assertEquals("Should not find it",Optional.empty(),repository.update(client3));
     }
 
