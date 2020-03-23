@@ -21,15 +21,21 @@ import java.util.stream.Collectors;
 
 public class PurchaseDataBaseRepository implements SortingRepository<Long, Purchase> {
 
-    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
-    private static final String USER = System.getProperty("postgres");
-    private static final String PASSWORD = System.getProperty("password");
+    private String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
+    private String USER = System.getProperty("postgres");
+    private String PASSWORD = System.getProperty("password");
     private Validator<Purchase> validator;
     private Repository<Long, Book> books;
 
     public PurchaseDataBaseRepository(Validator<Purchase> validator, Repository<Long, Book> books) {
         this.validator = validator;
         this.books = books;
+    }
+
+    public PurchaseDataBaseRepository(Validator<Purchase> validator, Repository<Long, Book> books, String URL) {
+        this.validator = validator;
+        this.books = books;
+        this.URL = URL;
     }
 
 
@@ -54,7 +60,7 @@ public class PurchaseDataBaseRepository implements SortingRepository<Long, Purch
 
                 Purchase p = new Purchase(clientID, bookID, nrBooks);
                 p.setId(id);
-
+                connection.close();
                 return Optional.of(p);
             }
 
@@ -82,6 +88,7 @@ public class PurchaseDataBaseRepository implements SortingRepository<Long, Purch
                 Purchase p = new Purchase(clientID, bookID, nrBooks);
                 p.setId(id);
                 result.add(p);
+                connection.close();
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -118,13 +125,13 @@ public class PurchaseDataBaseRepository implements SortingRepository<Long, Purch
                 });
             }
             catch (PSQLException e){
+                connection.close();
                 return Optional.of(entity);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return Optional.empty();
     }
 
@@ -151,6 +158,7 @@ public class PurchaseDataBaseRepository implements SortingRepository<Long, Purch
                         e.printStackTrace();
                     }
                 });
+                connection.close();
                 return p;
             }
 
@@ -195,6 +203,7 @@ public class PurchaseDataBaseRepository implements SortingRepository<Long, Purch
                 }
 
             });
+            connection.close();
             return pur;
 
         } catch (SQLException e) {
