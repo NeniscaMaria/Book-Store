@@ -7,6 +7,7 @@ import domain.validators.BookValidator;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
+import repository.DataBase.implementation.Sort;
 import service.PurchaseService;
 
 import javax.swing.text.html.Option;
@@ -94,6 +95,9 @@ public class Console {
                     case 16:
                         getReport();
                         break;
+                    case 18:
+                        sortBooks();
+                        break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
                     }
@@ -125,6 +129,9 @@ public class Console {
         System.out.println("14.Delete purchase.");
         System.out.println("15.Filter purchases.");
         System.out.println("16.Report.");
+        System.out.println("17.Sort clients.");
+        System.out.println("18.Sort books.");
+        System.out.println("19.Sort purchases.");
     }
 
     //******************************************************************************************************************
@@ -345,6 +352,29 @@ public class Console {
             System.out.println("Please input a valid format.");
         }
         return Optional.empty();
+    }
+
+    private void sortBooks() {
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Please enter how to order the elements: ");
+
+
+        try {
+            if (bufferRead.readLine().equals("DESC"))
+                Sort.dir = Sort.Direction.DESC;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Please enter your filters: ");
+
+        try {
+            Iterable<Book> books = bookService.getAllBooks(bufferRead.readLine().split(" "));
+            books.forEach(System.out::println);
+        }catch(SQLException | IOException e){
+            System.out.println(e);
+        }
     }
 
     //******************************************************************************************************************

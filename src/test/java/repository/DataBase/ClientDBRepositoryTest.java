@@ -61,7 +61,7 @@ public class ClientDBRepositoryTest {
         wrongName = new Client(SERIAL_NUMBER4,WRONG_NAME);
         wrongName.setId(ID1);
 
-        updateClient =new Client(SERIAL_NUMBER1,NAME3);
+        updateClient = new Client(SERIAL_NUMBER1,NAME3);
         updateClient.setId(ID1);
 
         allClients = new HashSet<Client>();
