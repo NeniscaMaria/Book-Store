@@ -1,8 +1,12 @@
 package service;
 
+import domain.Book;
 import domain.Purchase;
 import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
+import repository.DataBase.BookDataBaseRepository;
+import repository.DataBase.PurchaseDataBaseRepository;
+import repository.DataBase.implementation.Sort;
 import repository.Repository;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,6 +45,16 @@ public class PurchaseService {
     public Set<Purchase> getAllPurchases() throws SQLException {
         Iterable<domain.Purchase> purchases= repository.findAll();
         return StreamSupport.stream(purchases.spliterator(), false).collect(Collectors.toSet());
+    }
+
+    public Iterable<Purchase> getAllPurchases(String ...a) throws SQLException {
+        Iterable<domain.Purchase> pur;
+        if (repository instanceof PurchaseDataBaseRepository){
+            pur = ((PurchaseDataBaseRepository)repository).findAll(new Sort(a).and(new Sort(a)));
+            return StreamSupport.stream(pur.spliterator(), false).collect(Collectors.toList());
+        }
+        else throw new ValidatorException("Too many parameters");
+
     }
 
     public Set<domain.Purchase> filterPurchasesByClientID(Long clientID) throws SQLException {

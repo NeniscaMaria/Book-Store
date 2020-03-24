@@ -3,11 +3,9 @@ package repository.DataBase.implementation;
 import domain.Book;
 import domain.Client;
 import domain.Purchase;
-import org.graalvm.compiler.loop.InductionVariable;
 
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Sort {
 
@@ -37,8 +35,7 @@ public class Sort {
 
     public Iterable<Book> sortBook() throws SQLException {
         String s = "select * from Books order by ";
-        System.out.println(info);
-        Optional<String> ee = info.stream().reduce((s1, s2) -> s1 + ", " + s2 + " " + Sort.dir);
+        Optional<String> ee = info.stream().reduce((s1, s2) -> s1 + " " + Sort.dir + ", " + s2 + " " + Sort.dir);
         s = s + ee.get() + ";";
 
         List<Book> result = new ArrayList<>();

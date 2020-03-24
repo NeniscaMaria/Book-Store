@@ -95,8 +95,14 @@ public class Console {
                     case 16:
                         getReport();
                         break;
+                    case 17:
+                        sortClients();
+                        break;
                     case 18:
                         sortBooks();
+                        break;
+                    case 19:
+                        sortPurchases();
                         break;
                     default:
                         throw new ValidatorException("Please input a valid choice.");
@@ -231,6 +237,29 @@ public class Console {
             } catch (ValidatorException | SQLException e) {
                 System.out.println(e.getMessage());
             }});
+    }
+
+    private void sortClients() {
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Please enter how to order the elements: ");
+
+
+        try {
+            if (bufferRead.readLine().equals("DESC"))
+                Sort.dir = Sort.Direction.DESC;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Please enter your filters: ");
+
+        try {
+            Iterable<Client> clients = clientService.getAllClients(bufferRead.readLine().split(" "));
+            clients.forEach(System.out::println);
+        }catch(SQLException | IOException e){
+            System.out.println(e);
+        }
     }
 
     // ----------------
@@ -452,6 +481,30 @@ public class Console {
 
     }
 
+    private void sortPurchases() {
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Please enter how to order the elements: ");
+
+
+        try {
+            if (bufferRead.readLine().equals("DESC"))
+                Sort.dir = Sort.Direction.DESC;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Please enter your filters: ");
+
+        try {
+            Iterable<Purchase> pur = purchaseService.getAllPurchases(bufferRead.readLine().split(" "));
+            pur.forEach(System.out::println);
+        }catch(SQLException | IOException e){
+            System.out.println(e);
+        }
+    }
+
+
     private Optional<Purchase> readPurchase() {
         System.out.println("Please enter a new purchase: ");
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -508,6 +561,10 @@ public class Console {
         }
 
     }
+
+
+
+
     //******************************************************************************************************************
 
     private void getReport(){
@@ -539,6 +596,8 @@ public class Console {
             System.out.println(e);
         }
     }
+
+
 
 
 }

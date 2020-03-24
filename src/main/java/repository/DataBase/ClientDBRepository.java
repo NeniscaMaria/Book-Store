@@ -33,8 +33,8 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
     }
 
     @Override
-    public Iterable<Client> findAll(Sort sort) {
-        return null;
+    public Iterable<Client> findAll(Sort sort) throws SQLException {
+        return sort.sortClient();
     }
 
     @Override

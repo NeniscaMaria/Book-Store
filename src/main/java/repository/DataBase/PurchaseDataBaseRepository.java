@@ -40,8 +40,8 @@ public class PurchaseDataBaseRepository implements SortingRepository<Long, Purch
 
 
     @Override
-    public Iterable<Purchase> findAll(Sort sort) {
-        return null;
+    public Iterable<Purchase> findAll(Sort sort) throws SQLException {
+        return sort.sortPurchase();
     }
 
     @Override
