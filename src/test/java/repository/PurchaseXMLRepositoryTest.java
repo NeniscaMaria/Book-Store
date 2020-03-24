@@ -146,16 +146,18 @@ public class PurchaseXMLRepositoryTest {
     }
 
     @Test
-    public void update() {
+    public void delete() {
         assertEquals("Should delete purchase", purchase2, repoPurchase.delete(ID2).get());
         assertEquals("Should not find purchase", Optional.empty(), repoPurchase.delete(ID2));
 
     }
 
     @Test
-    public void delete() {
-        assertEquals("Should update purchase", purchase2, repoPurchase.delete(ID2).get());
-        assertEquals("Should not find purchase", Optional.empty(), repoPurchase.update(purchase2));
+    public void update() {
+        assertEquals("Should update purchase", purchase1, repoPurchase.update(purchase1).get());
+        assertEquals("Should not find purchase", Optional.empty(), repoPurchase.update(purchase3));
 
     }
+
+
 }

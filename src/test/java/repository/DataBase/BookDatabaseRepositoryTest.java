@@ -70,13 +70,15 @@ public class BookDatabaseRepositoryTest {
     private Book book_price;
     private Book book_update;
 
+    private String url = "jdbc:postgresql://localhost:5432/bookstoretest?currentSchema=bookstore&user=postgres&password=password";
+
     @Before
     public void setUp() throws Exception{
         valid = new BookValidator();
-        repo = new BookDataBaseRepository(valid);
+        repo = new BookDataBaseRepository(valid, url);
         books = new HashSet();
 
-        Iterable<Book> collaterals = repo.findAll();
+//        Iterable<Book> collaterals = repo.findAll();
 
         book1 = new Book(SN1, NAME1, AUTHOR1, YEAR1, PRICE1, STOCK1);
         book1.setId(ID1);
@@ -107,7 +109,7 @@ public class BookDatabaseRepositoryTest {
         repo.save(book1);
         repo.save(book2);
 
-        collaterals.forEach(p->books.add(p));
+//        collaterals.forEach(p->books.add(p));
 
         books.add(book1);
         books.add(book2);
@@ -142,11 +144,11 @@ public class BookDatabaseRepositoryTest {
 
     }
 
-//    @Test
-//    public void testFindOne() throws Exception {
-//        assertEquals("It should find one book", book1, repo.findOne(ID1).get());
-//        assertEquals("It should find no book", Optional.empty(), repo.findOne(15L));
-//    }
+    @Test
+    public void testFindOne() throws Exception {
+        assertEquals("It should find one book", book1, repo.findOne(ID1).get());
+        assertEquals("It should find no book", Optional.empty(), repo.findOne(15L));
+    }
 
     @Test
     public void testSave() throws ParserConfigurationException, TransformerException, SAXException, IOException {
@@ -154,10 +156,10 @@ public class BookDatabaseRepositoryTest {
         assertEquals("Book should not be saved", book3, repo.save(book3).get());
     }
 
-//    @Test
-//    public void testFindAll() {
-//        assertEquals("There should be two books", books, repo.findAll());
-//    }
+    @Test
+    public void testFindAll() {
+        assertEquals("There should be two books", books.size(), repo.findAll().spliterator().getExactSizeIfKnown());
+    }
 
     @Test
     public void testDelete() throws Exception {

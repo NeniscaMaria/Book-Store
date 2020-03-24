@@ -43,11 +43,13 @@ public class ClientDBRepositoryTest {
     private Client updateClient;
     private HashSet allClients;
 
+    private String url = "jdbc:postgresql://localhost:5432/bookstoretest?currentSchema=bookstore&user=postgres&password=password";
+
 
     @Before
     public void setUp() throws Exception {
         validator = new ClientValidator();
-        repository = new ClientDBRepository(validator);
+        repository = new ClientDBRepository(validator, url);
         client1 = new Client(SERIAL_NUMBER1,NAME1);
         client1.setId(ID1);
         client2 = new Client(SERIAL_NUMBER2,NAME2);
@@ -60,7 +62,7 @@ public class ClientDBRepositoryTest {
         wrongName = new Client(SERIAL_NUMBER4,WRONG_NAME);
         wrongName.setId(ID1);
 
-        updateClient =new Client(SERIAL_NUMBER1,NAME3);
+        updateClient = new Client(SERIAL_NUMBER1,NAME3);
         updateClient.setId(ID1);
 
         allClients = new HashSet<Client>();
@@ -77,11 +79,27 @@ public class ClientDBRepositoryTest {
         repository.delete(ID1);
         repository.delete(ID2);
         repository.delete(ID3);
+<<<<<<< HEAD
+=======
+        validator = null;
+        repository = null;
+        client1 = null;
+        client2 = null;
+        client3 = null;
+        allClients = null;
+        wrongName = null;
+        wrongSerial = null;
+        updateClient = null;
+>>>>>>> fe1b9fa06c4bf4d7862824c5efda32695f2cb8c7
     }
 
     @Test
     public void findAll() throws SQLException {
+<<<<<<< HEAD
         assertEquals("There should be 5 clients", 5,((Collection<?>) repository.findAll()).size());
+=======
+        assertEquals("There should be 2 clients", allClients.size(),repository.findAll().spliterator().getExactSizeIfKnown());
+>>>>>>> fe1b9fa06c4bf4d7862824c5efda32695f2cb8c7
     }
 
     @Test
@@ -113,15 +131,15 @@ public class ClientDBRepositoryTest {
         assertEquals("Should not find it",Optional.empty(),repository.update(client3));
     }
 
-    @Test(expected = ValidatorException.class)
-    public void testUpdateException() throws Exception {
-        repository.update(wrongSerial);
-        repository.update(wrongName);
-    }
-
-    @Test(expected = ValidatorException.class)
-    public void testSaveException() throws Exception {
-        repository.save(wrongName);
-        repository.save(wrongSerial);
-    }
+//    @Test(expected = ValidatorException.class)
+//    public void testUpdateException() throws Exception {
+//        repository.update(wrongSerial);
+//        repository.update(wrongName);
+//    }
+//
+//    @Test(expected = ValidatorException.class)
+//    public void testSaveException() throws Exception {
+//        repository.save(wrongName);
+//        repository.save(wrongSerial);
+//    }
 }

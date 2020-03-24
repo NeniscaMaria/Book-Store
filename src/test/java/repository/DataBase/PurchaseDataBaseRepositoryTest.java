@@ -59,6 +59,9 @@ public class PurchaseDataBaseRepositoryTest {
 
     private HashSet purchases;
 
+    private String url = "jdbc:postgresql://localhost:5432/bookstoretest?currentSchema=bookstore&user=postgres&password=password";
+
+
 
     @Before
     public void setUp() throws Exception {
@@ -70,8 +73,8 @@ public class PurchaseDataBaseRepositoryTest {
         validClient = new ClientValidator();
         validBook = new BookValidator();
 
-        repoClient = new ClientDBRepository(validClient);
-        repoBook = new BookDataBaseRepository(validBook);
+        repoClient = new ClientDBRepository(validClient, url);
+        repoBook = new BookDataBaseRepository(validBook, url);
 
         clientService = new ClientService(repoClient);
         bookService = new BookService(repoBook);
@@ -98,11 +101,10 @@ public class PurchaseDataBaseRepositoryTest {
         bookService.addBook(book2);
 
         validPurchase = new PurchaseValidator(clientService, bookService);
-        repoPurchase = new PurchaseDataBaseRepository(validPurchase, repoBook);
+        repoPurchase = new PurchaseDataBaseRepository(validPurchase, repoBook, url);
 
         purchase1 = new Purchase(ID1, ID1, NRBOOKS2);
         purchase1.setId(ID1);
-
 
         purchase2 = new Purchase(ID1, ID2, NRBOOKS2);
         purchase2.setId(ID2);
@@ -111,8 +113,10 @@ public class PurchaseDataBaseRepositoryTest {
         purchase_books = new Purchase(ID2, ID1, WRONG_NRBOOKS);
         purchase_books.setId(ID5);
 
+
         repoPurchase.save(purchase1);
         repoPurchase.save(purchase2);
+
 
         purchases.add(purchase1);
         purchases.add(purchase2);
@@ -135,10 +139,12 @@ public class PurchaseDataBaseRepositoryTest {
         bookService.deleteBook(ID2);
     }
 
-//    @Test
-//    public void testFindAll() {
-//        assertEquals("There should be two books", purchases, repoPurchase.findAll());
-//    }
+    @Test
+    public void testFindAll() {
+        assertEquals("There should be two books", purchases.size(), repoPurchase.findAll().spliterator().getExactSizeIfKnown());
+    }
+
+
 
 
     @Test
@@ -149,16 +155,18 @@ public class PurchaseDataBaseRepositoryTest {
     }
 
     @Test
-    public void update() {
+    public void delete() {
         assertEquals("Should delete purchase", purchase2, repoPurchase.delete(ID2).get());
         assertEquals("Should not find purchase", Optional.empty(), repoPurchase.delete(ID2));
 
     }
 
     @Test
-    public void delete() {
-        assertEquals("Should update purchase", purchase2, repoPurchase.delete(ID2).get());
-        assertEquals("Should not find purchase", Optional.empty(), repoPurchase.update(purchase2));
+    public void update() {
+        assertEquals("Should update purchase", purchase1, repoPurchase.update(purchase1).get());
+        assertEquals("Should not find purchase", Optional.empty(), repoPurchase.update(purchase3));
 
     }
+
+
 }

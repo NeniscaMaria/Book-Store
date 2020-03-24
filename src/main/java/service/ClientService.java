@@ -4,6 +4,8 @@ import domain.Book;
 import domain.Client;
 import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
+import repository.DataBase.ClientDBRepository;
+import repository.DataBase.implementation.Sort;
 import repository.Repository;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,6 +28,16 @@ public class ClientService {
 
     public Optional<Client> addClient(domain.Client client) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
         return repository.save(client);
+    }
+
+    public Iterable<Client> getAllClients(String ...a) throws SQLException {
+        Iterable<Client> clients;
+        if (repository instanceof ClientDBRepository){
+            clients = ((ClientDBRepository)repository).findAll(new Sort(a).and(new Sort(a)));
+            return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toList());
+        }
+        else throw new ValidatorException("Too many parameters");
+
     }
 
     public Optional<Client> removeClient(Long ID) throws SQLException {

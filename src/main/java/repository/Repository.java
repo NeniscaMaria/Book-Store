@@ -2,6 +2,7 @@ package repository;
 
 import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
+import repository.DataBase.implementation.Sort;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -47,4 +48,5 @@ public interface Repository<ID, T extends domain.BaseEntity<ID>> {
     Optional<T> update(T entity) throws ValidatorException, SQLException;
 
     void removeEntitiesWithClientID(ID id) throws ParserConfigurationException, IOException, SAXException;
+
 }

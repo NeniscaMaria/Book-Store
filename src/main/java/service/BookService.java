@@ -3,6 +3,8 @@ package service;
 import domain.Book;
 import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
+import repository.DataBase.BookDataBaseRepository;
+import repository.DataBase.implementation.Sort;
 import repository.Repository;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -10,6 +12,7 @@ import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -32,6 +35,17 @@ public class BookService {
         // Return all books from the repository
         Iterable<domain.Book> books = repository.findAll();
         return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
+    }
+
+    public Iterable<Book> getAllBooks(String ...a) throws SQLException {
+        // Return all books from the repository
+        Iterable<domain.Book> books;
+        if (repository instanceof BookDataBaseRepository){
+            books = ((BookDataBaseRepository)repository).findAll(new Sort(a).and(new Sort(a)));
+            return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toList());
+        }
+        else throw new ValidatorException("Too many parameters");
+
     }
 
     public Set<domain.Book> filterBooksByTitle(String s) throws SQLException {
