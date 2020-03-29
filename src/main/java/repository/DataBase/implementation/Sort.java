@@ -64,8 +64,6 @@ public class Sort {
 
 
      }
-
-
      public Iterable<Client> sortClient() throws SQLException {
          String cmd = "select * from Clients order by ";
          Optional<String> ee = info.stream().reduce((s1, s2) -> s1 + ", " + s2 + " " + dir);

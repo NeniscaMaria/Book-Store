@@ -16,18 +16,10 @@ import java.util.*;
 
 public class ClientDBRepository implements SortingRepository<Long, Client> {
 
-<<<<<<< HEAD
-    private static final String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
+
+    private static String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
     private static final String USER = System.getProperty("postgres");
     private static final String PASSWORD = System.getProperty("password");
-=======
-//    private static final String URL = "jdbc:postgresql://localhost:5432/Clientstore";
-//    private static final String USER = System.getProperty("username");
-//    private static final String PASSWORD = System.getProperty("password");
-    private String URL = "jdbc:postgresql://localhost:5432/bookstore?currentSchema=bookstore&user=postgres&password=password";
-    private String USER = System.getProperty("postgres");
-    private String PASSWORD = System.getProperty("password");
->>>>>>> fe1b9fa06c4bf4d7862824c5efda32695f2cb8c7
     private Validator<Client> validator;
 
     public ClientDBRepository(Validator<Client> validator) {
@@ -84,26 +76,9 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
     }
 
     @Override
-    public Optional<Client> save(Client entity) throws ValidatorException {
-        String cmd = "insert into Clients(id,serialNumber,name)" +
-                "values(?, ?, ?)";
-<<<<<<< HEAD
+    public Optional<Client> save(Client entity) throws ValidatorException, SQLException {
+        String cmd = "insert into Clients(id,serialNumber,name) values(?, ?, ?)";
         validator.validate(entity);
-        PreparedStatement preparedStatement;
-        try (Connection connection = DriverManager.getConnection(URL, USER, PASSWORD)) {
-            preparedStatement = connection.prepareStatement(cmd);
-            preparedStatement.setLong(1, entity.getId());
-            preparedStatement.setString(2, entity.getSerialNumber());
-            preparedStatement.setString(3, entity.getName());
-            if (preparedStatement.executeUpdate() != 0)
-                return Optional.empty();
-            else
-                return Optional.of(new Client());
-        }catch (SQLException se){
-            System.out.println(se);
-        }
-        return Optional.of(new Client());
-=======
         Connection connection = DriverManager.getConnection(URL, USER, PASSWORD);
         PreparedStatement preparedStatement = connection.prepareStatement(cmd);
         preparedStatement.setLong(1, entity.getId());
@@ -120,18 +95,6 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
         connection.close();
 
         return Optional.empty();
-//        if(preparedStatement.executeUpdate()==0) {
-//            connection.close();
-//
-//            return Optional.of(entity);
-//        }
-//
-//        else {
-//            connection.close();
-//            return Optional.empty();
-//
-//        }
->>>>>>> fe1b9fa06c4bf4d7862824c5efda32695f2cb8c7
     }
 
 
@@ -150,7 +113,6 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
         } else {
             connection.close();
             return c;
-//            return Optional.of(new Client());
         }
     }
 
