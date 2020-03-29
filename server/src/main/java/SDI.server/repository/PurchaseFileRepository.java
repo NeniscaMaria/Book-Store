@@ -1,8 +1,8 @@
 package SDI.server.repository;
 
 import SDI.server.validators.Validator;
-import domain.ValidatorException;
-import domain.Purchase;
+import common.domain.ValidatorException;
+import common.domain.Purchase;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -44,7 +44,7 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
                     Long clientID = Long.valueOf(items.get(1));
                     Long bookID = Long.valueOf(items.get((2)));
                     int nrBooks = Integer.parseInt(items.get(3));
-                    domain.Purchase purchase = new Purchase(clientID, bookID,nrBooks);
+                    Purchase purchase = new Purchase(clientID, bookID,nrBooks);
                     purchase.setId(id);
                     try {
                         super.save(purchase);
@@ -59,7 +59,7 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
     }
 
     @Override
-    public Optional<Purchase> save(domain.Purchase entity) throws ValidatorException{
+    public Optional<Purchase> save(Purchase entity) throws ValidatorException{
         Optional<Purchase> optional = null;
         optional = super.save(entity);
         if (optional.isPresent()) {
@@ -69,7 +69,7 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
         return Optional.empty();
     }
 
-    private void saveToFile(domain.Purchase entity) {
+    private void saveToFile(Purchase entity) {
         Path path = Paths.get(fileName);
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
 

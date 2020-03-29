@@ -4,9 +4,9 @@ import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
 import SDI.server.repository.SortingRepository;
 import SDI.server.validators.Validator;
-import domain.ValidatorException;
-import domain.Book;
-import domain.Purchase;
+import common.domain.ValidatorException;
+import common.domain.Book;
+import common.domain.Purchase;
 import org.postgresql.util.PSQLException;
 import org.xml.sax.SAXException;
 

@@ -1,8 +1,8 @@
-package domain;
+package common.domain;
 
 import java.util.Objects;
 
-public class Purchase extends BaseEntity<Long>{
+public class Purchase extends BaseEntity<Long> {
 
     private Long clientID;
     private Long bookID;

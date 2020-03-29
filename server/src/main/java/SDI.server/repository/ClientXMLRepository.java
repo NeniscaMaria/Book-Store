@@ -1,7 +1,7 @@
 package SDI.server.repository;
 
 import SDI.server.validators.Validator;
-import domain.Client;
+import common.domain.Client;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -93,7 +93,7 @@ public class ClientXMLRepository extends InMemoryRepository<Long, Client> {
     }
 
     @Override
-    public Optional<Client> save(domain.Client entity){
+    public Optional<Client> save(Client entity){
 
         Optional<Client> optional;
         try {
@@ -108,7 +108,7 @@ public class ClientXMLRepository extends InMemoryRepository<Long, Client> {
         return Optional.empty();
     }
 
-    private void saveToFile(domain.Client entity) throws ParserConfigurationException, TransformerException, IOException, SAXException {
+    private void saveToFile(Client entity) throws ParserConfigurationException, TransformerException, IOException, SAXException {
         Document document = DocumentBuilderFactory
                 .newInstance()
                 .newDocumentBuilder()

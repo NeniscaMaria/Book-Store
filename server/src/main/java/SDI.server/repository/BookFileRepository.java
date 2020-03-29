@@ -1,8 +1,8 @@
 package SDI.server.repository;
 
 import SDI.server.validators.Validator;
-import domain.ValidatorException;
-import domain.Book;
+import common.domain.ValidatorException;
+import common.domain.Book;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -83,7 +83,7 @@ public class BookFileRepository extends InMemoryRepository<Long, Book> {
 
     // Save data to file
     // in: entity (Book)
-    private void saveToFile(domain.Book entity) {
+    private void saveToFile(Book entity) {
         Path path = Paths.get(fileName);
 
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {

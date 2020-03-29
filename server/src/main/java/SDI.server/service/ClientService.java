@@ -3,8 +3,8 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.ClientDBRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
-import domain.ValidatorException;
-import domain.Client;
+import common.domain.Client;
+import common.domain.ValidatorException;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -19,11 +19,11 @@ import java.util.stream.StreamSupport;
 public class ClientService {
     private Repository<Long, Client> repository;
 
-    public ClientService(Repository<Long, domain.Client> repository) {
+    public ClientService(Repository<Long, Client> repository) {
         this.repository = repository;
     }
 
-    public Optional<Client> addClient(domain.Client client) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
+    public Optional<Client> addClient(Client client) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
         return repository.save(client);
     }
 
@@ -41,21 +41,21 @@ public class ClientService {
         return repository.delete(ID);
     }
 
-    public Optional<Client> updateClient(domain.Client client) throws ValidatorException, SQLException {
+    public Optional<Client> updateClient(Client client) throws ValidatorException, SQLException {
         return repository.update(client);
     }
 
-    public Set<domain.Client> getAllClients() throws SQLException {
-        Iterable<domain.Client> clients = repository.findAll();
+    public Set<Client> getAllClients() throws SQLException {
+        Iterable<Client> clients = repository.findAll();
         return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
     }
 
     /*POST:Returns all students whose name contain the given string.
      PRE: @param s
      */
-    public Set<domain.Client> filterClientsByName(String s) throws SQLException {
-        Iterable<domain.Client> clients = repository.findAll();
-        Set<domain.Client> filteredClients= new HashSet<>();
+    public Set<Client> filterClientsByName(String s) throws SQLException {
+        Iterable<Client> clients = repository.findAll();
+        Set<Client> filteredClients= new HashSet<>();
         clients.forEach(filteredClients::add);
         filteredClients.removeIf(student -> !student.getName().contains(s));
 

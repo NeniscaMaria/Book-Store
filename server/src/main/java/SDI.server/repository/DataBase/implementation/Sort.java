@@ -1,8 +1,8 @@
 package SDI.server.repository.DataBase.implementation;
 
-import domain.Book;
-import domain.Client;
-import domain.Purchase;
+import common.domain.Book;
+import common.domain.Client;
+import common.domain.Purchase;
 
 import java.sql.*;
 import java.util.*;

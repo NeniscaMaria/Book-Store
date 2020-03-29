@@ -1,7 +1,7 @@
 package ui;
 
-import domain.Book;
-import domain.Client;
+import common.domain.Book;
+import common.domain.Client;
 import domain.validators.BookValidator;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
@@ -101,14 +101,14 @@ public class Console {
     //Client functions:
     private void filterClients() {
         System.out.println("filtered clients (name containing 's2'):");
-        Set<domain.Client> students = clientService.filterClientsByName("s2");
+        Set<common.domain.Client> students = clientService.filterClientsByName("s2");
         students.stream().forEach(System.out::println);
     }
 
     private void printAllClients() {
         //DESCR: function that prints all the clients saved until now
 
-        Set<domain.Client> students = clientService.getAllClients();
+        Set<common.domain.Client> students = clientService.getAllClients();
         students.stream().forEach(System.out::println);
     }
 
@@ -140,7 +140,7 @@ public class Console {
             System.out.println("Name: ");
             String name = bufferRead.readLine();
 
-            domain.Client student = new domain.Client(serialNumber, name);
+            common.domain.Client student = new common.domain.Client(serialNumber, name);
             student.setId(id);
 
             return Optional.of(student);
@@ -170,13 +170,13 @@ public class Console {
 
     private void filterBooks() {
         System.out.println("filtered books (name containing 's2'):");
-        Set<domain.Book> books = bookService.filterBooksByName("s2");
+        Set<common.domain.Book> books = bookService.filterBooksByName("s2");
         books.stream().forEach(System.out::println);
     }
 
     private void printAllBooks() {
         // Print all books from repository
-        Set<domain.Book> books = bookService.getAllBooks();
+        Set<common.domain.Book> books = bookService.getAllBooks();
         books.stream().forEach(System.out::println);
     }
 
@@ -208,7 +208,7 @@ public class Console {
         });
     }
 
-    private Optional<domain.Book> readBook() {
+    private Optional<common.domain.Book> readBook() {
         // Input book from keyboard
         System.out.println("Please enter a new book: ");
 
@@ -227,7 +227,7 @@ public class Console {
             System.out.println("Price: ");
             double price = Double.parseDouble(bufferRead.readLine());
 
-            domain.Book book = new domain.Book(serialNumber, name, author, year, price);
+            common.domain.Book book = new common.domain.Book(serialNumber, name, author, year, price);
             book.setId(id);
 
             return Optional.of(book);

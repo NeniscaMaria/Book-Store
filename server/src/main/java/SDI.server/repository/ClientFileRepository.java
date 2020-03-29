@@ -1,8 +1,8 @@
 package SDI.server.repository;
 
 import SDI.server.validators.Validator;
-import domain.ValidatorException;
-import domain.Client;
+import common.domain.Client;
+import common.domain.ValidatorException;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,7 +16,7 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 
-public class ClientFileRepository extends InMemoryRepository<Long, domain.Client> {
+public class ClientFileRepository extends InMemoryRepository<Long, Client> {
     private String fileName;
 
     public ClientFileRepository(Validator<Client> validator, String fileName) {
@@ -34,7 +34,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
                     Long id = Long.valueOf(items.get(0));
                     String serialNumber = items.get(1);
                     String name = items.get((2));
-                    domain.Client student = new domain.Client(serialNumber, name);
+                    Client student = new Client(serialNumber, name);
                     student.setId(id);
                     try {
                         super.save(student);
@@ -49,7 +49,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
     }
 
     @Override
-    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException{
+    public Optional<Client> save(Client entity) throws ValidatorException{
         Optional<Client> optional = null;
         optional = super.save(entity);
         if (optional.isPresent()) {
@@ -59,7 +59,7 @@ public class ClientFileRepository extends InMemoryRepository<Long, domain.Client
         return Optional.empty();
     }
 
-    private void saveToFile(domain.Client entity) {
+    private void saveToFile(Client entity) {
         //writes changes to file
         Path path = Paths.get(fileName);
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {

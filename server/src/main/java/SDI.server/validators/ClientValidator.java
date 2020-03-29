@@ -1,8 +1,9 @@
 package SDI.server.validators;
 
-import domain.ValidatorException;
+import common.domain.Client;
+import common.domain.ValidatorException;
 
-public class ClientValidator implements Validator<domain.Client> {
+public class ClientValidator implements Validator<Client> {
     private boolean checkNull(String stringToBeChecked){ //checks if the string is valid, i.emit is not empty
         return stringToBeChecked.equals("") || stringToBeChecked.equals(" ");
     }
@@ -15,7 +16,7 @@ public class ClientValidator implements Validator<domain.Client> {
         return arrOfStr.length==1 && !number.contains("!,.:;?/(){}[]@#$%^&*_+=-");
     }
     @Override
-    public void validate(domain.Client entity) throws ValidatorException {
+    public void validate(Client entity) throws ValidatorException {
         if(entity==null)
             throw new ValidatorException("Client is null.");
         if(entity.getId()<0)

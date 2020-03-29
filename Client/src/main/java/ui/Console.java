@@ -1,20 +1,14 @@
 package ui;
 
-import domain.Book;
-import domain.Client;
-import domain.Purchase;
-import domain.ValidatorException;
-import org.xml.sax.SAXException;
+import common.domain.Book;
+import common.domain.Client;
+import common.domain.Purchase;
+import common.domain.ValidatorException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class Console {
     public Console() {
@@ -162,7 +156,7 @@ public class Console {
     private void printAllClients() {
         //DESCR: function that prints all the clients saved until now
         //try {
-            //Set<domain.Client> students = clientService.getAllClients();
+            //Set<common.domain.Client> students = clientService.getAllClients();
             //students.stream().forEach(System.out::println);
         //}catch(SQLException se){
         //    System.out.println(se);
@@ -197,7 +191,7 @@ public class Console {
             System.out.println("Name: ");
             String name = bufferRead.readLine();
 
-            domain.Client student = new domain.Client(serialNumber, name);
+            Client student = new Client(serialNumber, name);
             student.setId(id);
 
             return Optional.of(student);
@@ -265,7 +259,7 @@ public class Console {
     private void printAllBooks() {
         // Print all books from repository
         /*try {
-            Set<domain.Book> books = bookService.getAllBooks();
+            Set<common.domain.Book> books = bookService.getAllBooks();
             books.stream().forEach(System.out::println);
         }catch(SQLException e){
             System.out.println(e);
@@ -334,7 +328,7 @@ public class Console {
     }
 
 
-    private Optional<domain.Book> readBook() {
+    private Optional<Book> readBook() {
         // Input book from keyboard
         System.out.println("Please enter a new book: ");
 
@@ -355,7 +349,7 @@ public class Console {
             System.out.println("In stock: ");
             int stock = Integer.parseInt(bufferRead.readLine());
 
-            domain.Book book = new domain.Book(serialNumber, name, author, year, price, stock);
+            Book book = new Book(serialNumber, name, author, year, price, stock);
             book.setId(id);
 
             return Optional.of(book);
@@ -411,7 +405,7 @@ public class Console {
 
     private void displayPurchases(){
         /*try {
-            Set<domain.Purchase> purchases = purchaseService.getAllPurchases();
+            Set<common.domain.Purchase> purchases = purchaseService.getAllPurchases();
             purchases.stream().forEach(System.out::println);
         }catch (SQLException e){
             System.out.println(e);

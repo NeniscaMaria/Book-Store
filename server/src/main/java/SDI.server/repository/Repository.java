@@ -1,6 +1,7 @@
 package SDI.server.repository;
 
-import domain.ValidatorException;
+import common.domain.BaseEntity;
+import common.domain.ValidatorException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -9,7 +10,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
 
-public interface Repository<ID, T extends domain.BaseEntity<ID>> {
+public interface Repository<ID, T extends BaseEntity<ID>> {
     /*
         DESCR:Find the entity with the given {@code id}.
         PRE:param id must be not null.

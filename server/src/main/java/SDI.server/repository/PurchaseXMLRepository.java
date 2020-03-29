@@ -1,7 +1,7 @@
 package SDI.server.repository;
 
 import SDI.server.validators.Validator;
-import domain.Purchase;
+import common.domain.Purchase;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -121,7 +121,7 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
     }
 
     @Override
-    public Optional<Purchase> save(domain.Purchase entity){
+    public Optional<Purchase> save(Purchase entity){
 
         Optional<Purchase> optional;
         try {
@@ -136,7 +136,7 @@ public class PurchaseXMLRepository extends InMemoryRepository<Long, Purchase> {
         return Optional.empty();
     }
 
-    private void saveToFile(domain.Purchase entity) throws ParserConfigurationException, IOException, SAXException {
+    private void saveToFile(Purchase entity) throws ParserConfigurationException, IOException, SAXException {
         Document document = DocumentBuilderFactory
                 .newInstance()
                 .newDocumentBuilder()

@@ -1,7 +1,7 @@
 package SDI.server.validators;
 
-import domain.Book;
-import domain.ValidatorException;
+import common.domain.Book;
+import common.domain.ValidatorException;
 
 import java.util.Calendar;
 import java.util.Optional;

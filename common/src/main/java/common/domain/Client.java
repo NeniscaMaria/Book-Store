@@ -1,4 +1,4 @@
-package domain;
+package common.domain;
 
 public class Client extends BaseEntity<Long> {
     private String serialNumber;

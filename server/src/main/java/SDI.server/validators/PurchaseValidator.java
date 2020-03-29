@@ -2,10 +2,10 @@ package SDI.server.validators;
 
 import SDI.server.service.BookService;
 import SDI.server.service.ClientService;
-import domain.Book;
-import domain.Client;
-import domain.Purchase;
-import domain.ValidatorException;
+import common.domain.Book;
+import common.domain.Client;
+import common.domain.Purchase;
+import common.domain.ValidatorException;
 
 import java.sql.SQLException;
 import java.util.Optional;
@@ -33,7 +33,7 @@ public class PurchaseValidator implements Validator<Purchase> {
     }
 
     @Override
-    public void validate(domain.Purchase entity) throws ValidatorException {
+    public void validate(Purchase entity) throws ValidatorException {
 
         Optional<Purchase> purchase = Optional.ofNullable(Optional.ofNullable(entity).orElseThrow(()-> new ValidatorException("Entity is null.")));
         purchase.ifPresent(p->{

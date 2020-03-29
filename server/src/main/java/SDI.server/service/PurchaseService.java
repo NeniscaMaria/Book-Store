@@ -3,8 +3,8 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.PurchaseDataBaseRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
-import domain.ValidatorException;
-import domain.Purchase;
+import common.domain.Purchase;
+import common.domain.ValidatorException;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -19,11 +19,11 @@ import java.util.stream.StreamSupport;
 public class PurchaseService {
     private Repository<Long, Purchase> repository;
 
-    public PurchaseService(Repository<Long, domain.Purchase> repository) {
+    public PurchaseService(Repository<Long, Purchase> repository) {
         this.repository = repository;
     }
 
-    public Optional<Purchase> addPurchase(domain.Purchase purchase) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
+    public Optional<Purchase> addPurchase(Purchase purchase) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
         return repository.save(purchase);
     }
 
@@ -35,17 +35,17 @@ public class PurchaseService {
         return repository.delete(ID);
     }
 
-    public Optional<Purchase> updatePurchase(domain.Purchase purchase) throws ValidatorException, SQLException {
+    public Optional<Purchase> updatePurchase(Purchase purchase) throws ValidatorException, SQLException {
         return repository.update(purchase);
     }
 
     public Set<Purchase> getAllPurchases() throws SQLException {
-        Iterable<domain.Purchase> purchases= repository.findAll();
+        Iterable<Purchase> purchases= repository.findAll();
         return StreamSupport.stream(purchases.spliterator(), false).collect(Collectors.toSet());
     }
 
     public Iterable<Purchase> getAllPurchases(String ...a) throws SQLException {
-        Iterable<domain.Purchase> pur;
+        Iterable<Purchase> pur;
         if (repository instanceof PurchaseDataBaseRepository){
             pur = ((PurchaseDataBaseRepository)repository).findAll(new Sort(a).and(new Sort(a)));
             return StreamSupport.stream(pur.spliterator(), false).collect(Collectors.toList());
@@ -54,9 +54,9 @@ public class PurchaseService {
 
     }
 
-    public Set<domain.Purchase> filterPurchasesByClientID(Long clientID) throws SQLException {
-        Iterable<domain.Purchase> purchases = repository.findAll();
-        Set<domain.Purchase> filteredPurchases= new HashSet<>();
+    public Set<Purchase> filterPurchasesByClientID(Long clientID) throws SQLException {
+        Iterable<Purchase> purchases = repository.findAll();
+        Set<Purchase> filteredPurchases= new HashSet<>();
         purchases.forEach(filteredPurchases::add);
         filteredPurchases.removeIf(purchase -> !(purchase.getClientID()==clientID));
 

@@ -3,8 +3,8 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.BookDataBaseRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
-import domain.ValidatorException;
-import domain.Book;
+import common.domain.ValidatorException;
+import common.domain.Book;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -23,7 +23,7 @@ public class BookService {
         this.repository = repository;
     }
 
-    public Optional<Book> addBook(domain.Book book) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
+    public Optional<Book> addBook(Book book) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
         // Add given book to the repository
         // Return Optional null if the entity was added, otherwise return the entity with the same id
         return repository.save(book);
@@ -31,13 +31,13 @@ public class BookService {
 
     public Set<Book> getAllBooks() throws SQLException {
         // Return all books from the repository
-        Iterable<domain.Book> books = repository.findAll();
+        Iterable<Book> books = repository.findAll();
         return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
     }
 
     public Iterable<Book> getAllBooks(String ...a) throws SQLException {
         // Return all books from the repository
-        Iterable<domain.Book> books;
+        Iterable<Book> books;
         if (repository instanceof BookDataBaseRepository){
             books = ((BookDataBaseRepository)repository).findAll(new Sort(a).and(new Sort(a)));
             return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toList());
@@ -46,7 +46,7 @@ public class BookService {
 
     }
 
-    public Set<domain.Book> filterBooksByTitle(String s) throws SQLException {
+    public Set<Book> filterBooksByTitle(String s) throws SQLException {
         // Return the books that contain the given string
         Iterable<Book> books = repository.findAll();
 

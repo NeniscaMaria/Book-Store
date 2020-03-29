@@ -1,4 +1,4 @@
-package domain;
+package common.domain;
 
 public class Book extends BaseEntity<Long> {
     /*
