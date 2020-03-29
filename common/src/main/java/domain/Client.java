@@ -1,6 +1,8 @@
 package domain;
 
-public class Client extends BaseEntity<Long> {
+import java.io.Serializable;
+
+public class Client extends BaseEntity<Long> implements Serializable {
     private String serialNumber;
     private String name;
 

@@ -1,8 +1,9 @@
 package domain;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public class Purchase extends BaseEntity<Long>{
+public class Purchase extends BaseEntity<Long> implements Serializable {
 
     private Long clientID;
     private Long bookID;

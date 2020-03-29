@@ -1,6 +1,8 @@
 package domain;
 
-public class Book extends BaseEntity<Long> {
+import java.io.Serializable;
+
+public class Book extends BaseEntity<Long> implements Serializable {
     /*
     A book has a serialNumber (String), name (string),
     author (String), year of publication (int)

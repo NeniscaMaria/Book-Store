@@ -1,31 +1,31 @@
 package ui;
 
+import Service.ClientService;
+import domain.Client;
+import domain.Message;
+import domain.ValidatorException;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
+import java.sql.SQLOutput;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 public class Console {
     private ClientService clientService;
-    private BookService bookService;
-    private PurchaseService purchaseService;
 
-    public Console(ClientService studentService, BookService bookService, PurchaseService purchaseService) {
-        this.clientService = studentService;
-        this.bookService = bookService;
-        this.purchaseService=purchaseService;
+    public Console(ClientService clientService) {
+        this.clientService = clientService;
     }
-    //gitk and git gui in console
 
     public void runConsole() {
-        boolean finished=false;
-        while(!finished){
+        boolean finished = false;
+        while (!finished) {
             printChoices();
             try {
                 Scanner keyboard = new Scanner(System.in);
@@ -39,71 +39,69 @@ public class Console {
                         addClient();
                         break;
                     case 2:
-                        addBook();
+                        //addBook();
                         break;
                     case 3:
                         printAllClients();
                         break;
                     case 4:
-                        printAllBooks();
+                        //printAllBooks();
                         break;
                     case 5:
                         filterClients();
                         break;
                     case 6:
-                        filterBooks();
+                        //filterBooks();
                         break;
                     case 7:
                         deleteClient();
                         break;
                     case 8:
-                        deleteBook();
+                        //deleteBook();
                         break;
                     case 9:
                         updateClient();
                         break;
                     case 10:
-                        updateBook();
+                        //updateBook();
                         break;
                     case 11:
-                        addPurchase();
+                        //addPurchase();
                         break;
                     case 12:
-                        displayPurchases();
+                        //displayPurchases();
                         break;
                     case 13:
-                        updatePurchase();
+                        //updatePurchase();
                         break;
                     case 14:
-                        deletePurchase();
+                        //deletePurchase();
                         break;
                     case 15:
-                        filterPurchases();
+                        //filterPurchases();
                         break;
                     case 16:
-                        getReport();
+                        //getReport();
                         break;
                     case 17:
                         sortClients();
                         break;
                     case 18:
-                        sortBooks();
+                        //sortBooks();
                         break;
                     case 19:
-                        sortPurchases();
+                        //sortPurchases();
                         break;
                     default:
-                        throw new ValidatorException("Please input a valid choice.");
-                    }
-            }catch(InputMismatchException e ){
+                        throw new InvalidInput("Please input a valid choice.");
+                }
+            } catch (InputMismatchException e) {
                 System.out.println("Please input a number.");
-            }catch(ValidatorException ve){
+            } catch (InvalidInput ve) {
                 System.out.println(ve.getMessage());
             }
         }
-
     }
-
     private void printChoices(){
         System.out.println("\nChoose one from below:");
         System.out.println("0.Exit");
@@ -131,7 +129,7 @@ public class Console {
     //******************************************************************************************************************
     //Client functions:
     private void filterClients() {
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        /*BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
         try {
             System.out.println("Filter after: ");
             String name = bufferRead.readLine();
@@ -144,46 +142,47 @@ public class Console {
             System.out.println("Please input a valid format.");
         } catch (SQLException e) {
             e.printStackTrace();
-        }
+        }*/
 
     }
 
     private void deleteClient(){
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        Scanner key = new Scanner(System.in);
+        System.out.println("ID of client to be removed:");
+        Long id = key.nextLong();
+        Future<Message> result = clientService.removeClient(id);
         try {
-            System.out.println("ID: ");
-            Long id = Long.parseLong(bufferRead.readLine());
-            Optional<Client> client = clientService.removeClient(id);
-            client.ifPresent(c -> {System.out.println("Client removed successfully."); });
-            purchaseService.removeClients(id);
-        } catch (IOException | SAXException | ParserConfigurationException | SQLException ex) {
-            ex.printStackTrace();
-        }catch (NumberFormatException ex){
-            System.out.println("Please input a valid format.");
+            System.out.println(result.get().getHeader());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
+
     }
 
     private void printAllClients() {
-        //DESCR: function that prints all the clients saved until now
+        Future<Message> clients = clientService.getAllClients();
         try {
-            Set<domain.Client> students = clientService.getAllClients();
-            students.stream().forEach(System.out::println);
-        }catch(SQLException se){
-            System.out.println(se);
+            System.out.println(clients.get().getBody());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
         }
     }
 
     private void addClient() {
-        //DESCR: function that saves a new client
+       ///DESCR: function that saves a new client
 
         Optional<Client> client = readClient();
         client.ifPresent(c->{
             try {
-                Optional<Client> result = clientService.addClient(c);
-                result.ifPresent(r-> System.out.println("A client with this ID already exists."));
-            } catch (ValidatorException | ParserConfigurationException | TransformerException | SAXException | IOException | SQLException e) {
+                Future<Message> result = clientService.addClient(c);
+                System.out.println(result.get().getHeader());
+                //result.ifPresent(r-> System.out.println("A client with this ID already exists."));
+            } catch (ValidatorException e) {
                 System.out.println(e.getMessage());
-            }});
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private Optional<Client> readClient() {
@@ -214,7 +213,7 @@ public class Console {
     }
 
     private void updateClient(){
-        Optional<Client> client = readClient();
+        /*Optional<Client> client = readClient();
         client.ifPresent(c->{
             try {
                 Optional<Client> result = clientService.updateClient(c);
@@ -224,11 +223,11 @@ public class Console {
 
             } catch (ValidatorException | SQLException e) {
                 System.out.println(e.getMessage());
-            }});
+            }});*/
     }
 
     private void sortClients() {
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+       /* BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println("Please enter how to order the elements: ");
 
@@ -247,8 +246,26 @@ public class Console {
             clients.forEach(System.out::println);
         }catch(SQLException | IOException e){
             System.out.println(e);
-        }
+        }*/
     }
+
+/*
+    private BookService bookService;
+    private PurchaseService purchaseService;
+
+    public Console(ClientService studentService, BookService bookService, PurchaseService purchaseService) {
+        this.clientService = studentService;
+        this.bookService = bookService;
+        this.purchaseService=purchaseService;
+    }
+    //gitk and git gui in console
+
+
+    }
+
+
+
+
 
     // ----------------
     // Books
@@ -585,7 +602,7 @@ public class Console {
         }
     }
 
-
+*/
 
 
 }

@@ -3,7 +3,8 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.ClientDBRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
-import SDI.server.validators.ValidatorException;
+import domain.ValidatorException;
+import Service.ClientServiceInterface;
 import domain.Client;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,11 +15,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class ClientService {
-    public String GET_ALL_CLIENTS = "getAllClients";
+public class ClientService implements ClientServiceInterface {
     private Repository<Long, Client> repository;
     private ExecutorService executorService;
 
@@ -27,8 +28,9 @@ public class ClientService {
         this.executorService = executorService;
     }
 
-    public Optional<Client> addClient(domain.Client client) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
-        return repository.save(client);
+    @Override
+    public Future<Optional<Client>> addClient(domain.Client client) throws SQLException, ValidatorException {
+        return executorService.submit(()->repository.save(client));
     }
 
     public Iterable<Client> getAllClients(String ...a) throws SQLException {
@@ -41,17 +43,20 @@ public class ClientService {
 
     }
 
-    public Optional<Client> removeClient(Long ID) throws SQLException {
-        return repository.delete(ID);
+    @Override
+    public Future<Optional<Client>> removeClient(Long ID) throws SQLException {
+        return executorService.submit(()->repository.delete(ID));
     }
 
     public Optional<Client> updateClient(domain.Client client) throws ValidatorException, SQLException {
         return repository.update(client);
     }
 
-    public Set<domain.Client> getAllClients() throws SQLException {
+    @Override
+    public Future<Set<Client>> getAllClients() throws SQLException {
         Iterable<domain.Client> clients = repository.findAll();
-        return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
+        Set<Client> result = StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
+        return executorService.submit(()->result);
     }
 
     /*POST:Returns all students whose name contain the given string.
