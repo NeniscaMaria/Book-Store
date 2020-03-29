@@ -5,6 +5,7 @@ import SDI.server.service.ClientService;
 import domain.Book;
 import domain.Client;
 import domain.Purchase;
+import domain.ValidatorException;
 
 import java.sql.SQLException;
 import java.util.Optional;

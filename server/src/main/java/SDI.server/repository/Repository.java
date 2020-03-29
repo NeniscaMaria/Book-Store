@@ -1,6 +1,6 @@
 package SDI.server.repository;
 
-import SDI.server.validators.ValidatorException;
+import domain.ValidatorException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;

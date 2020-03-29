@@ -3,7 +3,7 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.ClientDBRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
-import SDI.server.validators.ValidatorException;
+import domain.ValidatorException;
 import domain.Client;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;

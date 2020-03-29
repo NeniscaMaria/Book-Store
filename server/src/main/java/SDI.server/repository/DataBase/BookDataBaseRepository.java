@@ -3,7 +3,7 @@ package SDI.server.repository.DataBase;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.SortingRepository;
 import SDI.server.validators.Validator;
-import SDI.server.validators.ValidatorException;
+import domain.ValidatorException;
 import domain.Book;
 import org.postgresql.util.PSQLException;
 import org.xml.sax.SAXException;

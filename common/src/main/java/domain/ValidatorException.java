@@ -1,4 +1,4 @@
-package SDI.server.validators;
+package domain;
 
 
 public class ValidatorException extends RuntimeException {
