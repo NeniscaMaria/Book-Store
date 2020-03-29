@@ -13,14 +13,18 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ClientService {
+    public String GET_ALL_CLIENTS = "getAllClients";
     private Repository<Long, Client> repository;
+    private ExecutorService executorService;
 
-    public ClientService(Repository<Long, domain.Client> repository) {
+    public ClientService(Repository<Long, domain.Client> repository, ExecutorService executorService) {
         this.repository = repository;
+        this.executorService = executorService;
     }
 
     public Optional<Client> addClient(domain.Client client) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
