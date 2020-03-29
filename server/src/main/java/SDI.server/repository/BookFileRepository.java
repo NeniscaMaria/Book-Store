@@ -1,7 +1,7 @@
 package SDI.server.repository;
 
 import SDI.server.validators.Validator;
-import domain.ValidatorException;
+import SDI.server.validators.ValidatorException;
 import domain.Book;
 
 import java.io.BufferedWriter;

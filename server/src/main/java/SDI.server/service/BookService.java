@@ -3,7 +3,7 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.BookDataBaseRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
-import domain.ValidatorException;
+import SDI.server.validators.ValidatorException;
 import domain.Book;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;

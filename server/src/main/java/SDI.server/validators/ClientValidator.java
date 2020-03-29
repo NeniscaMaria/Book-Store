@@ -1,7 +1,5 @@
 package SDI.server.validators;
 
-import domain.ValidatorException;
-
 public class ClientValidator implements Validator<domain.Client> {
     private boolean checkNull(String stringToBeChecked){ //checks if the string is valid, i.emit is not empty
         return stringToBeChecked.equals("") || stringToBeChecked.equals(" ");
