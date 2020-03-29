@@ -1,4 +1,4 @@
-package validators;
+package SDI.server.validators;
 
 import domain.Book;
 import domain.Client;

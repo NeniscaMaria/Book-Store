@@ -1,10 +1,4 @@
-package repository;
-
-import domain.Book;
-import domain.Client;
-import domain.Purchase;
-import domain.validators.Validator;
-import domain.validators.ValidatorException;
+package SDI.server.repository;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,44 +6,34 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.StreamSupport;
 
-public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
+
+public class ClientFileRepository extends InMemoryRepository<Long, domain.Client> {
     private String fileName;
 
-    public PurchaseFileRepository(Validator<Purchase> validator, String fileName) {
+    public ClientFileRepository(Validator<domain.Client> validator, String fileName) {
         super(validator);
         this.fileName = fileName;
         loadData();
     }
 
-    @Override
-    public void removeEntitiesWithClientID(Long ID){
-        if (ID == null) {
-            throw new IllegalArgumentException("ID must not be null");
-        }
-        List<Purchase> valuesToRemove = entities.values().stream().filter(p-> p.getClientID().equals(ID)) //we remained only with the purchaseID s of the client with ID
-                .collect(Collectors.toList());
-        entities.values().removeAll(valuesToRemove);
-        this.writeAllToFile();
-    }
-
-    private void loadData() {
+    private void loadData() { //loads data from file to memory
         Path path = Paths.get(fileName);
         try {//Files.lines(path) return a stream that contains the lines in the file
             Files.lines(path).forEach(line -> {
                 List<String> items = Arrays.asList(line.split(","));
-                if(items.size()==4) {
+                if(items.size()==3) {
                     Long id = Long.valueOf(items.get(0));
-                    Long clientID = Long.valueOf(items.get(1));
-                    Long bookID = Long.valueOf(items.get((2)));
-                    int nrBooks = Integer.parseInt(items.get(3));
-                    domain.Purchase purchase = new Purchase(clientID, bookID,nrBooks);
-                    purchase.setId(id);
+                    String serialNumber = items.get(1);
+                    String name = items.get((2));
+                    domain.Client student = new domain.Client(serialNumber, name);
+                    student.setId(id);
                     try {
-                        super.save(purchase);
+                        super.save(student);
                     } catch (ValidatorException e) {
                         e.printStackTrace();
                     }
@@ -61,8 +45,8 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
     }
 
     @Override
-    public Optional<Purchase> save(domain.Purchase entity) throws ValidatorException{
-        Optional<Purchase> optional = null;
+    public Optional<domain.Client> save(domain.Client entity) throws ValidatorException{
+        Optional<Client> optional = null;
         optional = super.save(entity);
         if (optional.isPresent()) {
             return optional;
@@ -71,12 +55,13 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
         return Optional.empty();
     }
 
-    private void saveToFile(domain.Purchase entity) {
+    private void saveToFile(domain.Client entity) {
+        //writes changes to file
         Path path = Paths.get(fileName);
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.APPEND)) {
 
             bufferedWriter.write(
-                    entity.getId() + "," + entity.getClientID() + "," + entity.getBookID()+","+entity.getNrBooks());
+                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
             bufferedWriter.newLine();
 
         } catch (IOException e) {
@@ -85,14 +70,15 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
     }
 
     private void writeAllToFile(){
+        //rewrites the whole file
         Path path = Paths.get(fileName);
-        Iterable<Purchase> clients = super.findAll();
+        Iterable<Client> clients = super.findAll();
         try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.TRUNCATE_EXISTING)) {
             StreamSupport.stream(clients.spliterator(), false)
                     .forEach(entity->{
                         try {
                             bufferedWriter.write(
-                                    entity.getId() + "," + entity.getClientID() + "," + entity.getBookID()+","+entity.getNrBooks());
+                                    entity.getId() + "," + entity.getSerialNumber() + "," + entity.getName());
                             bufferedWriter.newLine();
                         } catch (IOException e) {
                             e.printStackTrace();
@@ -102,14 +88,15 @@ public class PurchaseFileRepository extends InMemoryRepository<Long, Purchase> {
         }
     }
 
-    public Optional<Purchase> update(Purchase purchase){
-        Optional<Purchase> res = super.update(purchase);
+    public Optional<Client> update(Client client){
+        //updates a client
+        Optional<Client> res = super.update(client);
         res.ifPresent(r->{this.writeAllToFile();});
         return res;
     }
 
-    public Optional<Purchase> delete(Long ID){
-        Optional<Purchase> res = super.delete(ID);
+    public Optional<Client> delete(Long ID){//delete a client
+        Optional<Client> res = super.delete(ID);
         res.ifPresent(r->{this.writeAllToFile();});
         return res;
     }

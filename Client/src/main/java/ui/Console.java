@@ -1,15 +1,7 @@
 package ui;
 
-import domain.Book;
-import domain.Client;
-import domain.Purchase;
-import domain.validators.BookValidator;
-import domain.validators.Validator;
-import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
-import repository.DataBase.implementation.Sort;
-import service.PurchaseService;
-
+import sun.security.validator.ValidatorException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
@@ -21,11 +13,11 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class Console {
-    private service.ClientService clientService;
-    private service.BookService bookService;
-    private service.PurchaseService purchaseService;
+    private ClientService clientService;
+    private BookService bookService;
+    private PurchaseService purchaseService;
 
-    public Console(service.ClientService studentService, service.BookService bookService, PurchaseService purchaseService) {
+    public Console(ClientService studentService, BookService bookService, PurchaseService purchaseService) {
         this.clientService = studentService;
         this.bookService = bookService;
         this.purchaseService=purchaseService;
@@ -145,7 +137,7 @@ public class Console {
             System.out.println("Filter after: ");
             String name = bufferRead.readLine();
             System.out.println("filtered clients (name containing "+name+" ):");
-            Set<domain.Client> students = clientService.filterClientsByName(name);
+            Set<Client> students = clientService.filterClientsByName(name);
             students.stream().forEach(System.out::println);
         } catch (IOException ex) {
             ex.printStackTrace();

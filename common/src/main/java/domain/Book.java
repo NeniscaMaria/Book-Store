@@ -1,6 +1,6 @@
 package domain;
 
-public class Book extends BaseEntity<Long>{
+public class Book extends BaseEntity<Long> {
     /*
     A book has a serialNumber (String), name (string),
     author (String), year of publication (int)

@@ -1,13 +1,6 @@
-package service;
+package SDI.server.service;
 
-import domain.Book;
-import domain.Purchase;
-import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
-import repository.DataBase.PurchaseDataBaseRepository;
-import repository.DataBase.implementation.Sort;
-import repository.Repository;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;

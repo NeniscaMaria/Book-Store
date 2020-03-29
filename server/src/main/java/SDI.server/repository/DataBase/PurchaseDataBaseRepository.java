@@ -1,14 +1,6 @@
-package repository.DataBase;
+package SDI.server.repository.DataBase;
 
-import domain.Book;
-import domain.Purchase;
-import domain.validators.Validator;
-import domain.validators.ValidatorException;
-import org.postgresql.util.PSQLException;
 import org.xml.sax.SAXException;
-import repository.DataBase.implementation.Sort;
-import repository.Repository;
-import repository.SortingRepository;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;

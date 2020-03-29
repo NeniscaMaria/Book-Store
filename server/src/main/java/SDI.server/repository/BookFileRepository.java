@@ -1,8 +1,6 @@
-package repository;
+package SDI.server.repository;
 
-import domain.Book;
-import domain.validators.Validator;
-import domain.validators.ValidatorException;
+import SDI.server.validators.ValidatorException;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -15,7 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
+public class BookFileRepository extends InMemoryRepository<Long, Book> {
     private String fileName;
 
     public BookFileRepository(Validator<Book> validator, String fileName) {
@@ -41,7 +39,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
                 int stock = Integer.parseInt(items.get((6)));
 
 
-                domain.Book book = new domain.Book(serialNumber, name, author, year, price, stock);
+                Book book = new Book(serialNumber, name, author, year, price, stock);
                 book.setId(id);
 
                 try {
@@ -56,7 +54,7 @@ public class BookFileRepository extends InMemoryRepository<Long, domain.Book> {
     }
 
     @Override
-    public Optional<Book> save(domain.Book entity) throws ValidatorException {
+    public Optional<Book> save(Book entity) throws ValidatorException {
         Optional<Book> optional = null;
         optional = super.save(entity);
         if (optional.isPresent()) {

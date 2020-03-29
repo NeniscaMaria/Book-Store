@@ -1,13 +1,6 @@
-package repository.DataBase;
+package SDI.server.repository.DataBase;
 
-import domain.Client;
-import domain.validators.Validator;
-import domain.validators.ValidatorException;
-import org.postgresql.util.PSQLException;
 import org.xml.sax.SAXException;
-import repository.SortingRepository;
-import repository.DataBase.implementation.Sort;
-
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.sql.*;

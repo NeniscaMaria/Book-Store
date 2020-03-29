@@ -1,8 +1,4 @@
-package repository;
-
-
-import domain.BaseEntity;
-import repository.DataBase.implementation.Sort;
+package SDI.server.repository;
 
 import java.io.Serializable;
 import java.sql.SQLException;

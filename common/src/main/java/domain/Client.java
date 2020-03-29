@@ -1,6 +1,6 @@
 package domain;
 
-public class Client extends domain.BaseEntity<Long> {
+public class Client extends BaseEntity<Long> {
     private String serialNumber;
     private String name;
 
@@ -33,7 +33,7 @@ public class Client extends domain.BaseEntity<Long> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        domain.Client student = (domain.Client) o;
+        Client student = (Client) o;
         return name.equals(student.name) && serialNumber.equals(student.serialNumber);
     }
 

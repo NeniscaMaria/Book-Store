@@ -1,8 +1,7 @@
-package repository;
+package SDI.server.repository;
 
-import domain.Purchase;
-import domain.validators.Validator;
-import domain.validators.ValidatorException;
+import SDI.server.validators.Validator;
+import SDI.server.validators.ValidatorException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -12,7 +11,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class InMemoryRepository<ID, T extends domain.BaseEntity<ID>> implements repository.Repository<ID, T> {
+public class InMemoryRepository<ID, T extends BaseEntity<ID>> implements SDI.server.repository.Repository<ID, T> {
 
     protected Map<ID, T> entities;
     private Validator<T> validator;
