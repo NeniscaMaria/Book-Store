@@ -57,6 +57,19 @@ public class TCPServer {
                     }
 
                 });
+        //uncomment when fixed message
+        /*addHandler(ClientServiceInterface.ADD_CLIENT,
+                (request)->{
+                    try {
+                        Client client = request.getBody());
+                        Future<Optional<Client>> client = clientService.addClient(client);
+                        if(client.get().isEmpty())
+                            return new Message("Client saved successfully.","");
+                        return new Message("A client with this ID already exists.", "");
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while deleting client.", e.getMessage());
+                    }
+                });*/
     }
 
     //TODO

@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 public interface ClientServiceInterface {
     public String GET_ALL_CLIENTS = "getAllClients";
     public String REMOVE_CLIENT = "removeClient";
+    public String ADD_CLIENT = "addClient";
 
     Future<Set<Client>> getAllClients() throws SQLException;
     Future<Optional<Client>> removeClient(Long id) throws SQLException;
