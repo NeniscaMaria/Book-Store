@@ -1,4 +1,5 @@
 import Service.ClientService;
+import Service.PurchaseService;
 import TCP.TCPClient;
 import ui.Console;
 
@@ -12,7 +13,8 @@ public class Main {
 
         TCPClient tcpClient= new TCPClient();
         ClientService clientService = new ClientService(executorService,tcpClient);
-        Console console = new Console(clientService);
+        PurchaseService purchaseService = new PurchaseService(executorService,tcpClient);
+        Console console = new Console(clientService,purchaseService);
         console.runConsole();
 
         executorService.shutdown();

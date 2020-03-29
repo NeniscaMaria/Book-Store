@@ -1,6 +1,8 @@
 package SDI.server;
 
+import SDI.server.service.BookService;
 import SDI.server.service.ClientService;
+import SDI.server.service.PurchaseService;
 import Service.ClientServiceInterface;
 import domain.*;
 import domain.Message;
@@ -24,11 +26,15 @@ public class TCPServer {
     private Map<String, UnaryOperator<Message>> methodHandlers;
 
     private ClientService clientService;
+    private BookService bookService ;
+    private PurchaseService purchaseService;
 
-    public TCPServer(ExecutorService executorService, ClientService clientService) {
+    public TCPServer(ExecutorService executorService, ClientService clientService, BookService bookService, PurchaseService purchaseService) {
         this.executorService = executorService;
         methodHandlers = new HashMap<>();
         this.clientService = clientService;
+        this.purchaseService = purchaseService;
+        this.bookService = bookService;
         initializeHandlers();
     }
 
@@ -75,7 +81,31 @@ public class TCPServer {
     //TODO
     private void initializeHandlersBooks(){}
     //TODO
-    private void initializeHandlersPurchases(){}
+    private void initializeHandlersPurchases(){
+        addHandler(PurchaseService.GET_ALL_PURCHASES,
+                (request) -> {
+                    try {
+                        Future<Set<Purchase>> purchases = purchaseService.getAllPurchases();
+                        return new Message("success", purchases.get().stream().map(a->a.toString()).reduce("",(a,b)->a+b));
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("error", e.getMessage());
+                    }
+
+                });
+        addHandler(PurchaseService.REMOVE_PURCHASE,
+                (request) -> {
+                    try {
+                        Long id = Long.parseLong(request.getBody());
+                        Future<Optional<Purchase>> client = purchaseService.removePurchase(id);
+                        if(client.get().isEmpty())
+                            return new Message("No purchase matched this ID.","");
+                        return new Message("Purchase removed successfully", "");
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while deleting purchase.", e.getMessage());
+                    }
+
+                });
+    }
 
     private void initializeHandlers(){
         initializeHandlersClient();

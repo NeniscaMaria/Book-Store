@@ -3,6 +3,8 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.PurchaseDataBaseRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
+import Service.PurchaseServiceInterface;
+import domain.Client;
 import domain.ValidatorException;
 import domain.Purchase;
 import org.xml.sax.SAXException;
@@ -13,14 +15,19 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class PurchaseService {
-    private Repository<Long, Purchase> repository;
+public class PurchaseService  implements PurchaseServiceInterface {
 
-    public PurchaseService(Repository<Long, domain.Purchase> repository) {
+    private Repository<Long, Purchase> repository;
+    private ExecutorService executorService;
+
+    public PurchaseService(Repository<Long, domain.Purchase> repository, ExecutorService executorService) {
         this.repository = repository;
+        this.executorService = executorService;
     }
 
     public Optional<Purchase> addPurchase(domain.Purchase purchase) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
@@ -31,20 +38,22 @@ public class PurchaseService {
         repository.removeEntitiesWithClientID(ID);
     }
 
-    public Optional<Purchase> removePurchase(Long ID) throws SQLException {
-        return repository.delete(ID);
+    public Future<Optional<Purchase>> removePurchase(Long ID) throws SQLException {
+        return executorService.submit(()->repository.delete(ID));
     }
 
     public Optional<Purchase> updatePurchase(domain.Purchase purchase) throws ValidatorException, SQLException {
         return repository.update(purchase);
     }
 
-    public Set<Purchase> getAllPurchases() throws SQLException {
+    public Future<Set<Purchase>> getAllPurchases() throws SQLException {
         Iterable<domain.Purchase> purchases= repository.findAll();
-        return StreamSupport.stream(purchases.spliterator(), false).collect(Collectors.toSet());
+        Set<Purchase> result = StreamSupport.stream(purchases.spliterator(), false).collect(Collectors.toSet());
+        return executorService.submit(()->result);
     }
 
     public Iterable<Purchase> getAllPurchases(String ...a) throws SQLException {
+
         Iterable<domain.Purchase> pur;
         if (repository instanceof PurchaseDataBaseRepository){
             pur = ((PurchaseDataBaseRepository)repository).findAll(new Sort(a).and(new Sort(a)));

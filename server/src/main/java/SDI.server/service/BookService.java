@@ -13,14 +13,17 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class BookService {
     private Repository<Long, Book> repository;
+    private ExecutorService executorService;
 
-    public BookService(Repository<Long, Book> repository) {
+    public BookService(Repository<Long, Book> repository, ExecutorService executorService) {
         this.repository = repository;
+        this.executorService = executorService;
     }
 
     public Optional<Book> addBook(domain.Book book) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {

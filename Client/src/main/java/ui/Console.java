@@ -1,8 +1,10 @@
 package ui;
 
 import Service.ClientService;
+import Service.PurchaseService;
 import domain.Client;
 import domain.Message;
+import domain.Purchase;
 import domain.ValidatorException;
 import org.xml.sax.SAXException;
 
@@ -16,9 +18,11 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 public class Console {
     private ClientService clientService;
+    private PurchaseService purchaseService;
 
-    public Console(ClientService clientService) {
+    public Console(ClientService clientService,PurchaseService purchaseService) {
         this.clientService = clientService;
+        this.purchaseService = purchaseService;
     }
 
     public void runConsole() {
@@ -67,13 +71,13 @@ public class Console {
                         //addPurchase();
                         break;
                     case 12:
-                        //displayPurchases();
+                        displayPurchases();
                         break;
                     case 13:
                         //updatePurchase();
                         break;
                     case 14:
-                        //deletePurchase();
+                        deletePurchase();
                         break;
                     case 15:
                         //filterPurchases();
@@ -247,6 +251,128 @@ public class Console {
         }*/
     }
 
+    //******************************************************************************************************************
+    //PURCHASES
+    //******************************************************************************************************************
+
+    private void addPurchase(){
+
+       /* Optional<Purchase> purchase = readPurchase();
+        purchase.ifPresent(p->{
+            try {
+                Optional<Purchase> pur = purchaseService.addPurchase(p);
+                pur.ifPresent(pp -> System.out.println("A purchase with this ID already exists"));
+
+            } catch (ParserConfigurationException | TransformerException | SAXException | IOException |SQLException  e) {
+                e.printStackTrace();
+            }
+
+        });*/
+    }
+
+    private void displayPurchases(){
+        Future<Message> purchases = purchaseService.getAllPurchases();
+        try {
+            System.out.println(purchases.get().getBody());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void updatePurchase(){
+/*
+        Optional<Purchase> purchase = readPurchase();
+        purchase.ifPresent(p->{
+            try {
+                Optional<Purchase> pp = purchaseService.updatePurchase(p);
+                pp.ifPresent(ppp -> {
+                    throw new ValidatorException("Purchase updated successfully");
+                });
+                throw new ValidatorException("This purchase was not found successfully");
+            }catch(SQLException e){
+                System.out.println(e);
+            }
+        });*/
+    }
+
+    private void deletePurchase(){
+        Scanner key = new Scanner(System.in);
+        System.out.println("ID of purchase to be removed:");
+        Long id = key.nextLong();
+        Future<Message> result = purchaseService.removePurchase(id);
+        try {
+            System.out.println(result.get().getHeader());
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void sortPurchases() {
+        /*BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Please enter how to order the elements: ");
+
+
+        try {
+            if (bufferRead.readLine().equals("DESC"))
+                Sort.dir = Sort.Direction.DESC;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Please enter your filters: ");
+
+        try {
+            Iterable<Purchase> pur = purchaseService.getAllPurchases(bufferRead.readLine().split(" "));
+            pur.forEach(System.out::println);
+        }catch(SQLException | IOException e){
+            System.out.println(e);
+        }*/
+    }
+
+
+    private Optional<Purchase> readPurchase() {
+        System.out.println("Please enter a new purchase: ");
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("ID: ");
+            Long id = Long.parseLong(bufferRead.readLine());
+            System.out.println("ID client: ");
+            Long idClient = Long.parseLong(bufferRead.readLine());
+
+            System.out.println("ID book: ");
+            Long idBook = Long.parseLong(bufferRead.readLine());
+
+            System.out.println("Number of books: ");
+            int nrBooks = Integer.parseInt(bufferRead.readLine());
+
+            Purchase purchase = new Purchase(idClient, idBook, nrBooks);
+            purchase.setId(id);
+            return Optional.of(purchase);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return Optional.empty();
+    }
+
+    private void filterPurchases() {
+       /* BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Filter: ");
+        try {
+            Long filter = Long.parseLong(bufferRead.readLine());
+            Set<Purchase> filteredPurchase = purchaseService.filterPurchasesByClientID(filter);
+            filteredPurchase.forEach(System.out::println);
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }*/
+
+    }
+
+
+
+
+
 /*
     private BookService bookService;
     private PurchaseService purchaseService;
@@ -408,164 +534,6 @@ public class Console {
             System.out.println(e);
         }
     }
-
-    //******************************************************************************************************************
-    //PURCHASES
-    //******************************************************************************************************************
-
-    private void addPurchase(){
-
-        Optional<Purchase> purchase = readPurchase();
-        purchase.ifPresent(p->{
-            try {
-                Optional<Purchase> pur = purchaseService.addPurchase(p);
-                pur.ifPresent(pp -> System.out.println("A purchase with this ID already exists"));
-
-            } catch (ParserConfigurationException | TransformerException | SAXException | IOException |SQLException  e) {
-                e.printStackTrace();
-            }
-
-        });
-    }
-
-    private void displayPurchases(){
-        try {
-            Set<domain.Purchase> purchases = purchaseService.getAllPurchases();
-            purchases.stream().forEach(System.out::println);
-        }catch (SQLException e){
-            System.out.println(e);
-        }
-    }
-
-    private void updatePurchase(){
-
-        Optional<Purchase> purchase = readPurchase();
-        purchase.ifPresent(p->{
-            try {
-                Optional<Purchase> pp = purchaseService.updatePurchase(p);
-                pp.ifPresent(ppp -> {
-                    throw new ValidatorException("Purchase updated successfully");
-                });
-                throw new ValidatorException("This purchase was not found successfully");
-            }catch(SQLException e){
-                System.out.println(e);
-            }
-        });
-    }
-
-    private void deletePurchase(){
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-        try {
-            System.out.println("ID: ");
-            Long id = Long.parseLong(bufferRead.readLine());
-            Optional<Purchase> purchase = purchaseService.removePurchase(id);
-            purchase.ifPresent(p->{System.out.println("Purchase removed successfully");
-//                try {
-//
-//                    int nr = p.getNrBooks();
-//                    Long idBook = p.getBookID();
-//
-//                    Book b = bookService.findOneBook(idBook).get();
-//
-//                    Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock() + nr);
-//                    newBook.setId(b.getId());
-//
-//                    bookService.updateBook(newBook);
-//                }catch(SQLException e){
-//                    System.out.println(e);
-//                }
-
-            });
-
-
-        } catch (IOException | SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private void sortPurchases() {
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-
-        System.out.println("Please enter how to order the elements: ");
-
-
-        try {
-            if (bufferRead.readLine().equals("DESC"))
-                Sort.dir = Sort.Direction.DESC;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Please enter your filters: ");
-
-        try {
-            Iterable<Purchase> pur = purchaseService.getAllPurchases(bufferRead.readLine().split(" "));
-            pur.forEach(System.out::println);
-        }catch(SQLException | IOException e){
-            System.out.println(e);
-        }
-    }
-
-
-    private Optional<Purchase> readPurchase() {
-        System.out.println("Please enter a new purchase: ");
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-
-
-        try {
-            System.out.println("ID: ");
-            Long id = Long.parseLong(bufferRead.readLine());
-            System.out.println("ID client: ");
-            Long idClient = Long.parseLong(bufferRead.readLine());
-
-            System.out.println("ID book: ");
-            Long idBook = Long.parseLong(bufferRead.readLine());
-
-            System.out.println("Number of books: ");
-            int nrBooks = Integer.parseInt(bufferRead.readLine());
-
-            Purchase purchase = new Purchase(idClient, idBook, nrBooks);
-            purchase.setId(id);
-
-//            Optional<Book> book = bookService.findOneBook(idBook);
-//
-//            book.ifPresent(b->{
-//                try {
-//                    int nr = b.getInStock();
-//                    b.setInStock(nr - nrBooks);
-//
-//                    Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock());
-//                    newBook.setId(b.getId());
-//                    bookService.updateBook(newBook);
-//                }catch (SQLException e){
-//                    System.out.println(e);
-//                }
-
-//            });
-
-
-            return Optional.of(purchase);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return Optional.empty();
-    }
-
-    private void filterPurchases() {
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Filter: ");
-        try {
-            Long filter = Long.parseLong(bufferRead.readLine());
-            Set<Purchase> filteredPurchase = purchaseService.filterPurchasesByClientID(filter);
-            filteredPurchase.forEach(System.out::println);
-        } catch (IOException | SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-
 
 
     //******************************************************************************************************************
