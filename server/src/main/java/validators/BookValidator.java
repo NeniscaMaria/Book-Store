@@ -1,4 +1,4 @@
-package domain.validators;
+package validators;
 
 import domain.Book;
 import java.util.Calendar;

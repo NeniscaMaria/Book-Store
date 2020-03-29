@@ -5,10 +5,7 @@ import domain.validators.*;
 import org.xml.sax.SAXException;
 import repository.*;
 import repository.DataBase.BookDataBaseRepository;
-//<<<<<<< HEAD
-//=======
 import repository.DataBase.ClientDBRepository;
-//>>>>>>> 3ec221699fc819ef3e66019419cfef54fa50f723
 import repository.DataBase.PurchaseDataBaseRepository;
 import service.BookService;
 import service.ClientService;

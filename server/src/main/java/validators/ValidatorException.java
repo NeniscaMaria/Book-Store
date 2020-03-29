@@ -1,4 +1,4 @@
-package domain.validators;
+package validators;
 
 
 public class ValidatorException extends RuntimeException {
