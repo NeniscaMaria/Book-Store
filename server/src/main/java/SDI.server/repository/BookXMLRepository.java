@@ -1,5 +1,7 @@
 package SDI.server.repository;
 
+import SDI.server.validators.Validator;
+import domain.Book;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;

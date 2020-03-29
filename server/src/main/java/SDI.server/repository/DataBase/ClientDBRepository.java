@@ -1,5 +1,11 @@
 package SDI.server.repository.DataBase;
 
+import SDI.server.repository.DataBase.implementation.Sort;
+import SDI.server.repository.SortingRepository;
+import SDI.server.validators.Validator;
+import SDI.server.validators.ValidatorException;
+import domain.Client;
+import org.postgresql.util.PSQLException;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;

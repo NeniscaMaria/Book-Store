@@ -1,7 +1,6 @@
 package ui;
 
 import org.xml.sax.SAXException;
-import sun.security.validator.ValidatorException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;

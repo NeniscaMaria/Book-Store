@@ -1,19 +1,21 @@
-plugins {
-    id 'java'
-}
+allprojects{
+//    plugins {
+//         id 'java'
+//    }
+    apply plugin: 'java'
+    group 'SDI'
+    version '1.0-SNAPSHOT'
 
-group 'SDI'
-version '1.0-SNAPSHOT'
+    sourceCompatibility = JavaVersion.VERSION_11
 
-sourceCompatibility = 1.8
+    repositories {
+        mavenCentral()
+    }
 
-repositories {
-    mavenCentral()
-}
+    dependencies {
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+        // https://mvnrepository.com/artifact/postgresql/postgresql
+        compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
 
-dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
-    // https://mvnrepository.com/artifact/postgresql/postgresql
-    compile group: 'postgresql', name: 'postgresql', version: '9.1-901-1.jdbc4'
-
+    }
 }

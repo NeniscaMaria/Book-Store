@@ -2,6 +2,7 @@ package SDI.server.repository;
 
 import SDI.server.validators.Validator;
 import SDI.server.validators.ValidatorException;
+import domain.BaseEntity;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;

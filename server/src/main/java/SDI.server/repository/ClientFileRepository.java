@@ -1,5 +1,9 @@
 package SDI.server.repository;
 
+import SDI.server.validators.Validator;
+import SDI.server.validators.ValidatorException;
+import domain.Client;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,7 +19,7 @@ import java.util.stream.StreamSupport;
 public class ClientFileRepository extends InMemoryRepository<Long, domain.Client> {
     private String fileName;
 
-    public ClientFileRepository(Validator<domain.Client> validator, String fileName) {
+    public ClientFileRepository(Validator<Client> validator, String fileName) {
         super(validator);
         this.fileName = fileName;
         loadData();

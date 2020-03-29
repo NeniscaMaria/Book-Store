@@ -1,7 +1,4 @@
 rootProject.name = 'Book-Store'
 include 'server'
-include 'Client'
 include 'common'
-include 'SDI.server'
-include 'SDI.common'
-
+include 'client'

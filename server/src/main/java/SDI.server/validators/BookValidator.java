@@ -1,9 +1,11 @@
 package SDI.server.validators;
 
+import domain.Book;
+
 import java.util.Calendar;
 import java.util.Optional;
 
-public class BookValidator implements Validator<client.domain.Book>  {
+public class BookValidator implements Validator<Book>  {
     boolean checkNull(String stringToBeChecked){
         return stringToBeChecked.equals("") || stringToBeChecked.equals(" ");
     }

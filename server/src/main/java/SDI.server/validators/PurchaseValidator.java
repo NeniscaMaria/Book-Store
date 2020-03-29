@@ -1,10 +1,10 @@
 package SDI.server.validators;
 
+import SDI.server.service.BookService;
+import SDI.server.service.ClientService;
 import domain.Book;
 import domain.Client;
 import domain.Purchase;
-import service.BookService;
-import service.ClientService;
 
 import java.sql.SQLException;
 import java.util.Optional;

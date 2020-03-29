@@ -1,5 +1,9 @@
 package SDI.server.repository;
 
+import SDI.server.validators.Validator;
+import SDI.server.validators.ValidatorException;
+import domain.Purchase;
+
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;

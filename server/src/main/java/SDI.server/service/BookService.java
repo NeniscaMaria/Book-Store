@@ -1,5 +1,10 @@
 package SDI.server.service;
 
+import SDI.server.repository.DataBase.BookDataBaseRepository;
+import SDI.server.repository.DataBase.implementation.Sort;
+import SDI.server.repository.Repository;
+import SDI.server.validators.ValidatorException;
+import domain.Book;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -14,7 +19,7 @@ import java.util.stream.StreamSupport;
 public class BookService {
     private Repository<Long, Book> repository;
 
-    public BookService(Repository<Long, domain.Book> repository) {
+    public BookService(Repository<Long, Book> repository) {
         this.repository = repository;
     }
 

@@ -1,5 +1,10 @@
 package SDI.server.service;
 
+import SDI.server.repository.DataBase.ClientDBRepository;
+import SDI.server.repository.DataBase.implementation.Sort;
+import SDI.server.repository.Repository;
+import SDI.server.validators.ValidatorException;
+import domain.Client;
 import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -12,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 public class ClientService {
-    private Repository<Long, domain.Client> repository;
+    private Repository<Long, Client> repository;
 
     public ClientService(Repository<Long, domain.Client> repository) {
         this.repository = repository;

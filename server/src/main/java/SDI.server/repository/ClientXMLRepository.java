@@ -1,5 +1,7 @@
 package SDI.server.repository;
 
+import SDI.server.validators.Validator;
+import domain.Client;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -18,7 +20,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-public class ClientXMLRepository extends InMemoryRepository<Long,Client> {
+public class ClientXMLRepository extends InMemoryRepository<Long, Client> {
     private String fileName;
 
     public ClientXMLRepository(Validator<Client> validator, String fileName) {
