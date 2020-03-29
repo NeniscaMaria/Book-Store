@@ -13,11 +13,8 @@ import org.junit.Test;
 import service.BookService;
 import service.ClientService;
 
-import java.io.FileWriter;
 import java.util.HashSet;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
 
 public class PurchaseXMLRepositoryTest {
 

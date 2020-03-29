@@ -10,7 +10,6 @@ import org.xml.sax.SAXException;
 import repository.DataBase.implementation.Sort;
 import service.PurchaseService;
 
-import javax.swing.text.html.Option;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
@@ -18,9 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Console {

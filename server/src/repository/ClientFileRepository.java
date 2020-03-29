@@ -3,10 +3,7 @@ package repository;
 import domain.Client;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;

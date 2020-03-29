@@ -3,14 +3,9 @@ package repository;
 import domain.Book;
 import domain.validators.Validator;
 import domain.validators.ValidatorException;
-import org.xml.sax.SAXException;
 
-import javax.swing.text.html.Option;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.io.FilterWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

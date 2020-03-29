@@ -4,7 +4,6 @@ import domain.Book;
 import domain.Purchase;
 import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
-import repository.DataBase.BookDataBaseRepository;
 import repository.DataBase.PurchaseDataBaseRepository;
 import repository.DataBase.implementation.Sort;
 import repository.Repository;

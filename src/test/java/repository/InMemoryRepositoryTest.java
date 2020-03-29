@@ -5,15 +5,11 @@ import domain.validators.ClientValidator;
 import domain.validators.Validator;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import domain.validators.ValidatorException;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Optional;
-
-import static org.junit.Assert.*;
 
 
 public class InMemoryRepositoryTest {

@@ -11,8 +11,6 @@ import org.junit.Test;
 import java.util.HashSet;
 import java.util.Optional;
 
-import static org.junit.Assert.*;
-
 public class BookXMLRepositoryTest {
     private static final Long ID1 = 1L;
     private static final Long ID2 = 2L;
