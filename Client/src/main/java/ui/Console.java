@@ -1,11 +1,9 @@
 package ui;
 
 import Service.ClientService;
+import Service.ClientService2;
 import Service.PurchaseService;
-import domain.Client;
-import domain.Message;
-import domain.Purchase;
-import domain.ValidatorException;
+import domain.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -17,12 +15,16 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 public class Console {
-    private ClientService clientService;
+    private ClientService2 clientService;
     private PurchaseService purchaseService;
 
-    public Console(ClientService clientService,PurchaseService purchaseService) {
+    public Console(ClientService2 clientService,PurchaseService purchaseService) {
         this.clientService = clientService;
         this.purchaseService = purchaseService;
+    }
+
+    public Console(ClientService2 clientService) {
+        this.clientService = clientService;
     }
 
     public void runConsole() {
@@ -149,25 +151,25 @@ public class Console {
     }
 
     private void deleteClient(){
-        Scanner key = new Scanner(System.in);
-        System.out.println("ID of client to be removed:");
-        Long id = key.nextLong();
-        Future<Message> result = clientService.removeClient(id);
-        try {
-            System.out.println(result.get().getHeader());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+//        Scanner key = new Scanner(System.in);
+//        System.out.println("ID of client to be removed:");
+//        Long id = key.nextLong();
+//        Future<Message> result = clientService.removeClient(id);
+//        try {
+//            System.out.println(result.get().getHeader());
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
 
     }
 
     private void printAllClients() {
-        Future<Message> clients = clientService.getAllClients();
-        try {
-            System.out.println(clients.get().getBody());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+//        Future<Message> clients = clientService.getAllClients();
+//        try {
+//            System.out.println(clients.get().getBody());
+//        } catch (InterruptedException | ExecutionException e) {
+//            e.printStackTrace();
+//        }
     }
 
     private void addClient() {
@@ -176,7 +178,7 @@ public class Console {
         Optional<Client> client = readClient();
         client.ifPresent(c->{
             try {
-                Future<Message> result = clientService.addClient(c);
+                Future<Message2<Client>> result = clientService.addClient(c);
                 System.out.println(result.get().getHeader());
                 //result.ifPresent(r-> System.out.println("A client with this ID already exists."));
             } catch (ValidatorException e) {

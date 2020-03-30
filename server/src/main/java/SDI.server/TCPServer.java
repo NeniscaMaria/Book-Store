@@ -7,14 +7,12 @@ import Service.ClientServiceInterface;
 import domain.*;
 import domain.Message;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -40,6 +38,21 @@ public class TCPServer {
 
     private void initializeHandlersClient(){
         //getAllClients function
+
+        addHandler(ClientServiceInterface.ADD_CLIENT,
+                (request) -> {
+                    try {
+                        List<String> args = Arrays.asList(request.getBody().split(" "));
+                        Client client = new Client(args.get(1), args.get(2));
+                        client.setId(Long.parseLong(args.get(0)));
+                        Future<Optional<Client>> clients = clientService.addClient(client);
+                        return new Message("success", clients.get().stream().map(a->a.toString()).reduce("",(a,b)->a+b));
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("error", e.getMessage());
+                    }
+
+                });
+
         addHandler(ClientServiceInterface.GET_ALL_CLIENTS,
                 (request) -> {
                     try {
@@ -64,24 +77,25 @@ public class TCPServer {
 
                 });
         //uncomment when fixed message
-        /*addHandler(ClientServiceInterface.ADD_CLIENT,
-                (request)->{
-                    try {
-                        Client client = request.getBody());
-                        Future<Optional<Client>> client = clientService.addClient(client);
-                        if(client.get().isEmpty())
-                            return new Message("Client saved successfully.","");
-                        return new Message("A client with this ID already exists.", "");
-                    } catch (SQLException | InterruptedException | ExecutionException e) {
-                        return new Message("Server-side error while deleting client.", e.getMessage());
-                    }
-                });*/
+//        addHandler(ClientServiceInterface.ADD_CLIENT,
+//                (request)->{
+//                    try {
+//                        String client = request.getBody();
+//                        Future<Optional<Client>> client2 = clientService.addClient(client);
+//                        if(client.get().isEmpty())
+//                            return new Message("Client saved successfully.","");
+//                        return new Message("A client with this ID already exists.", "");
+//                    } catch (SQLException | InterruptedException | ExecutionException e) {
+//                        return new Message("Server-side error while deleting client.", e.getMessage());
+//                    }
+//                });
     }
 
     //TODO
     private void initializeHandlersBooks(){}
     //TODO
     private void initializeHandlersPurchases(){
+
         addHandler(PurchaseService.GET_ALL_PURCHASES,
                 (request) -> {
                     try {
@@ -128,10 +142,10 @@ public class TCPServer {
         }
     }
 
-    private class ClientHandler implements Runnable{
+    class ClientHandler implements Runnable{
         private Socket socket;
 
-        public ClientHandler(Socket socket) {
+        ClientHandler(Socket socket) {
             this.socket = socket;
         }
 

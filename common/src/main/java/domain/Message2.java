@@ -1,36 +1,22 @@
 package domain;
 
 import java.io.*;
-import java.util.Optional;
+import java.util.stream.Stream;
 
-public class Message {
+public class Message2<T> {
+
     public static final int PORT = 1234;
     public static final String HOST = "localhost";
 
     private String header;
-    private String body;
-    private int numberOfLines=1;
+    private T body;
 
-    public Message() {
+    public Message2() {
     }
 
-    public Message(String header, String body) {
+    public Message2(String header, T body) {
         this.header = header;
         this.body = body;
-    }
-
-    public Message(String header, String body, int lines) {
-        this.header = header;
-        this.body = body;
-        numberOfLines = lines;
-    }
-
-    public int getNumberOfLines() {
-        return numberOfLines;
-    }
-
-    public void setNumberOfLines(int numberOfLines) {
-        this.numberOfLines = numberOfLines;
     }
 
     public String getHeader() {
@@ -41,11 +27,11 @@ public class Message {
         this.header = header;
     }
 
-    public String getBody() {
+    public T getBody() {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(T body) {
         this.body = body;
     }
 
@@ -56,14 +42,14 @@ public class Message {
     public void readFrom(InputStream is) throws IOException {
         var br = new BufferedReader(new InputStreamReader(is));
         header = br.readLine();
-        body = br.readLine();
+        body = (T) br.readLine();
     }
 
     @Override
     public String toString() {
-        return "Message{" +
+        return "Message2{" +
                 "header='" + header + '\'' +
-                ", body='" + body + '\'' +
+                ", body=" + body +
                 '}';
     }
 }
