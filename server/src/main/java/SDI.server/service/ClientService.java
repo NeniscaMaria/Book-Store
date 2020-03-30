@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -30,8 +30,11 @@ public class ClientService implements ClientServiceInterface {
     }
 
     @Override
-    public Future<Optional<Client>> addClient(Client client) throws SQLException, ValidatorException {
-        return executorService.submit(()->repository.save(client));
+    public CompletableFuture<Optional<Client>> addClient(Client client) throws ValidatorException {
+        /*return CompletableFuture.supplyAsync(()-> {
+                repository.save(client);
+        },executorService).handle((res,ex)->{return Optional.empty();});*/
+        return null;
     }
 
     public Iterable<Client> getAllClients(String ...a) throws SQLException {
@@ -45,38 +48,70 @@ public class ClientService implements ClientServiceInterface {
     }
 
     @Override
-    public Future<Optional<Client>> removeClient(Long ID) throws SQLException {
-        return executorService.submit(()->repository.delete(ID));
+    public CompletableFuture<Optional<Client>> removeClient(Long ID) throws SQLException {
+        return CompletableFuture.supplyAsync(()-> {
+            try {
+                return repository.delete(ID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        },executorService);
     }
 
     @Override
-    public Future<Optional<Client>> updateClient(domain.Client client) throws ValidatorException, SQLException {
-        return executorService.submit(()->repository.update(client));
+    public CompletableFuture<Optional<Client>> updateClient(domain.Client client) throws ValidatorException, SQLException {
+        return CompletableFuture.supplyAsync(()-> {
+            try {
+                return repository.update(client);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        },executorService);
     }
 
     @Override
-    public Future<Set<Client>> getAllClients() throws SQLException {
-        Iterable<domain.Client> clients = repository.findAll();
-        Set<Client> result = StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
-        return executorService.submit(()->result);
+    public CompletableFuture<Set<Client>> getAllClients() throws SQLException {
+        return CompletableFuture.supplyAsync(()->{
+            Iterable<Client> clients = null;
+            try {
+                clients = repository.findAll();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
+        },executorService);
     }
 
     /*POST:Returns all students whose name contain the given string.
      PRE: @param s
      */
     @Override
-    public Future<Set<domain.Client>> filterClientsByName(String s) throws SQLException {
-        return executorService.submit(()->{
-            Iterable<domain.Client> clients = repository.findAll();
+    public CompletableFuture<Set<Client>> filterClientsByName(String s) throws SQLException {
+        return CompletableFuture.supplyAsync(()->{
+            Iterable<Client> clients = null;
+            try {
+                clients = repository.findAll();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             Set<domain.Client> filteredClients= new HashSet<>();
             clients.forEach(filteredClients::add);
             filteredClients.removeIf(student -> !student.getName().contains(s));
             return filteredClients;
-        });
+        },executorService);
     }
     @Override
-    public Future<Optional<Client>> findOneClient(Long clientID) throws SQLException {
-        return executorService.submit(()->repository.findOne(clientID));
+    public CompletableFuture<Optional<Client>> findOneClient(Long clientID) throws SQLException {
+        return CompletableFuture.supplyAsync(()-> {
+            try {
+                return repository.findOne(clientID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        },executorService);
     }
 
 }

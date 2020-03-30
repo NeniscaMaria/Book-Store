@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
@@ -43,7 +43,7 @@ public class TCPServer {
         addHandler(ClientServiceInterface.GET_ALL_CLIENTS,
                 (request) -> {
                     try {
-                        Future<Set<Client>> clients = clientService.getAllClients();
+                        CompletableFuture<Set<Client>> clients = clientService.getAllClients();
                         return new Message("success", clients.get().stream().map(Client::toString).reduce("",(a, b)->a+b));
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("error", e.getMessage());
@@ -54,7 +54,7 @@ public class TCPServer {
                 (request) -> {
                     try {
                         Long id = Long.parseLong(request.getBody());
-                        Future<Optional<Client>> client = clientService.removeClient(id);
+                        CompletableFuture<Optional<Client>> client = clientService.removeClient(id);
                         if(client.get().isEmpty())
                             return new Message("No client matched this ID.","");
                         return new Message("Client removed successfully", "");
@@ -67,18 +67,18 @@ public class TCPServer {
         addClientHandler(ClientServiceInterface.ADD_CLIENT,
                 (entity)->{
                     try {
-                        Future<Optional<Client>> client = clientService.addClient(entity);
+                        CompletableFuture<Optional<Client>> client = clientService.addClient(entity);
                         if(client.get().isEmpty())
                             return new Message("Client saved successfully.","");
                         return new Message("A client with this ID already exists.", "");
-                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while deleting client.", e.getMessage());
                     }
                 });
         addClientHandler(ClientServiceInterface.UPDATE_CLIENT,
                 (entity)->{
                     try {
-                        Future<Optional<Client>> client = clientService.updateClient(entity);
+                        CompletableFuture<Optional<Client>> client = clientService.updateClient(entity);
                         if(client.get().isEmpty())
                             return new Message("Client updated successfully.","");
                         return new Message("Fail at update client.", "");
@@ -89,7 +89,7 @@ public class TCPServer {
         addHandler(ClientServiceInterface.FIND_ONE,
                 (ID)->{
                     try {
-                        Future<Optional<Client>> client = clientService.findOneClient(Long.parseLong(ID.getBody()));
+                        CompletableFuture<Optional<Client>> client = clientService.findOneClient(Long.parseLong(ID.getBody()));
                         if(client.get().isEmpty())
                             return new Message("No client with this ID.","");
                         return new Message("succes.", client.get().get().toString());
@@ -100,7 +100,7 @@ public class TCPServer {
         addHandler(ClientServiceInterface.FILTER_NAME,
                 (request)->{
                     try {
-                        Future<Set<Client>> clients = clientService.filterClientsByName(request.getBody());
+                        CompletableFuture<Set<Client>> clients = clientService.filterClientsByName(request.getBody());
                         return new Message("success", clients.get().stream().map(Client::toString).reduce("",(a, b)->a+b));
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while filtering clients.", e.getMessage());
@@ -115,7 +115,7 @@ public class TCPServer {
         addHandler(PurchaseServiceInterface.GET_ALL_PURCHASES,
                 (request) -> {
                     try {
-                        Future<Set<Purchase>> purchases = purchaseService.getAllPurchases();
+                        CompletableFuture<Set<Purchase>> purchases = purchaseService.getAllPurchases();
                         return new Message("success", purchases.get().stream().map(Purchase::toString).reduce("",(a, b)->a+b));
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("error", e.getMessage());
@@ -126,7 +126,7 @@ public class TCPServer {
                 (request) -> {
                     try {
                         Long id = Long.parseLong(request.getBody());
-                        Future<Optional<Purchase>> client = purchaseService.removePurchase(id);
+                        CompletableFuture<Optional<Purchase>> client = purchaseService.removePurchase(id);
                         if(client.get().isEmpty())
                             return new Message("No purchase matched this ID.","");
                         return new Message("Purchase removed successfully", "");
@@ -139,7 +139,7 @@ public class TCPServer {
         addPurchaseHandler(PurchaseServiceInterface.ADD_PURCHASE,
                 (entity)->{
                     try {
-                        Future<Optional<Purchase>> purchase = purchaseService.addPurchase(entity);
+                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.addPurchase(entity);
                         if(purchase.get().isEmpty())
                             return new Message("Purchase saved successfully.","");
                         return new Message("A purchase with this ID already exists.", "");
@@ -150,7 +150,7 @@ public class TCPServer {
         addPurchaseHandler(PurchaseServiceInterface.UPDATE_PURCHASE,
                 (entity)->{
                     try {
-                        Future<Optional<Purchase>> purchase = purchaseService.updatePurchase(entity);
+                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.updatePurchase(entity);
                         if(purchase.get().isEmpty())
                             return new Message("Purchase updated successfully.","");
                         return new Message("Fail at update purchase.", "");
@@ -161,7 +161,7 @@ public class TCPServer {
         addHandler(PurchaseServiceInterface.FIND_ONE,
                 (request)->{
                     try {
-                        Future<Optional<Purchase>> purchase = purchaseService.findOnePurchase(Long.parseLong(request.getBody()));
+                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.findOnePurchase(Long.parseLong(request.getBody()));
                         if(purchase.get().isEmpty())
                             return new Message("No client with this ID.","");
                         return new Message("success", purchase.get().get().toString());
@@ -172,7 +172,7 @@ public class TCPServer {
         addHandler(PurchaseServiceInterface.FILTER,
                 (request)->{
                     try {
-                        Future<Set<Purchase>> purchases = purchaseService.filterPurchasesByClientID(Long.parseLong(request.getBody()));
+                        CompletableFuture<Set<Purchase>> purchases = purchaseService.filterPurchasesByClientID(Long.parseLong(request.getBody()));
                         return new Message("success", purchases.get().stream().map(Purchase::toString).reduce("",(a, b)->a+b));
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while filtering purchases.", e.getMessage());

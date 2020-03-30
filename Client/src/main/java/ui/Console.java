@@ -12,7 +12,7 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 public class Console {
     private ClientService clientService;
     private PurchaseService purchaseService;
@@ -136,9 +136,11 @@ public class Console {
             System.out.println("Filter after: ");
             String name = bufferRead.readLine();
             System.out.println("filtered clients (name containing "+name+" ):");
-            Future<Message> result = clientService.filterClientsByName(name);
-            System.out.println(result.get().getBody());
-        } catch (IOException | SQLException | InterruptedException | ExecutionException ex) {
+            CompletableFuture<Message> result = clientService.filterClientsByName(name);
+            result.thenAccept(r->{
+                System.out.println(r.getBody());
+            });
+        } catch (IOException | SQLException ex) {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
 
@@ -151,37 +153,32 @@ public class Console {
         Scanner key = new Scanner(System.in);
         System.out.println("ID of client to be removed:");
         Long id = key.nextLong();
-        Future<Message> result = clientService.removeClient(id);
-        try {
-            System.out.println(result.get().getHeader());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        CompletableFuture<Message> result = clientService.removeClient(id);
+        result.thenAccept(r->{
+            System.out.println(r.getHeader());
+        });
 
     }
 
     private void printAllClients() {
-        Future<Message> clients = clientService.getAllClients();
-        try {
-            System.out.println(clients.get().getBody());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        CompletableFuture<Message> clients = clientService.getAllClients();
+        clients.thenAccept(c->{
+            System.out.println(c.getBody());
+        });
     }
 
     private void addClient() {
        ///DESCR: function that saves a new client
 
         Optional<Client> client = readClient();
-        client.ifPresent(c->{
+        client.ifPresent(c-> {
             try {
-                Future<Message> result = clientService.addClient(c);
-                System.out.println(result.get().getHeader());
-                //result.ifPresent(r-> System.out.println("A client with this ID already exists."));
+                CompletableFuture<Message> result = clientService.addClient(c);
+                result.thenAccept(r -> {
+                    System.out.println(r.getHeader());
+                });
             } catch (ValidatorException e) {
                 System.out.println(e.getMessage());
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
             }
         });
     }
@@ -272,12 +269,10 @@ public class Console {
     }
 
     private void displayPurchases(){
-        Future<Message> purchases = purchaseService.getAllPurchases();
-        try {
-            System.out.println(purchases.get().getBody());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        CompletableFuture<Message> purchases = purchaseService.getAllPurchases();
+        purchases.thenAccept(p->{
+            System.out.println(p.getBody());
+        });
     }
 
     private void updatePurchase(){
@@ -300,12 +295,10 @@ public class Console {
         Scanner key = new Scanner(System.in);
         System.out.println("ID of purchase to be removed:");
         Long id = key.nextLong();
-        Future<Message> result = purchaseService.removePurchase(id);
-        try {
-            System.out.println(result.get().getHeader());
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
+        CompletableFuture<Message> result = purchaseService.removePurchase(id);
+        result.thenAccept(r->{
+            System.out.println(r.getHeader());
+        });
 
     }
 
@@ -362,9 +355,11 @@ public class Console {
         System.out.println("Filter: ");
         try {
             Long filter = Long.parseLong(bufferRead.readLine());
-            Future<Message> result = purchaseService.filterPurchasesByClientID(filter);
-            System.out.println(result.get().getBody());
-        } catch (IOException | InterruptedException | ExecutionException | SQLException e) {
+            CompletableFuture<Message> result = purchaseService.filterPurchasesByClientID(filter);
+            result.thenAccept(r->{
+                System.out.println(r.getBody());
+            });
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
 

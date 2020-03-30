@@ -15,7 +15,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -29,26 +29,54 @@ public class PurchaseService  implements PurchaseServiceInterface {
         this.executorService = executorService;
     }
 
-    public Future<Optional<Purchase>> addPurchase(domain.Purchase purchase) throws ValidatorException{
-        return executorService.submit(()->repository.save(purchase));
+    public CompletableFuture<Optional<Purchase>> addPurchase(domain.Purchase purchase) throws ValidatorException{
+        return CompletableFuture.supplyAsync(()-> {
+            try {
+                return repository.save(purchase);
+            } catch (ParserConfigurationException | IOException | SAXException | TransformerException | SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        },executorService).handle((res, ex)->{return Optional.empty();});
     }
 
     public void removeClients(Long ID) throws IOException, SAXException, ParserConfigurationException {
         repository.removeEntitiesWithClientID(ID);
     }
 
-    public Future<Optional<Purchase>> removePurchase(Long ID) throws SQLException {
-        return executorService.submit(()->repository.delete(ID));
+    public CompletableFuture<Optional<Purchase>> removePurchase(Long ID) throws SQLException {
+        return CompletableFuture.supplyAsync(()-> {
+            try {
+                return repository.delete(ID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        },executorService);
     }
 
-    public Future<Optional<Purchase>> updatePurchase(domain.Purchase purchase) throws ValidatorException, SQLException {
-        return executorService.submit(()->repository.update(purchase));
+    public CompletableFuture<Optional<Purchase>> updatePurchase(domain.Purchase purchase) throws ValidatorException, SQLException {
+        return CompletableFuture.supplyAsync(()-> {
+            try {
+                return repository.update(purchase);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        },executorService);
     }
 
-    public Future<Set<Purchase>> getAllPurchases() throws SQLException {
-        Iterable<domain.Purchase> purchases= repository.findAll();
-        Set<Purchase> result = StreamSupport.stream(purchases.spliterator(), false).collect(Collectors.toSet());
-        return executorService.submit(()->result);
+    public CompletableFuture<Set<Purchase>> getAllPurchases() throws SQLException {
+
+        return CompletableFuture.supplyAsync(()->{
+            Iterable<Purchase> purchases= null;
+            try {
+                purchases = repository.findAll();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return StreamSupport.stream(purchases.spliterator(), false).collect(Collectors.toSet());
+        },executorService);
     }
 
     public Iterable<Purchase> getAllPurchases(String ...a) throws SQLException {
@@ -62,17 +90,29 @@ public class PurchaseService  implements PurchaseServiceInterface {
 
     }
 
-    public Future<Set<domain.Purchase>> filterPurchasesByClientID(Long clientID) throws SQLException {
-        return executorService.submit(()->{
-            Iterable<domain.Purchase> purchases = repository.findAll();
+    public CompletableFuture<Set<Purchase>> filterPurchasesByClientID(Long clientID) throws SQLException {
+        return CompletableFuture.supplyAsync(()->{
+            Iterable<Purchase> purchases = null;
+            try {
+                purchases = repository.findAll();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             Set<domain.Purchase> filteredPurchases= new HashSet<>();
             purchases.forEach(filteredPurchases::add);
             filteredPurchases.removeIf(purchase -> !(purchase.getClientID()==clientID));
             return filteredPurchases;
-        });
+        },executorService);
     }
 
-    public Future<Optional<Purchase>> findOnePurchase(Long purchaseID) throws SQLException {
-        return executorService.submit(()->repository.findOne(purchaseID));
+    public CompletableFuture<Optional<Purchase>> findOnePurchase(Long purchaseID) throws SQLException {
+        return CompletableFuture.supplyAsync(()-> {
+            try {
+                return repository.findOne(purchaseID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        },executorService);
     }
 }

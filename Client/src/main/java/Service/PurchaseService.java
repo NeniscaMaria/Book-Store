@@ -13,7 +13,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -26,28 +26,27 @@ public class PurchaseService {
         this.tcpClient = tcpClient;
     }
 
-    public Future<Message> getAllPurchases(){
-        return executorService.submit(()->{
+    public CompletableFuture<Message> getAllPurchases(){
+        return CompletableFuture.supplyAsync(()->{
             //create request
             Message request  = new Message(PurchaseServiceInterface.GET_ALL_PURCHASES,"");
             //send request to server and receive answer
-            Message response = tcpClient.sendAndReceive(request);
-            return response;
-        });
+            return tcpClient.sendAndReceive(request);
+        },executorService);
     }
 
-    public Future<Message> removePurchase(Long id){
-        return executorService.submit(()->{
+    public CompletableFuture<Message> removePurchase(Long id){
+        return CompletableFuture.supplyAsync(()->{
             String ID = String.valueOf(id);
             Message request = new Message(PurchaseServiceInterface.REMOVE_PURCHASE,ID);
             return tcpClient.sendAndReceive(request);
-        });
+        },executorService);
     }
 
-    public Future<Message> addPurchases(Purchase purchase){
+    public CompletableFuture<Message> addPurchases(Purchase purchase){
         return null;
     }
-    public Future<Message> updatePurchase(Purchase purchase) {
+    public CompletableFuture<Message> updatePurchase(Purchase purchase) {
         /*return executorService.submit(()->{
             Message request = new Message(PurchaseServiceInterface.UPDATE_PURCHASE,purchase);
             Message response = tcpClient.sendAndReceive(request);
@@ -55,20 +54,20 @@ public class PurchaseService {
         });*/
         return null;
     }
-    public Future<Message> filterPurchasesByClientID(Long id) throws SQLException {
-        return executorService.submit(()->{
+    public CompletableFuture<Message> filterPurchasesByClientID(Long id) throws SQLException {
+        return CompletableFuture.supplyAsync(()->{
             String ID = String.valueOf(id);
             Message request = new Message(PurchaseServiceInterface.FILTER,ID);
             return tcpClient.sendAndReceive(request);
         });
     }
 
-    public Future<Message> findOnePurchase(Long id) throws SQLException {
-        return executorService.submit(()->{
+    public CompletableFuture<Message> findOnePurchase(Long id) throws SQLException {
+        return CompletableFuture.supplyAsync(()->{
             String ID = String.valueOf(id);
             Message request = new Message(PurchaseServiceInterface.FIND_ONE,ID);
             return tcpClient.sendAndReceive(request);
-        });
+        },executorService);
     }
 }
 
