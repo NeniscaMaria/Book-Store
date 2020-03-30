@@ -4,26 +4,24 @@ import SDI.server.service.BookService;
 import SDI.server.service.ClientService;
 import SDI.server.service.PurchaseService;
 import Service.ClientServiceInterface;
+import Service.PurchaseServiceInterface;
 import domain.*;
-import domain.Message;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.function.Function;
 import java.util.function.UnaryOperator;
-import java.util.stream.Stream;
 
 public class TCPServer {
     private ExecutorService executorService;
-    private Map<String, UnaryOperator<Message>> methodHandlers;
+    private Map<String, UnaryOperator<Message>> methodHandlers; //for methods that return string
+    private Map<String, Function<Client,Message>> clientHandlers; //for methods that need a Client as parameter
+    private Map<String, Function<Purchase,Message>> purchaseHandlers; //for methods that need a Purchase as parameter
 
     private ClientService clientService;
     private BookService bookService ;
@@ -32,6 +30,8 @@ public class TCPServer {
     public TCPServer(ExecutorService executorService, ClientService clientService, BookService bookService, PurchaseService purchaseService) {
         this.executorService = executorService;
         methodHandlers = new HashMap<>();
+        clientHandlers = new HashMap<>();
+        purchaseHandlers = new HashMap<>();
         this.clientService = clientService;
         this.purchaseService = purchaseService;
         this.bookService = bookService;
@@ -44,7 +44,7 @@ public class TCPServer {
                 (request) -> {
                     try {
                         Future<Set<Client>> clients = clientService.getAllClients();
-                        return new Message("success", clients.get().stream().map(a->a.toString()).reduce("",(a,b)->a+b));
+                        return new Message("success", clients.get().stream().map(Client::toString).reduce("",(a, b)->a+b));
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("error", e.getMessage());
                     }
@@ -64,35 +64,65 @@ public class TCPServer {
 
                 });
         //uncomment when fixed message
-        /*addHandler(ClientServiceInterface.ADD_CLIENT,
-                (request)->{
+        addClientHandler(ClientServiceInterface.ADD_CLIENT,
+                (entity)->{
                     try {
-                        Client client = request.getBody());
-                        Future<Optional<Client>> client = clientService.addClient(client);
+                        Future<Optional<Client>> client = clientService.addClient(entity);
                         if(client.get().isEmpty())
                             return new Message("Client saved successfully.","");
                         return new Message("A client with this ID already exists.", "");
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while deleting client.", e.getMessage());
                     }
-                });*/
+                });
+        addClientHandler(ClientServiceInterface.UPDATE_CLIENT,
+                (entity)->{
+                    try {
+                        Future<Optional<Client>> client = clientService.updateClient(entity);
+                        if(client.get().isEmpty())
+                            return new Message("Client updated successfully.","");
+                        return new Message("Fail at update client.", "");
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while updating client.", e.getMessage());
+                    }
+                });
+        addHandler(ClientServiceInterface.FIND_ONE,
+                (ID)->{
+                    try {
+                        Future<Optional<Client>> client = clientService.findOneClient(Long.parseLong(ID.getBody()));
+                        if(client.get().isEmpty())
+                            return new Message("No client with this ID.","");
+                        return new Message("succes.", client.get().get().toString());
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while finding client.", e.getMessage());
+                    }
+                });
+        addHandler(ClientServiceInterface.FILTER_NAME,
+                (request)->{
+                    try {
+                        Future<Set<Client>> clients = clientService.filterClientsByName(request.getBody());
+                        return new Message("success", clients.get().stream().map(Client::toString).reduce("",(a, b)->a+b));
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while filtering clients.", e.getMessage());
+                    }
+                });
     }
 
     //TODO
     private void initializeHandlersBooks(){}
     //TODO
     private void initializeHandlersPurchases(){
-        addHandler(PurchaseService.GET_ALL_PURCHASES,
+        addHandler(PurchaseServiceInterface.GET_ALL_PURCHASES,
                 (request) -> {
                     try {
                         Future<Set<Purchase>> purchases = purchaseService.getAllPurchases();
-                        return new Message("success", purchases.get().stream().map(a->a.toString()).reduce("",(a,b)->a+b));
+                        return new Message("success", purchases.get().stream().map(Purchase::toString).reduce("",(a, b)->a+b));
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("error", e.getMessage());
                     }
 
                 });
-        addHandler(PurchaseService.REMOVE_PURCHASE,
+        addHandler(PurchaseServiceInterface.REMOVE_PURCHASE,
                 (request) -> {
                     try {
                         Long id = Long.parseLong(request.getBody());
@@ -105,6 +135,49 @@ public class TCPServer {
                     }
 
                 });
+        //uncomment when fixed message
+        addPurchaseHandler(PurchaseServiceInterface.ADD_PURCHASE,
+                (entity)->{
+                    try {
+                        Future<Optional<Purchase>> purchase = purchaseService.addPurchase(entity);
+                        if(purchase.get().isEmpty())
+                            return new Message("Purchase saved successfully.","");
+                        return new Message("A purchase with this ID already exists.", "");
+                    } catch (InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while adding purchase client.", e.getMessage());
+                    }
+                });
+        addPurchaseHandler(PurchaseServiceInterface.UPDATE_PURCHASE,
+                (entity)->{
+                    try {
+                        Future<Optional<Purchase>> purchase = purchaseService.updatePurchase(entity);
+                        if(purchase.get().isEmpty())
+                            return new Message("Purchase updated successfully.","");
+                        return new Message("Fail at update purchase.", "");
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while updating client.", e.getMessage());
+                    }
+                });
+        addHandler(PurchaseServiceInterface.FIND_ONE,
+                (request)->{
+                    try {
+                        Future<Optional<Purchase>> purchase = purchaseService.findOnePurchase(Long.parseLong(request.getBody()));
+                        if(purchase.get().isEmpty())
+                            return new Message("No client with this ID.","");
+                        return new Message("success", purchase.get().get().toString());
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while finding client.", e.getMessage());
+                    }
+                });
+        addHandler(PurchaseServiceInterface.FILTER,
+                (request)->{
+                    try {
+                        Future<Set<Purchase>> purchases = purchaseService.filterPurchasesByClientID(Long.parseLong(request.getBody()));
+                        return new Message("success", purchases.get().stream().map(Purchase::toString).reduce("",(a, b)->a+b));
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("Server-side error while filtering purchases.", e.getMessage());
+                    }
+                });
     }
 
     private void initializeHandlers(){
@@ -115,6 +188,14 @@ public class TCPServer {
 
     public void addHandler(String methodName, UnaryOperator<Message> handler){
         methodHandlers.put(methodName,handler);
+    }
+
+    public void addClientHandler(String methodName, Function<Client,Message> handler){
+        clientHandlers.put(methodName,handler);
+    }
+
+    public void addPurchaseHandler(String methodName, Function<Purchase,Message> handler){
+        purchaseHandlers.put(methodName,handler);
     }
 
     public void startServer(){

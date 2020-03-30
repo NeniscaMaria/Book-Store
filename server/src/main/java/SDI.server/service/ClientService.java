@@ -3,6 +3,7 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.ClientDBRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
+import domain.Message;
 import domain.ValidatorException;
 import Service.ClientServiceInterface;
 import domain.Client;
@@ -29,7 +30,7 @@ public class ClientService implements ClientServiceInterface {
     }
 
     @Override
-    public Future<Optional<Client>> addClient(domain.Client client) throws SQLException, ValidatorException {
+    public Future<Optional<Client>> addClient(Client client) throws SQLException, ValidatorException {
         return executorService.submit(()->repository.save(client));
     }
 
@@ -48,8 +49,9 @@ public class ClientService implements ClientServiceInterface {
         return executorService.submit(()->repository.delete(ID));
     }
 
-    public Optional<Client> updateClient(domain.Client client) throws ValidatorException, SQLException {
-        return repository.update(client);
+    @Override
+    public Future<Optional<Client>> updateClient(domain.Client client) throws ValidatorException, SQLException {
+        return executorService.submit(()->repository.update(client));
     }
 
     @Override
@@ -62,15 +64,19 @@ public class ClientService implements ClientServiceInterface {
     /*POST:Returns all students whose name contain the given string.
      PRE: @param s
      */
-    public Set<domain.Client> filterClientsByName(String s) throws SQLException {
-        Iterable<domain.Client> clients = repository.findAll();
-        Set<domain.Client> filteredClients= new HashSet<>();
-        clients.forEach(filteredClients::add);
-        filteredClients.removeIf(student -> !student.getName().contains(s));
+    @Override
+    public Future<Set<domain.Client>> filterClientsByName(String s) throws SQLException {
+        return executorService.submit(()->{
+            Iterable<domain.Client> clients = repository.findAll();
+            Set<domain.Client> filteredClients= new HashSet<>();
+            clients.forEach(filteredClients::add);
+            filteredClients.removeIf(student -> !student.getName().contains(s));
+            return filteredClients;
+        });
+    }
+    @Override
+    public Future<Optional<Client>> findOneClient(Long clientID) throws SQLException {
+        return executorService.submit(()->repository.findOne(clientID));
+    }
 
-        return filteredClients;
-    }
-    public Optional<Client> findOneClient(Long clientID) throws SQLException {
-        return repository.findOne(clientID);
-    }
 }

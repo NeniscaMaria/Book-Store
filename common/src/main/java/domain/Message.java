@@ -8,7 +8,6 @@ public class Message {
 
     private String header;
     private String body;
-    private int numberOfLines=1;
 
     public Message() {
     }
@@ -16,20 +15,6 @@ public class Message {
     public Message(String header, String body) {
         this.header = header;
         this.body = body;
-    }
-
-    public Message(String header, String body, int lines) {
-        this.header = header;
-        this.body = body;
-        numberOfLines = lines;
-    }
-
-    public int getNumberOfLines() {
-        return numberOfLines;
-    }
-
-    public void setNumberOfLines(int numberOfLines) {
-        this.numberOfLines = numberOfLines;
     }
 
     public String getHeader() {

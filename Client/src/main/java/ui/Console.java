@@ -6,13 +6,10 @@ import domain.Client;
 import domain.Message;
 import domain.Purchase;
 import domain.ValidatorException;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -80,7 +77,7 @@ public class Console {
                         deletePurchase();
                         break;
                     case 15:
-                        //filterPurchases();
+                        filterPurchases();
                         break;
                     case 16:
                         //getReport();
@@ -129,22 +126,24 @@ public class Console {
     }
 
     //******************************************************************************************************************
-    //Client functions:
+    //CLIENT
+    //WHAT WORKS:
+    //delete, display, filter
+    //******************************************************************************************************************
     private void filterClients() {
-        /*BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
         try {
             System.out.println("Filter after: ");
             String name = bufferRead.readLine();
             System.out.println("filtered clients (name containing "+name+" ):");
-            Set<Client> students = clientService.filterClientsByName(name);
-            students.stream().forEach(System.out::println);
-        } catch (IOException ex) {
+            Future<Message> result = clientService.filterClientsByName(name);
+            System.out.println(result.get().getBody());
+        } catch (IOException | SQLException | InterruptedException | ExecutionException ex) {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
+
             System.out.println("Please input a valid format.");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }*/
+        }
 
     }
 
@@ -253,6 +252,8 @@ public class Console {
 
     //******************************************************************************************************************
     //PURCHASES
+    //WHAT WORKS:
+    //delete, display, filter
     //******************************************************************************************************************
 
     private void addPurchase(){
@@ -357,15 +358,15 @@ public class Console {
     }
 
     private void filterPurchases() {
-       /* BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+       BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Filter: ");
         try {
             Long filter = Long.parseLong(bufferRead.readLine());
-            Set<Purchase> filteredPurchase = purchaseService.filterPurchasesByClientID(filter);
-            filteredPurchase.forEach(System.out::println);
-        } catch (IOException | SQLException e) {
+            Future<Message> result = purchaseService.filterPurchasesByClientID(filter);
+            System.out.println(result.get().getBody());
+        } catch (IOException | InterruptedException | ExecutionException | SQLException e) {
             e.printStackTrace();
-        }*/
+        }
 
     }
 

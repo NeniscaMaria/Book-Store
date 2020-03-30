@@ -2,8 +2,6 @@ import Service.ClientService;
 import Service.PurchaseService;
 import TCP.TCPClient;
 import ui.Console;
-
-import java.sql.Connection;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

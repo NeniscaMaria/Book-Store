@@ -9,14 +9,16 @@ import domain.ValidatorException;
 
 import java.sql.SQLException;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 public class PurchaseValidator implements Validator<Purchase> {
     private ClientService clients;
     private BookService books;
 
-    private boolean clientExists(Long ID) throws SQLException { //checks if a client with this ID exists
-        Optional<Client> client = clients.findOneClient(ID);
-        return client.isPresent();
+    private boolean clientExists(Long ID) throws SQLException, ExecutionException, InterruptedException { //checks if a client with this ID exists
+        Future<Optional<Client>> client = clients.findOneClient(ID);
+        return client.get().isPresent();
     }
 
     private boolean bookExists(Long ID) throws SQLException {//checks if a book with this ID exists
@@ -43,7 +45,7 @@ public class PurchaseValidator implements Validator<Purchase> {
             try {
                 if (!clientExists(entity.getClientID()))
                     throw new ValidatorException("This client does not exist.");
-            } catch (SQLException e) {
+            } catch (SQLException | InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
             try {

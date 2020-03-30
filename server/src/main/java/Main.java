@@ -13,7 +13,6 @@ import SDI.server.validators.Validator;
 import domain.Book;
 import domain.Client;
 import domain.Purchase;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -36,7 +35,6 @@ public class Main {
             Repository<Long, Purchase> purchaseRepository = new PurchaseDataBaseRepository(purchaseValidator, bookRepository);
             PurchaseService purchaseService = new PurchaseService(purchaseRepository,executorService);
 
-            //adding method handlers
             TCPServer server = new TCPServer(executorService,clientService,bookService,purchaseService);
             System.out.println("Server started.");
             server.startServer();
