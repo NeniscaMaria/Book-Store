@@ -3,17 +3,17 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.ClientDBRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
-import domain.Message;
 import domain.ValidatorException;
 import Service.ClientServiceInterface;
 import domain.Client;
 import org.xml.sax.SAXException;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.Optional;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.CompletableFuture;
@@ -30,14 +30,18 @@ public class ClientService implements ClientServiceInterface {
     }
 
     @Override
-    public CompletableFuture<Optional<Client>> addClient(Client client) throws ValidatorException {
-        /*return CompletableFuture.supplyAsync(()-> {
-                repository.save(client);
-        },executorService).handle((res,ex)->{return Optional.empty();});*/
-        return null;
+    public synchronized CompletableFuture<Optional<Client>> addClient(Client client) throws ValidatorException {
+        return CompletableFuture.supplyAsync(()-> {
+            try {
+                return repository.save(client);
+            } catch (ParserConfigurationException | IOException | SAXException | TransformerException | SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        },executorService).handle((res,ex)->{return Optional.empty();});
     }
 
-    public Iterable<Client> getAllClients(String ...a) throws SQLException {
+    public synchronized Iterable<Client> getAllClients(String ...a) throws SQLException {
         Iterable<Client> clients;
         if (repository instanceof ClientDBRepository){
             clients = ((ClientDBRepository)repository).findAll(new Sort(a).and(new Sort(a)));
@@ -48,7 +52,7 @@ public class ClientService implements ClientServiceInterface {
     }
 
     @Override
-    public CompletableFuture<Optional<Client>> removeClient(Long ID) throws SQLException {
+    public synchronized CompletableFuture<Optional<Client>> removeClient(Long ID) throws SQLException {
         return CompletableFuture.supplyAsync(()-> {
             try {
                 return repository.delete(ID);
@@ -60,7 +64,7 @@ public class ClientService implements ClientServiceInterface {
     }
 
     @Override
-    public CompletableFuture<Optional<Client>> updateClient(domain.Client client) throws ValidatorException, SQLException {
+    public synchronized CompletableFuture<Optional<Client>> updateClient(domain.Client client) throws ValidatorException, SQLException {
         return CompletableFuture.supplyAsync(()-> {
             try {
                 return repository.update(client);
@@ -72,7 +76,7 @@ public class ClientService implements ClientServiceInterface {
     }
 
     @Override
-    public CompletableFuture<Set<Client>> getAllClients() throws SQLException {
+    public synchronized CompletableFuture<HashSet<Client>> getAllClients() throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             Iterable<Client> clients = null;
             try {
@@ -80,7 +84,7 @@ public class ClientService implements ClientServiceInterface {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
+            return (HashSet)StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
         },executorService);
     }
 
@@ -88,7 +92,7 @@ public class ClientService implements ClientServiceInterface {
      PRE: @param s
      */
     @Override
-    public CompletableFuture<Set<Client>> filterClientsByName(String s) throws SQLException {
+    public synchronized CompletableFuture<HashSet<Client>> filterClientsByName(String s) throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             Iterable<Client> clients = null;
             try {
@@ -96,14 +100,14 @@ public class ClientService implements ClientServiceInterface {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            Set<domain.Client> filteredClients= new HashSet<>();
+            HashSet<domain.Client> filteredClients= new HashSet<>();
             clients.forEach(filteredClients::add);
             filteredClients.removeIf(student -> !student.getName().contains(s));
-            return filteredClients;
+            return (HashSet)filteredClients;
         },executorService);
     }
     @Override
-    public CompletableFuture<Optional<Client>> findOneClient(Long clientID) throws SQLException {
+    public synchronized CompletableFuture<Optional<Client>> findOneClient(Long clientID) throws SQLException {
         return CompletableFuture.supplyAsync(()-> {
             try {
                 return repository.findOne(clientID);

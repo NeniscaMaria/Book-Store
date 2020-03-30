@@ -3,6 +3,8 @@ package TCP;
 import domain.Message;
 import domain.ServerException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class TCPClient {
@@ -12,12 +14,16 @@ public class TCPClient {
             var os = socket.getOutputStream()){
 
             //send request
-            request.writeTo(os);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            oos.writeObject(request);
+            //request.writeTo(os);
             //receive response
-            Message response = new Message();
-            response.readFrom(is);
+            ObjectInputStream ois = new ObjectInputStream(is);
+            Message response = (Message)ois.readObject();
+            //response.readFrom(is);
+            System.out.println("TCPClient response received: "+response);
             return response;
-        } catch (IOException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new ServerException("error connecting to server "+e.getMessage(),e);
         }
     }

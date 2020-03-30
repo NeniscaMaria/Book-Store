@@ -2,17 +2,17 @@ package domain;
 
 import java.io.*;
 
-public class Message {
+public class Message<T> implements Serializable{
     public static final int PORT = 1234;
     public static final String HOST = "localhost";
 
     private String header;
-    private String body;
+    private T body;
 
     public Message() {
     }
 
-    public Message(String header, String body) {
+    public Message(String header, T body) {
         this.header = header;
         this.body = body;
     }
@@ -25,14 +25,14 @@ public class Message {
         this.header = header;
     }
 
-    public String getBody() {
+    public T getBody() {
         return body;
     }
 
-    public void setBody(String body) {
+    public void setBody(T body) {
         this.body = body;
     }
-
+    /*
     public void writeTo(OutputStream os) throws IOException {
         os.write((header + System.lineSeparator() + body + System.lineSeparator()).getBytes());
     }
@@ -42,7 +42,7 @@ public class Message {
         header = br.readLine();
         body =br.readLine();
     }
-
+*/
     @Override
     public String toString() {
         return "Message{" +

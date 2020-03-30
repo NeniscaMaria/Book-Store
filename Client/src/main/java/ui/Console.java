@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.CompletableFuture;
 public class Console {
     private ClientService clientService;
@@ -65,13 +64,13 @@ public class Console {
                         //updateBook();
                         break;
                     case 11:
-                        //addPurchase();
+                        addPurchase();
                         break;
                     case 12:
                         displayPurchases();
                         break;
                     case 13:
-                        //updatePurchase();
+                        updatePurchase();
                         break;
                     case 14:
                         deletePurchase();
@@ -128,7 +127,8 @@ public class Console {
     //******************************************************************************************************************
     //CLIENT
     //WHAT WORKS:
-    //delete, display, filter
+    //add, update properly
+    //filter, display and delete but returns string
     //******************************************************************************************************************
     private void filterClients() {
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -136,14 +136,14 @@ public class Console {
             System.out.println("Filter after: ");
             String name = bufferRead.readLine();
             System.out.println("filtered clients (name containing "+name+" ):");
-            CompletableFuture<Message> result = clientService.filterClientsByName(name);
+            CompletableFuture<Message<Set<Client>>> result = clientService.filterClientsByName(name);
             result.thenAccept(r->{
                 System.out.println(r.getBody());
+                r.getBody().stream().forEach(System.out::println);
             });
         } catch (IOException | SQLException ex) {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
-
             System.out.println("Please input a valid format.");
         }
 
@@ -153,9 +153,11 @@ public class Console {
         Scanner key = new Scanner(System.in);
         System.out.println("ID of client to be removed:");
         Long id = key.nextLong();
-        CompletableFuture<Message> result = clientService.removeClient(id);
+        CompletableFuture<Message<Optional<Client>>> result = clientService.removeClient(id);
         result.thenAccept(r->{
-            System.out.println(r.getHeader());
+            r.getBody().ifPresent(a->{
+                System.out.println("Continue with message");
+            });
         });
 
     }
@@ -167,15 +169,39 @@ public class Console {
         });
     }
 
+    private void sortClients() {
+       /* BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Please enter how to order the elements: ");
+
+
+        try {
+            if (bufferRead.readLine().equals("DESC"))
+                Sort.dir = Sort.Direction.DESC;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("Please enter your filters: ");
+
+        try {
+            Iterable<Client> clients = clientService.getAllClients(bufferRead.readLine().split(" "));
+            clients.forEach(System.out::println);
+        }catch(SQLException | IOException e){
+            System.out.println(e);
+        }*/
+    }
+
     private void addClient() {
        ///DESCR: function that saves a new client
 
         Optional<Client> client = readClient();
         client.ifPresent(c-> {
             try {
-                CompletableFuture<Message> result = clientService.addClient(c);
+                CompletableFuture<Message<Optional<Client>>> result = clientService.addClient(c);
                 result.thenAccept(r -> {
-                    System.out.println(r.getHeader());
+                    r.getBody().ifPresent(clientResult->{
+                        System.out.println("A client with this ID already exists");});
                 });
             } catch (ValidatorException e) {
                 System.out.println(e.getMessage());
@@ -211,61 +237,78 @@ public class Console {
     }
 
     private void updateClient(){
-        /*Optional<Client> client = readClient();
+
+        Optional<Client> client = readClient();
         client.ifPresent(c->{
             try {
-                Optional<Client> result = clientService.updateClient(c);
-                result.ifPresent(r -> {
-                    throw new ValidatorException("Client updated successfully!");});
-                throw new ValidatorException("A client with this ID was not found!");
-
+                CompletableFuture<Message<Optional<Client>>> result = clientService.updateClient(c);
+                result.thenAccept(r->{
+                    r.getBody().ifPresent(clientResult -> {
+                        System.out.println("A client with this ID was not found!");});
+                });
             } catch (ValidatorException | SQLException e) {
                 System.out.println(e.getMessage());
-            }});*/
-    }
-
-    private void sortClients() {
-       /* BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-
-        System.out.println("Please enter how to order the elements: ");
-
-
-        try {
-            if (bufferRead.readLine().equals("DESC"))
-                Sort.dir = Sort.Direction.DESC;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Please enter your filters: ");
-
-        try {
-            Iterable<Client> clients = clientService.getAllClients(bufferRead.readLine().split(" "));
-            clients.forEach(System.out::println);
-        }catch(SQLException | IOException e){
-            System.out.println(e);
-        }*/
+            }});
     }
 
     //******************************************************************************************************************
     //PURCHASES
     //WHAT WORKS:
-    //delete, display, filter
+    //update,add properly
+    //delete, display, filter but return string
     //******************************************************************************************************************
 
     private void addPurchase(){
-
-       /* Optional<Purchase> purchase = readPurchase();
+        Optional<Purchase> purchase = readPurchase();
         purchase.ifPresent(p->{
             try {
-                Optional<Purchase> pur = purchaseService.addPurchase(p);
-                pur.ifPresent(pp -> System.out.println("A purchase with this ID already exists"));
-
-            } catch (ParserConfigurationException | TransformerException | SAXException | IOException |SQLException  e) {
-                e.printStackTrace();
+                CompletableFuture<Message<Optional<Purchase>>> result = purchaseService.addPurchase(p);
+                result.thenAccept((r) -> {
+                    r.getBody().ifPresent(pp -> {
+                        System.out.println("A purchase with this ID already exists");
+                    });
+                });
+            }catch(ValidatorException ex){
+                System.out.println(ex.getMessage());
             }
+        });
+    }
+    private Optional<Purchase> readPurchase() {
+        System.out.println("Please enter a new purchase: ");
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        try {
+            System.out.println("ID: ");
+            Long id = Long.parseLong(bufferRead.readLine());
+            System.out.println("ID client: ");
+            Long idClient = Long.parseLong(bufferRead.readLine());
 
-        });*/
+            System.out.println("ID book: ");
+            Long idBook = Long.parseLong(bufferRead.readLine());
+
+            System.out.println("Number of books: ");
+            int nrBooks = Integer.parseInt(bufferRead.readLine());
+
+            Purchase purchase = new Purchase(idClient, idBook, nrBooks);
+            purchase.setId(id);
+            return Optional.of(purchase);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        return Optional.empty();
+    }
+    private void updatePurchase(){
+        Optional<Purchase> purchase = readPurchase();
+        purchase.ifPresent(p->{
+            CompletableFuture<Message<Optional<Purchase>>> result = purchaseService.updatePurchase(p);
+            try {
+                result.thenAccept(r -> {
+                    r.getBody().ifPresent(pp->{
+                        System.out.println("No Purchase with this ID.");});
+                });
+            }catch(ValidatorException ve){
+                System.out.println(ve.getMessage());
+            }
+        });
     }
 
     private void displayPurchases(){
@@ -273,22 +316,6 @@ public class Console {
         purchases.thenAccept(p->{
             System.out.println(p.getBody());
         });
-    }
-
-    private void updatePurchase(){
-/*
-        Optional<Purchase> purchase = readPurchase();
-        purchase.ifPresent(p->{
-            try {
-                Optional<Purchase> pp = purchaseService.updatePurchase(p);
-                pp.ifPresent(ppp -> {
-                    throw new ValidatorException("Purchase updated successfully");
-                });
-                throw new ValidatorException("This purchase was not found successfully");
-            }catch(SQLException e){
-                System.out.println(e);
-            }
-        });*/
     }
 
     private void deletePurchase(){
@@ -325,31 +352,6 @@ public class Console {
         }*/
     }
 
-
-    private Optional<Purchase> readPurchase() {
-        System.out.println("Please enter a new purchase: ");
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-        try {
-            System.out.println("ID: ");
-            Long id = Long.parseLong(bufferRead.readLine());
-            System.out.println("ID client: ");
-            Long idClient = Long.parseLong(bufferRead.readLine());
-
-            System.out.println("ID book: ");
-            Long idBook = Long.parseLong(bufferRead.readLine());
-
-            System.out.println("Number of books: ");
-            int nrBooks = Integer.parseInt(bufferRead.readLine());
-
-            Purchase purchase = new Purchase(idClient, idBook, nrBooks);
-            purchase.setId(id);
-            return Optional.of(purchase);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-        return Optional.empty();
-    }
-
     private void filterPurchases() {
        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Filter: ");
@@ -364,9 +366,6 @@ public class Console {
         }
 
     }
-
-
-
 
 
 /*

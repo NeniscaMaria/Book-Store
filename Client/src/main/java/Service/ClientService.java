@@ -6,6 +6,8 @@ import domain.Message;
 import domain.ValidatorException;
 
 import java.sql.SQLException;
+import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.CompletableFuture;
 
@@ -27,7 +29,7 @@ public class ClientService{
         },executorService);
     }
 
-    public CompletableFuture<Message> removeClient(Long id){
+    public CompletableFuture<Message<Optional<Client>>> removeClient(Long id){
         return CompletableFuture.supplyAsync(()->{
             String ID = String.valueOf(id);
             Message request = new Message(ClientServiceInterface.REMOVE_CLIENT,ID);
@@ -35,25 +37,27 @@ public class ClientService{
         },executorService);
     }
 
-    public CompletableFuture<Message> addClient(Client client){
-        return null;
+    public CompletableFuture<Message<Optional<Client>>> addClient(Client client){
+        return CompletableFuture.supplyAsync(()-> {
+            Message request = new Message(ClientServiceInterface.ADD_CLIENT, client);
+            return tcpClient.sendAndReceive(request);
+        },executorService);
     }
 
-    CompletableFuture<Message> updateClient(Client entity) throws SQLException, ValidatorException{
-        /*return executorService.submit(()->{
+    public CompletableFuture<Message<Optional<Client>>> updateClient(Client entity) throws SQLException, ValidatorException{
+        return CompletableFuture.supplyAsync(()->{
             Message request = new Message(ClientServiceInterface.UPDATE_CLIENT,entity);
             return tcpClient.sendAndReceive(request);
-        });*/
-        return null;
+        },executorService);
     }
-    public CompletableFuture<Message> findOneClient(Long id) throws SQLException{
+    public CompletableFuture<Message<Optional<Client>>> findOneClient(Long id) throws SQLException{
         return CompletableFuture.supplyAsync(()->{
             String ID = String.valueOf(id);
             Message request = new Message(ClientServiceInterface.FIND_ONE,ID);
             return tcpClient.sendAndReceive(request);
         },executorService);
     }
-    public CompletableFuture<Message> filterClientsByName(String s) throws SQLException{
+    public CompletableFuture<Message<Set<Client>>> filterClientsByName(String s) throws SQLException{
         return CompletableFuture.supplyAsync(()->{
             Message request = new Message(ClientServiceInterface.FILTER_NAME,s);
             return tcpClient.sendAndReceive(request);

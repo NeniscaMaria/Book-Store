@@ -1,6 +1,7 @@
 package Service;
 
 import TCP.TCPClient;
+import domain.Client;
 import domain.Message;
 import domain.Purchase;
 import domain.ValidatorException;
@@ -43,23 +44,24 @@ public class PurchaseService {
         },executorService);
     }
 
-    public CompletableFuture<Message> addPurchases(Purchase purchase){
-        return null;
+    public CompletableFuture<Message<Optional<Purchase>>> addPurchase(Purchase purchase){
+        return CompletableFuture.supplyAsync(()-> {
+            Message request = new Message(PurchaseServiceInterface.ADD_PURCHASE, purchase);
+            return tcpClient.sendAndReceive(request);
+        },executorService);
     }
-    public CompletableFuture<Message> updatePurchase(Purchase purchase) {
-        /*return executorService.submit(()->{
-            Message request = new Message(PurchaseServiceInterface.UPDATE_PURCHASE,purchase);
-            Message response = tcpClient.sendAndReceive(request);
-            return response;
-        });*/
-        return null;
+    public CompletableFuture<Message<Optional<Purchase>>> updatePurchase(Purchase purchase) {
+        return CompletableFuture.supplyAsync(()->{
+            Message<Purchase> request = new Message<Purchase>(PurchaseServiceInterface.UPDATE_PURCHASE,purchase);
+            return tcpClient.sendAndReceive(request);
+        },executorService);
     }
     public CompletableFuture<Message> filterPurchasesByClientID(Long id) throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             String ID = String.valueOf(id);
             Message request = new Message(PurchaseServiceInterface.FILTER,ID);
             return tcpClient.sendAndReceive(request);
-        });
+        },executorService);
     }
 
     public CompletableFuture<Message> findOnePurchase(Long id) throws SQLException {

@@ -1,6 +1,7 @@
 import Service.ClientService;
 import Service.PurchaseService;
 import TCP.TCPClient;
+import domain.Message;
 import ui.Console;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

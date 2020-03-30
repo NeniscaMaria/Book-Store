@@ -29,7 +29,7 @@ public class PurchaseService  implements PurchaseServiceInterface {
         this.executorService = executorService;
     }
 
-    public CompletableFuture<Optional<Purchase>> addPurchase(domain.Purchase purchase) throws ValidatorException{
+    public synchronized CompletableFuture<Optional<Purchase>> addPurchase(domain.Purchase purchase) throws ValidatorException{
         return CompletableFuture.supplyAsync(()-> {
             try {
                 return repository.save(purchase);
@@ -40,11 +40,11 @@ public class PurchaseService  implements PurchaseServiceInterface {
         },executorService).handle((res, ex)->{return Optional.empty();});
     }
 
-    public void removeClients(Long ID) throws IOException, SAXException, ParserConfigurationException {
+    public synchronized void removeClients(Long ID) throws IOException, SAXException, ParserConfigurationException {
         repository.removeEntitiesWithClientID(ID);
     }
 
-    public CompletableFuture<Optional<Purchase>> removePurchase(Long ID) throws SQLException {
+    public synchronized CompletableFuture<Optional<Purchase>> removePurchase(Long ID) throws SQLException {
         return CompletableFuture.supplyAsync(()-> {
             try {
                 return repository.delete(ID);
@@ -55,7 +55,7 @@ public class PurchaseService  implements PurchaseServiceInterface {
         },executorService);
     }
 
-    public CompletableFuture<Optional<Purchase>> updatePurchase(domain.Purchase purchase) throws ValidatorException, SQLException {
+    public synchronized CompletableFuture<Optional<Purchase>> updatePurchase(domain.Purchase purchase) throws ValidatorException, SQLException {
         return CompletableFuture.supplyAsync(()-> {
             try {
                 return repository.update(purchase);
@@ -66,7 +66,7 @@ public class PurchaseService  implements PurchaseServiceInterface {
         },executorService);
     }
 
-    public CompletableFuture<Set<Purchase>> getAllPurchases() throws SQLException {
+    public synchronized CompletableFuture<Set<Purchase>> getAllPurchases() throws SQLException {
 
         return CompletableFuture.supplyAsync(()->{
             Iterable<Purchase> purchases= null;
@@ -79,7 +79,7 @@ public class PurchaseService  implements PurchaseServiceInterface {
         },executorService);
     }
 
-    public Iterable<Purchase> getAllPurchases(String ...a) throws SQLException {
+    public synchronized Iterable<Purchase> getAllPurchases(String ...a) throws SQLException {
 
         Iterable<domain.Purchase> pur;
         if (repository instanceof PurchaseDataBaseRepository){
@@ -90,7 +90,7 @@ public class PurchaseService  implements PurchaseServiceInterface {
 
     }
 
-    public CompletableFuture<Set<Purchase>> filterPurchasesByClientID(Long clientID) throws SQLException {
+    public synchronized CompletableFuture<Set<Purchase>> filterPurchasesByClientID(Long clientID) throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             Iterable<Purchase> purchases = null;
             try {
@@ -105,7 +105,7 @@ public class PurchaseService  implements PurchaseServiceInterface {
         },executorService);
     }
 
-    public CompletableFuture<Optional<Purchase>> findOnePurchase(Long purchaseID) throws SQLException {
+    public synchronized CompletableFuture<Optional<Purchase>> findOnePurchase(Long purchaseID) throws SQLException {
         return CompletableFuture.supplyAsync(()-> {
             try {
                 return repository.findOne(purchaseID);
