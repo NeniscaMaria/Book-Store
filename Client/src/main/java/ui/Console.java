@@ -172,11 +172,8 @@ public class Console {
     }
 
     private void sortClients() {
-       /* BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-
+       BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("Please enter how to order the elements: ");
-
-
         try {
             if (bufferRead.readLine().equals("DESC"))
                 Sort.dir = Sort.Direction.DESC;
@@ -191,7 +188,7 @@ public class Console {
             clients.forEach(System.out::println);
         }catch(SQLException | IOException e){
             System.out.println(e);
-        }*/
+        }
     }
 
     private void addClient() {

@@ -63,4 +63,10 @@ public class ClientService{
             return tcpClient.sendAndReceive(request);
         },executorService);
     }
+    public CompletableFuture<Message<Iterable<Client>>> getAllClients(String ...a) throws SQLException{
+        return CompletableFuture.supplyAsync(()->{
+            Message request = new Message(ClientServiceInterface.GET_ALL_SORT,a);
+            return tcpClient.sendAndReceive(request);
+        },executorService);
+    }
 }

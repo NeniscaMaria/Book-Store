@@ -49,6 +49,11 @@ public class TCPServer {
     }
 
     private void initializeHandlersClient(){
+
+        addHandler(ClientServiceInterface.GET_ALL_SORT,
+                (request)->{
+
+                });
         //getAllClients function
         //return Set<Client> DONE
         addClientHandlerSet(ClientServiceInterface.GET_ALL_CLIENTS,

@@ -12,6 +12,7 @@ import java.util.concurrent.CompletableFuture;
 
 public interface ClientServiceInterface {
     public String GET_ALL_CLIENTS = "getAllClients";
+    public String GET_ALL_SORT = "getAllSort";
     public String REMOVE_CLIENT = "removeClient";
     public String ADD_CLIENT = "addClient";
     public String UPDATE_CLIENT = "updateClient";

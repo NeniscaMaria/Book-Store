@@ -1,22 +1,13 @@
 package Service;
 
 import TCP.TCPClient;
-import domain.Client;
 import domain.Message;
 import domain.Purchase;
-import domain.ValidatorException;
-import org.xml.sax.SAXException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 public class PurchaseService {
     private ExecutorService executorService;
@@ -64,7 +55,7 @@ public class PurchaseService {
         },executorService);
     }
 
-    public CompletableFuture<Message> findOnePurchase(Long id) throws SQLException {
+    public CompletableFuture<Message<Optional<Purchase>>> findOnePurchase(Long id) throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             String ID = String.valueOf(id);
             Message request = new Message(PurchaseServiceInterface.FIND_ONE,ID);

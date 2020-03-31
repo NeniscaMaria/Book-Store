@@ -1,6 +1,6 @@
 package SDI.server.repository.DataBase;
 
-import SDI.server.repository.DataBase.implementation.Sort;
+import domain.Sort;
 import SDI.server.repository.SortingRepository;
 import SDI.server.validators.Validator;
 import domain.ValidatorException;

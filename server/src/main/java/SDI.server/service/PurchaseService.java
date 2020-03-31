@@ -1,7 +1,7 @@
 package SDI.server.service;
 
 import SDI.server.repository.DataBase.PurchaseDataBaseRepository;
-import SDI.server.repository.DataBase.implementation.Sort;
+import domain.Sort;
 import SDI.server.repository.Repository;
 import Service.PurchaseServiceInterface;
 import domain.ValidatorException;

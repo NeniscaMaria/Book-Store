@@ -1,7 +1,7 @@
 package SDI.server.service;
 
 import SDI.server.repository.DataBase.BookDataBaseRepository;
-import SDI.server.repository.DataBase.implementation.Sort;
+import domain.Sort;
 import SDI.server.repository.Repository;
 import Service.BookServiceInterface;
 import domain.ValidatorException;

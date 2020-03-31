@@ -1,7 +1,8 @@
 package SDI.server.service;
 
 import SDI.server.repository.DataBase.ClientDBRepository;
-import SDI.server.repository.DataBase.implementation.Sort;
+import domain.Message;
+import domain.Sort;
 import SDI.server.repository.Repository;
 import domain.ValidatorException;
 import Service.ClientServiceInterface;
@@ -12,6 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.Optional;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,14 +43,24 @@ public class ClientService implements ClientServiceInterface {
         },executorService).handle((res,ex)->{return Optional.empty();});
     }
 
-    public synchronized Iterable<Client> getAllClients(String ...a) throws SQLException {
-        Iterable<Client> clients;
-        if (repository instanceof ClientDBRepository){
-            clients = ((ClientDBRepository)repository).findAll(new Sort(a).and(new Sort(a)));
-            return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toList());
-        }
-        else throw new ValidatorException("Too many parameters");
-
+    public synchronized CompletableFuture<Iterable<Client>> getAllClients(String ...a) throws SQLException {
+        return  CompletableFuture.supplyAsync(()-> {
+            Iterable<Client> clients = null;
+            if (repository instanceof ClientDBRepository) {
+                try {
+                    clients = ((ClientDBRepository) repository).findAll(new Sort(a).and(new Sort(a)));
+                    return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toList());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+            return new Iterable<Client>() {
+                @Override
+                public Iterator<Client> iterator() {
+                    return null;
+                }
+            };
+        });
     }
 
     @Override
