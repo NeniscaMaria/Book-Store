@@ -12,6 +12,9 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 public class Console {
     private ClientService clientService;
     private PurchaseService purchaseService;
@@ -81,7 +84,7 @@ public class Console {
                         filterPurchases();
                         break;
                     case 16:
-                        //getReport();
+                        getReport();
                         break;
                     case 17:
                         sortClients();
@@ -530,40 +533,44 @@ public class Console {
 //        }
     }
 
-/*
+
     //******************************************************************************************************************
 
     private void getReport(){
-        try {
-            //getting how many books are in stock
-            long nrBooksInStock = StreamSupport.stream(bookService.getAllBooks().spliterator(), false)
+        //getting how many books are in stock
+        bookService.getAllBooks().thenAccept(books->{
+            Set<Book> bookset = (Set<Book>) books.getBody();
+            long nrBooksInStock = bookset.stream()
                     .map(Book::getInStock).count();
-            System.out.println("Total books in storage : " + nrBooksInStock);
+            System.out.println("Total books in storage : " + nrBooksInStock);});
 
-            //getting how many books were sold
-            long soldBooks = StreamSupport.stream(purchaseService.getAllPurchases().spliterator(), false).
+        //getting how many books were sold
+        purchaseService.getAllPurchases().thenAccept(purchases->{
+            Set<Purchase> p = purchases.getBody();
+            long soldBooks = p.stream().
                     map(Purchase::getNrBooks).count();
             System.out.println("Number of books sold : " + soldBooks);
 
             //the client that bought from us more often
             //mapping clientID to how many books he/she bought
-            Map<Long, Integer> clientIDtoBooksBought = purchaseService.getAllPurchases().stream()
+            Map<Long, Integer> clientIDtoBooksBought = p.stream()
                     .collect(Collectors.groupingBy(Purchase::getClientID, Collectors.summingInt(Purchase::getNrBooks)));
             //getting the maximum bought books
             clientIDtoBooksBought.entrySet().stream()
-                    .max(Comparator.comparing(Map.Entry::getValue))
+                    .max(Map.Entry.comparingByValue())
                     .ifPresent(e -> { try{
-                        System.out.println("The " + clientService.findOneClient(e.getKey()).get() + " bought the most books: " + e.getValue());
+                        clientService.findOneClient(e.getKey()).thenAccept(client->{
+                                System.out.println("The " + client.getBody().get() + " bought the most books: " + e.getValue());
+                        });
                     }catch(SQLException se){
                         System.out.println(se);
                     }
                     });
-        }catch(SQLException e){
-            System.out.println(e);
-        }
+        });
+
     }
 
-*/
+
 
 
 }
