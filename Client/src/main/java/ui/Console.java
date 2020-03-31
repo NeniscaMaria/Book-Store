@@ -129,8 +129,8 @@ public class Console {
     //******************************************************************************************************************
     //CLIENT
     //WHAT WORKS:
-    //add, update properly
-    //filter, display and delete but returns string
+    //add, update, display, filter properly
+    //delete weird
     //******************************************************************************************************************
     private void filterClients() {
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
@@ -158,16 +158,16 @@ public class Console {
         CompletableFuture<Message<Optional<Client>>> result = clientService.removeClient(id);
         result.thenAccept(r->{
             r.getBody().ifPresent(a->{
-                System.out.println("Continue with message");
+                System.out.println("A client with this ID was not found.");
             });
         });
 
     }
 
     private void printAllClients() {
-        CompletableFuture<Message> clients = clientService.getAllClients();
+        CompletableFuture<Message<Set<Client>>> clients = clientService.getAllClients();
         clients.thenAccept(c->{
-            System.out.println(c.getBody());
+            c.getBody().forEach(System.out::println);
         });
     }
 
@@ -256,8 +256,8 @@ public class Console {
     //******************************************************************************************************************
     //PURCHASES
     //WHAT WORKS:
-    //update,add properly
-    //delete, display, filter but return string
+    //update,add, display, filter properly
+    //delete weird
     //******************************************************************************************************************
 
     private void addPurchase(){
@@ -314,12 +314,25 @@ public class Console {
     }
 
     private void displayPurchases(){
-        CompletableFuture<Message> purchases = purchaseService.getAllPurchases();
+        CompletableFuture<Message<Set<Purchase>>> purchases = purchaseService.getAllPurchases();
         purchases.thenAccept(p->{
-            System.out.println(p.getBody());
+            p.getBody().stream().forEach(System.out::println);
         });
     }
+    private void filterPurchases() {
+        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Filter: ");
+        try {
+            Long filter = Long.parseLong(bufferRead.readLine());
+            CompletableFuture<Message<Set<Purchase>>> result = purchaseService.filterPurchasesByClientID(filter);
+            result.thenAccept(r->{
+                r.getBody().stream().forEach(System.out::println);
+            });
+        } catch (IOException | SQLException e) {
+            e.printStackTrace();
+        }
 
+    }
     private void deletePurchase(){
         Scanner key = new Scanner(System.in);
         System.out.println("ID of purchase to be removed:");
@@ -354,20 +367,7 @@ public class Console {
         }*/
     }
 
-    private void filterPurchases() {
-       BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Filter: ");
-        try {
-            Long filter = Long.parseLong(bufferRead.readLine());
-            CompletableFuture<Message> result = purchaseService.filterPurchasesByClientID(filter);
-            result.thenAccept(r->{
-                System.out.println(r.getBody());
-            });
-        } catch (IOException | SQLException e) {
-            e.printStackTrace();
-        }
 
-    }
 
 
 

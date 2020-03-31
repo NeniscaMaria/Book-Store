@@ -18,11 +18,11 @@ public interface ClientServiceInterface {
     public String FIND_ONE = "findOneClient";
     public String FILTER_NAME = "filterClientsByName";
 
-    CompletableFuture<HashSet<Client>> getAllClients() throws SQLException;
+    CompletableFuture<Set<Client>> getAllClients() throws SQLException;
     CompletableFuture<Optional<Client>> removeClient(Long id) throws SQLException;
     CompletableFuture<Optional<Client>> addClient(Client entity) throws SQLException, ValidatorException, ParserConfigurationException;
 
     CompletableFuture<Optional<Client>> updateClient(Client entity) throws SQLException, ValidatorException;
     CompletableFuture<Optional<Client>> findOneClient(Long clientID) throws SQLException;
-    CompletableFuture<HashSet<Client>> filterClientsByName(String s) throws SQLException;
+    CompletableFuture<Set<Client>> filterClientsByName(String s) throws SQLException;
 }

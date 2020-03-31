@@ -37,7 +37,7 @@ public class PurchaseService  implements PurchaseServiceInterface {
                 e.printStackTrace();
             }
             return Optional.empty();
-        },executorService).handle((res, ex)->{return Optional.empty();});
+        },executorService);
     }
 
     public synchronized void removeClients(Long ID) throws IOException, SAXException, ParserConfigurationException {

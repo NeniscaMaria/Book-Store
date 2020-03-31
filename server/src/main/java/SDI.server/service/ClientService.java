@@ -76,7 +76,7 @@ public class ClientService implements ClientServiceInterface {
     }
 
     @Override
-    public synchronized CompletableFuture<HashSet<Client>> getAllClients() throws SQLException {
+    public synchronized CompletableFuture<Set<Client>> getAllClients() throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             Iterable<Client> clients = null;
             try {
@@ -84,7 +84,7 @@ public class ClientService implements ClientServiceInterface {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return (HashSet)StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
+            return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toSet());
         },executorService);
     }
 
@@ -92,7 +92,7 @@ public class ClientService implements ClientServiceInterface {
      PRE: @param s
      */
     @Override
-    public synchronized CompletableFuture<HashSet<Client>> filterClientsByName(String s) throws SQLException {
+    public synchronized CompletableFuture<Set<Client>> filterClientsByName(String s) throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             Iterable<Client> clients = null;
             try {
@@ -103,7 +103,7 @@ public class ClientService implements ClientServiceInterface {
             HashSet<domain.Client> filteredClients= new HashSet<>();
             clients.forEach(filteredClients::add);
             filteredClients.removeIf(student -> !student.getName().contains(s));
-            return (HashSet)filteredClients;
+            return filteredClients;
         },executorService);
     }
     @Override
