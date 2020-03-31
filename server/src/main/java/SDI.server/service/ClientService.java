@@ -13,10 +13,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Iterator;
-import java.util.Optional;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -49,17 +46,11 @@ public class ClientService implements ClientServiceInterface {
             if (repository instanceof ClientDBRepository) {
                 try {
                     clients = ((ClientDBRepository) repository).findAll(new Sort(a).and(new Sort(a)));
-                    return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toList());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            }
-            return new Iterable<Client>() {
-                @Override
-                public Iterator<Client> iterator() {
-                    return null;
-                }
             };
+            return StreamSupport.stream(clients.spliterator(), false).collect(Collectors.toList());
         });
     }
 

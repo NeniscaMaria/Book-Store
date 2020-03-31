@@ -25,6 +25,7 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class TCPServer {
+    //problem with maps that have long
     private ExecutorService executorService;
     private Map<String, UnaryOperator<Message<String>>> methodHandlers; //for methods that return string
 
@@ -61,10 +62,16 @@ public class TCPServer {
 
     private void initializeHandlersClient(){
 
-//        addHandler(ClientServiceInterface.GET_ALL_SORT,
-//                (request)->{
-//
-//                });
+        addHandler(ClientServiceInterface.GET_ALL_SORT,
+                (request)->{
+                    try {
+                        CompletableFuture<Iterable<Client>> clients = clientService.getAllClients(request.getBody());
+                        return new Message("success",clients.get());
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("error", e.getMessage());
+                    }
+                });
+
         //getAllClients function
         //return Set<Client> DONE
         addClientHandlerSet(ClientServiceInterface.GET_ALL_CLIENTS,
@@ -104,6 +111,7 @@ public class TCPServer {
                 (ID)->{
                     try {
                         CompletableFuture<Optional<Client>> client = clientService.findOneClient(ID.getBody());
+                        System.out.println("FIND ONE: "+client.get());
                         return new Message("success.",client.get());
                     } catch (SQLException |InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while finding client.", e.getMessage());
@@ -321,6 +329,7 @@ public class TCPServer {
         private Message getResponse(Message request){
             if(methodHandlers.get(request.getHeader())!=null)
                 return methodHandlers.get(request.getHeader()).apply(request);
+//<<<<<<< HEAD
             else {
                 if (clientHandlers.get(request.getHeader()) != null)
                     return clientHandlers.get(request.getHeader()).apply(request);
@@ -349,6 +358,18 @@ public class TCPServer {
                     }
                 }
             }
+//=======
+//            if (clientHandlers.get(request.getHeader()) != null)
+//                return clientHandlers.get(request.getHeader()).apply(request);
+//            if (purchaseHandlers.get(request.getHeader()) != null)
+//                return purchaseHandlers.get(request.getHeader()).apply(request);
+//            if (clientHandlersSet.get(request.getHeader()) != null)
+//                return clientHandlersSet.get(request.getHeader()).apply(request);
+//            if (clientHandlerLong.get(request.getHeader()) != null)
+//                return clientHandlerLong.get(request.getHeader()).apply(request);
+//            if(purchaseHandlerLong.get(request.getHeader())!=null)
+//                return purchaseHandlerLong.get(request.getHeader()).apply(request);
+//>>>>>>> e717568e2609057cca37c260c3cdb19d70922f82
             return null;
         }
 
@@ -362,7 +383,7 @@ public class TCPServer {
                 //request header = method name
                 //request body = method arguments
                 Message response = getResponse(request);
-                System.out.println(response);
+                System.out.println("CLIENT_HANDLER_SERVER: "+response);
                 ObjectOutputStream oos = new ObjectOutputStream(os);
                 oos.writeObject(response);
                 //response.writeTo(os);
