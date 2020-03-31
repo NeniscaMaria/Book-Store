@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public interface BookServiceInterface {
@@ -20,11 +21,11 @@ public interface BookServiceInterface {
     public String FIND_ONE = "findOneBook";
     public String FILTER_BOOKS = "filterBooks";
 
-    CompletableFuture<HashSet<Book>> getAllBooks() throws SQLException;
+    CompletableFuture<Set<Book>> getAllBooks() throws SQLException;
     CompletableFuture<Optional<Book>> removeBook(Long id) throws SQLException;
     CompletableFuture<Optional<Book>> addBook(Book entity) throws SQLException, ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException;
 
     CompletableFuture<Optional<Book>> updateBook(Book entity) throws SQLException, ValidatorException;
     CompletableFuture<Optional<Book>> findOneBook(Long clientID) throws SQLException;
-    CompletableFuture<HashSet<Book>> filterBooksByTitle(String s) throws SQLException;
+    CompletableFuture<Set<Book>> filterBooksByTitle(String s) throws SQLException;
 }

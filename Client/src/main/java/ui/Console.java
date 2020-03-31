@@ -172,23 +172,23 @@ public class Console {
     }
 
     private void sortClients() {
-       BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Please enter how to order the elements: ");
-        try {
-            if (bufferRead.readLine().equals("DESC"))
-                Sort.dir = Sort.Direction.DESC;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Please enter your filters: ");
-
-        try {
-            Iterable<Client> clients = clientService.getAllClients(bufferRead.readLine().split(" "));
-            clients.forEach(System.out::println);
-        }catch(SQLException | IOException e){
-            System.out.println(e);
-        }
+//       BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+//        System.out.println("Please enter how to order the elements: ");
+//        try {
+//            if (bufferRead.readLine().equals("DESC"))
+//                Sort.dir = Sort.Direction.DESC;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println("Please enter your filters: ");
+//
+//        try {
+//            Iterable<Client> clients = clientService.getAllClients(bufferRead.readLine().split(" "));
+//            clients.forEach(System.out::println);
+//        }catch(SQLException | IOException e){
+//            System.out.println(e);
+//        }
     }
 
     private void addClient() {
@@ -392,8 +392,8 @@ public class Console {
 
     private void printAllBooks() {
         // Print all books from repository
-        CompletableFuture<Message> clients = bookService.getAllBooks();
-        clients.thenAccept(c->{
+        CompletableFuture<Message<Set<Book>>> books = bookService.getAllBooks();
+        books.thenAccept(c->{
             System.out.println(c.getBody());
         });
     }

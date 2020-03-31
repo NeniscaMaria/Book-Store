@@ -39,7 +39,7 @@ public class BookService implements BookServiceInterface {
         }, executorService);
     }
 
-    public CompletableFuture<HashSet<Book>> getAllBooks() throws SQLException {
+    public CompletableFuture<Set<Book>> getAllBooks() throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             Iterable<Book> books = null;
             try {
@@ -47,7 +47,9 @@ public class BookService implements BookServiceInterface {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            return (HashSet)StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
+            assert books != null;
+            return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
+//            return (HashSet)StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
 
         }, executorService);
     }
@@ -65,7 +67,7 @@ public class BookService implements BookServiceInterface {
 
     }
 
-    public CompletableFuture<HashSet<Book>> filterBooksByTitle(String s) throws SQLException {
+    public CompletableFuture<Set<Book>> filterBooksByTitle(String s) throws SQLException {
         return CompletableFuture.supplyAsync(()-> {
             Iterable<Book> books = null;
             try {
@@ -77,7 +79,7 @@ public class BookService implements BookServiceInterface {
             Set<Book> bookSet = new HashSet<>();
             books.forEach(bookSet::add);
             bookSet.removeIf(book -> !book.getTitle().contains(s));
-            return (HashSet)bookSet;
+            return bookSet;
         }, executorService);
     }
 

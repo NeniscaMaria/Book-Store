@@ -20,7 +20,7 @@ public class BookService {
         this.tcpClient = tcpClient;
     }
 
-    public CompletableFuture<Message> getAllBooks(){
+    public CompletableFuture<Message<Set<Book>>> getAllBooks(){
         return CompletableFuture.supplyAsync(()->{
             //create request
             Message request  = new Message(BookServiceInterface.GET_ALL_BOOKS,"");
