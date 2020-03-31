@@ -3,6 +3,7 @@ package SDI.server.service;
 import SDI.server.repository.DataBase.BookDataBaseRepository;
 import SDI.server.repository.DataBase.implementation.Sort;
 import SDI.server.repository.Repository;
+import Service.BookServiceInterface;
 import domain.ValidatorException;
 import domain.Book;
 import org.xml.sax.SAXException;
@@ -13,11 +14,12 @@ import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-public class BookService {
+public class BookService implements BookServiceInterface {
     private Repository<Long, Book> repository;
     private ExecutorService executorService;
 
@@ -26,17 +28,31 @@ public class BookService {
         this.executorService = executorService;
     }
 
-    public Optional<Book> addBook(domain.Book book) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
-        // Add given book to the repository
-        // Return Optional null if the entity was added, otherwise return the entity with the same id
-        return repository.save(book);
+    public synchronized CompletableFuture<Optional<Book>> addBook(domain.Book book) throws ValidatorException, ParserConfigurationException, TransformerException, SAXException, IOException, SQLException {
+        return CompletableFuture.supplyAsync(()->{
+            try {
+                return repository.save(book);
+            } catch (ParserConfigurationException | IOException | SAXException | TransformerException | SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        }, executorService);
     }
 
-    public Set<Book> getAllBooks() throws SQLException {
-        // Return all books from the repository
-        Iterable<domain.Book> books = repository.findAll();
-        return StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
+    public CompletableFuture<HashSet<Book>> getAllBooks() throws SQLException {
+        return CompletableFuture.supplyAsync(()->{
+            Iterable<Book> books = null;
+            try {
+                books = repository.findAll();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return (HashSet)StreamSupport.stream(books.spliterator(), false).collect(Collectors.toSet());
+
+        }, executorService);
     }
+
+
 
     public Iterable<Book> getAllBooks(String ...a) throws SQLException {
         // Return all books from the repository
@@ -49,30 +65,54 @@ public class BookService {
 
     }
 
-    public Set<domain.Book> filterBooksByTitle(String s) throws SQLException {
-        // Return the books that contain the given string
-        Iterable<Book> books = repository.findAll();
+    public CompletableFuture<HashSet<Book>> filterBooksByTitle(String s) throws SQLException {
+        return CompletableFuture.supplyAsync(()-> {
+            Iterable<Book> books = null;
+            try {
+                books = repository.findAll();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
-        Set<Book> bookSet = new HashSet<>();
-        books.forEach(bookSet::add);
-        bookSet.removeIf(book -> !book.getTitle().contains(s));
-        return bookSet;
+            Set<Book> bookSet = new HashSet<>();
+            books.forEach(bookSet::add);
+            bookSet.removeIf(book -> !book.getTitle().contains(s));
+            return (HashSet)bookSet;
+        }, executorService);
     }
 
-    public Optional<Book> updateBook(Book book) throws SQLException {
-        // Update the book with the same id as the one given
-        // Return Optional null if the entity was updated, otherwise the given entity (if the id does not exist)
-        return repository.update(book);
+    public CompletableFuture<Optional<Book>> updateBook(Book book) throws SQLException {
+        return CompletableFuture.supplyAsync(()->{
+            try {
+                return repository.update(book);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        }, executorService);
     }
 
-    public Optional<Book> deleteBook(Long bookID) throws ValidatorException, SQLException {
-        // Delete the book with the given id from repository
-        // Return Optional null if the entity was deleted, otherwise return the entity with the same id
-        return repository.delete(bookID);
+    public CompletableFuture<Optional<Book>> removeBook(Long bookID) throws ValidatorException, SQLException {
+        return CompletableFuture.supplyAsync(()->{
+            try {
+                return repository.delete(bookID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        }, executorService);
     }
 
-    public Optional<Book> findOneBook(Long bookID) throws SQLException {
-        return repository.findOne(bookID);
+    public CompletableFuture<Optional<Book>> findOneBook(Long bookID) throws SQLException {
+        return CompletableFuture.supplyAsync(()->{
+            try {
+                return repository.findOne(bookID);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return Optional.empty();
+        }, executorService);
     }
+
 
 }

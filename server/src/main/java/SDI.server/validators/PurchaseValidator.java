@@ -22,14 +22,24 @@ public class PurchaseValidator implements Validator<Purchase> {
     }
 
     private boolean bookExists(Long ID) throws SQLException {//checks if a book with this ID exists
-        Optional<Book> book = books.findOneBook(ID);
+        Optional<Book> book = null;
+        try {
+            book = books.findOneBook(ID).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         return book.isPresent();
     }
 
     private boolean isBookInSock(Long ID, int nrBooks) throws SQLException { //checks if there are enough books in stock for this operation to take place
         if (nrBooks==0)
             return false;
-        Optional<Book> book = books.findOneBook(ID);
+        Optional<Book> book = null;
+        try {
+            book = books.findOneBook(ID).get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
         //we know here for sure that the book exists because we check if the book exists before we call this function
         return book.get().getInStock()>=nrBooks;
     }
