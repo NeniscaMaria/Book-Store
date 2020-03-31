@@ -22,6 +22,7 @@ public class TCPClient {
             Message response = (Message)ois.readObject();
             //response.readFrom(is);
             System.out.println("TCPClient response received: "+response);
+            socket.close();
             return response;
         } catch (IOException | ClassNotFoundException e) {
             throw new ServerException("error connecting to server "+e.getMessage(),e);

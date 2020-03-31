@@ -25,19 +25,10 @@ import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
 public class TCPServer {
-    //problem with maps that have long
     private ExecutorService executorService;
     private Map<String, UnaryOperator<Message<String>>> methodHandlers; //for methods that return string
 
-    private Map<String, Function<Message<Client>,Message<Optional<Client>>>> clientHandlers; //for methods that need a Client as parameter
-    private Map<String, Function<Message<String>,Message<Set<Client>>>> clientHandlersSet; //for methods that need a Client as parameter
-    private Map<String,Function<Message<Long>, Message<Optional<Client>>>> clientHandlerLong;
-
-    private Map<String, Function<Message<Book>, Message<Optional<Book>>>> bookHandlers; // Book
-    private Map<String, Function<Message<String>, Message<Set<Book>>>> bookHandlersSet; // HashSet<Book>
-
-    private Map<String, Function<Message<Purchase>,Message<Optional<Purchase>>>> purchaseHandlers; //for methods that need a Purchase as parameter
-    private Map<String,Function<Message<Long>, Message<Optional<Purchase>>>> purchaseHandlerLong;
+    private Map<String, Function<Message<?>,Message<?>>> clientHandlers; // methods that return message
 
     private ClientService clientService;
     private BookService bookService;
@@ -47,12 +38,6 @@ public class TCPServer {
         this.executorService = executorService;
         methodHandlers = new HashMap<>();
         clientHandlers = new HashMap<>();
-        purchaseHandlers = new HashMap<>();
-        clientHandlersSet = new HashMap<>();
-        clientHandlerLong = new HashMap<>();
-        purchaseHandlerLong = new HashMap<>();
-        bookHandlers = new HashMap<>();
-        bookHandlersSet = new HashMap<>();
 
         this.clientService = clientService;
         this.purchaseService = purchaseService;
@@ -74,7 +59,7 @@ public class TCPServer {
 
         //getAllClients function
         //return Set<Client> DONE
-        addClientHandlerSet(ClientServiceInterface.GET_ALL_CLIENTS,
+        addClientHandler(ClientServiceInterface.GET_ALL_CLIENTS,
                 (request) -> {
                     try {
                         CompletableFuture<Set<Client>> clients = clientService.getAllClients();
@@ -84,7 +69,7 @@ public class TCPServer {
                     }
 
                 });
-        addClientHandlerSet(ClientServiceInterface.FILTER_NAME,
+        addClientHandler(ClientServiceInterface.FILTER_NAME,
                 (request)->{
                     try {
                         CompletableFuture<Set<Client>> clients = clientService.filterClientsByName((String) request.getBody());
@@ -96,21 +81,23 @@ public class TCPServer {
 
 
         //input: Long output:Optional<Client>
-        addClientHandlerLong(ClientServiceInterface.REMOVE_CLIENT,
+        addHandler(ClientServiceInterface.REMOVE_CLIENT,
                 (request) -> {
                     try {
-                        Long id = request.getBody();
+                        Long id = Long.parseLong(request.getBody());
                         System.out.println("REMOVE");
                         CompletableFuture<Optional<Client>> client = clientService.removeClient(id);
+                        if(client.get().isEmpty())
+                            return new Message<>("No client matched this ID.","");
                         return new Message("success",client.get());
                     } catch (SQLException |InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while deleting client.", e.getMessage());
                     }
                 });
-        addClientHandlerLong(ClientServiceInterface.FIND_ONE,
+        addHandler(ClientServiceInterface.FIND_ONE,
                 (ID)->{
                     try {
-                        CompletableFuture<Optional<Client>> client = clientService.findOneClient(ID.getBody());
+                        CompletableFuture<Optional<Client>> client = clientService.findOneClient(Long.parseLong(ID.getBody()));
                         System.out.println("FIND ONE: "+client.get());
                         return new Message("success.",client.get());
                     } catch (SQLException |InterruptedException | ExecutionException e) {
@@ -123,7 +110,7 @@ public class TCPServer {
                 (entity)->{
                     try {
                         System.out.println("Adding client..");
-                        CompletableFuture<Optional<Client>> client = clientService.addClient(entity.getBody());
+                        CompletableFuture<Optional<Client>> client = clientService.addClient((Client) entity.getBody());
                         return new Message<Optional<Client>>("success",client.get());
                     } catch (InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while deleting client.", e.getMessage());
@@ -132,7 +119,7 @@ public class TCPServer {
         addClientHandler(ClientServiceInterface.UPDATE_CLIENT,
                 (entity)->{
                     try {
-                        CompletableFuture<Optional<Client>> client = clientService.updateClient(entity.getBody());
+                        CompletableFuture<Optional<Client>> client = clientService.updateClient((Client) entity.getBody());
                         return new Message<Optional<Client>>("success",client.get());
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while updating client.", e.getMessage());
@@ -141,7 +128,7 @@ public class TCPServer {
     }
 
     private void initializeHandlersBooks(){
-        addBookHandlersHashSet(BookServiceInterface.GET_ALL_BOOKS,
+        addClientHandler(BookServiceInterface.GET_ALL_BOOKS,
                 (request) -> {
                     try {
                         CompletableFuture<Set<Book>> books = bookService.getAllBooks();
@@ -152,7 +139,7 @@ public class TCPServer {
 
 
                 });
-        addBookHandlersHashSet(BookServiceInterface.FILTER_BOOKS,
+        addClientHandler(BookServiceInterface.FILTER_BOOKS,
                 (request)->{
                     try {
                         CompletableFuture<Set<Book>> books = bookService.filterBooksByTitle((String) request.getBody());
@@ -166,13 +153,13 @@ public class TCPServer {
         addHandler(BookServiceInterface.REMOVE_BOOK,
                 (request) -> {
                     try {
-                        Long id = Long.parseLong((String) request.getBody());
+                        Long id = Long.parseLong(request.getBody());
                         CompletableFuture<Optional<Book>> book = bookService.removeBook(id);
                         if(book.get().isEmpty())
-                            return new Message("No book matched this ID.","");
-                        return new Message("Client book successfully", "");
+                            return new Message<>("No book matched this ID.","");
+                        return new Message<>("Book removed successfully", "");
                     } catch (SQLException | InterruptedException | ExecutionException e) {
-                        return new Message("Server-side error while deleting book.", e.getMessage());
+                        return new Message<>("Server-side error while deleting book.", e.getMessage());
                     }
 
                 });
@@ -181,28 +168,28 @@ public class TCPServer {
                     try {
                         CompletableFuture<Optional<Book>> book = bookService.findOneBook(Long.parseLong((String) ID.getBody()));
                         if(book.get().isEmpty())
-                            return new Message("No book with this ID.","");
-                        return new Message("succes.", book.get().get().toString());
+                            return new Message<>("No book with this ID.","");
+                        return new Message<>("succes.", book.get().get().toString());
                     } catch (SQLException | InterruptedException | ExecutionException e) {
-                        return new Message("Server-side error while finding book.", e.getMessage());
+                        return new Message<>("Server-side error while finding book.", e.getMessage());
                     }
                 });
 
-        addBookHandler(BookServiceInterface.ADD_BOOK,
+        addClientHandler(BookServiceInterface.ADD_BOOK,
                 (entity)->{
                     try {
                         System.out.println("Adding book");
-                        CompletableFuture<Optional<Book>> book = bookService.addBook(entity.getBody());
+                        CompletableFuture<Optional<Book>> book = bookService.addBook((Book) entity.getBody());
                         return new Message<Optional<Book>>("success", book.get());
                     } catch (InterruptedException | ExecutionException | ParserConfigurationException | TransformerException | SAXException | IOException | SQLException e ){
                         return new Message("Server-side error while deleting book.", e.getMessage());
                     }
 
                 });
-        addBookHandler(BookServiceInterface.UPDATE_BOOK,
+        addClientHandler(BookServiceInterface.UPDATE_BOOK,
                 (entity)->{
                     try {
-                        CompletableFuture<Optional<Book>> book = bookService.updateBook(entity.getBody());
+                        CompletableFuture<Optional<Book>> book = bookService.updateBook((Book) entity.getBody());
                         return new Message<Optional<Book>>("success",book.get());
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while updating book.", e.getMessage());
@@ -233,21 +220,23 @@ public class TCPServer {
                 });
 
         //input: Long output: Optional<Purchase>
-        addPurchaseHandlerLong(PurchaseServiceInterface.REMOVE_PURCHASE,
+        addHandler(PurchaseServiceInterface.REMOVE_PURCHASE,
                 (request) -> {
                     try {
-                        Long id = request.getBody();
+                        Long id = Long.parseLong(request.getBody());
                         CompletableFuture<Optional<Purchase>> p = purchaseService.removePurchase(id);
+                        if(p.get().isEmpty())
+                            return new Message<>("No purchase matched this ID.","");
                         return new Message("success",p.get());
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while deleting purchase.", e.getMessage());
                     }
                 });
 
-        addPurchaseHandlerLong(PurchaseServiceInterface.FIND_ONE,
+        addHandler(PurchaseServiceInterface.FIND_ONE,
                 (request)->{
                     try {
-                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.findOnePurchase(request.getBody());
+                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.findOnePurchase(Long.parseLong(request.getBody()));
                         return new Message("success",purchase.get());
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while finding client.", e.getMessage());
@@ -255,19 +244,19 @@ public class TCPServer {
                 });
 
         //input: Purchase output:Optional<Purchase> DONE
-        addPurchaseHandler(PurchaseServiceInterface.ADD_PURCHASE,
+        addClientHandler(PurchaseServiceInterface.ADD_PURCHASE,
                 (entity)->{
                     try {
-                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.addPurchase(entity.getBody());
+                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.addPurchase((Purchase) entity.getBody());
                         return new Message<>("succes", purchase.get());
                     } catch (InterruptedException | ExecutionException e) {
                         return new Message("fail",e.getMessage());
                     }
                 });
-        addPurchaseHandler(PurchaseServiceInterface.UPDATE_PURCHASE,
+        addClientHandler(PurchaseServiceInterface.UPDATE_PURCHASE,
                 (entity)->{
                     try {
-                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.updatePurchase(entity.getBody());
+                        CompletableFuture<Optional<Purchase>> purchase = purchaseService.updatePurchase((Purchase) entity.getBody());
                         return new Message("success", purchase.get());
                     } catch (SQLException | InterruptedException | ExecutionException e) {
                         return new Message("Server-side error while updating client.", e.getMessage());
@@ -286,27 +275,8 @@ public class TCPServer {
     public void addHandler(String methodName, UnaryOperator<Message<String>> handler){
         methodHandlers.put(methodName,handler);
     }
-    public void addClientHandlerLong(String methodName,Function<Message<Long>, Message<Optional<Client>>> handler){
-        clientHandlerLong.put(methodName,handler);
-    }
-    public void addClientHandler(String methodName, Function<Message<Client>,Message<Optional<Client>>> handler){
+    public void addClientHandler(String methodName, Function<Message<?>,Message<?>> handler){
         clientHandlers.put(methodName,handler);
-    }
-    public void addClientHandlerSet(String methodName, Function<Message<String>,Message<Set<Client>>> handler){
-        clientHandlersSet.put(methodName,handler);
-    }
-    public void addBookHandler(String methodName, Function<Message<Book>,Message<Optional<Book>>> handler){
-        bookHandlers.put(methodName,handler);
-    }
-    public void addBookHandlersHashSet(String methodName, Function<Message<String>,Message<Set<Book>>> handler){
-        bookHandlersSet.put(methodName,handler);
-    }
-
-    public void addPurchaseHandler(String methodName, Function<Message<Purchase>,Message<Optional<Purchase>>> handler){
-        purchaseHandlers.put(methodName,handler);
-    }
-    public void addPurchaseHandlerLong(String methodName,Function<Message<Long>, Message<Optional<Purchase>>> handler){
-        purchaseHandlerLong.put(methodName,handler);
     }
     public void startServer(){
         try(var serverSocket = new ServerSocket(Message.PORT)){
@@ -329,47 +299,10 @@ public class TCPServer {
         private Message getResponse(Message request){
             if(methodHandlers.get(request.getHeader())!=null)
                 return methodHandlers.get(request.getHeader()).apply(request);
-//<<<<<<< HEAD
-            else {
+            else
                 if (clientHandlers.get(request.getHeader()) != null)
                     return clientHandlers.get(request.getHeader()).apply(request);
-                else {
-                    if (purchaseHandlers.get(request.getHeader()) != null)
-                        return purchaseHandlers.get(request.getHeader()).apply(request);
-                    else {
-                        if (clientHandlersSet.get(request.getHeader()) != null)
-                            return clientHandlersSet.get(request.getHeader()).apply(request);
-                        else {
-                            if (clientHandlerLong.get(request.getHeader()) != null)
-                                return clientHandlerLong.get(request.getHeader()).apply(request);
-                            else{
-                                if(purchaseHandlerLong.get(request.getHeader())!=null)
-                                    return clientHandlerLong.get(request.getHeader()).apply(request);
-                                else {
-                                    if (bookHandlers.get(request.getHeader()) != null)
-                                        return bookHandlers.get(request.getHeader()).apply(request);
-                                    else
-                                    if(bookHandlersSet.get(request.getHeader())!=null)
-                                        return bookHandlersSet.get(request.getHeader()).apply(request);
-                                }
 
-                            }
-                        }
-                    }
-                }
-            }
-//=======
-//            if (clientHandlers.get(request.getHeader()) != null)
-//                return clientHandlers.get(request.getHeader()).apply(request);
-//            if (purchaseHandlers.get(request.getHeader()) != null)
-//                return purchaseHandlers.get(request.getHeader()).apply(request);
-//            if (clientHandlersSet.get(request.getHeader()) != null)
-//                return clientHandlersSet.get(request.getHeader()).apply(request);
-//            if (clientHandlerLong.get(request.getHeader()) != null)
-//                return clientHandlerLong.get(request.getHeader()).apply(request);
-//            if(purchaseHandlerLong.get(request.getHeader())!=null)
-//                return purchaseHandlerLong.get(request.getHeader()).apply(request);
-//>>>>>>> e717568e2609057cca37c260c3cdb19d70922f82
             return null;
         }
 
@@ -387,6 +320,7 @@ public class TCPServer {
                 ObjectOutputStream oos = new ObjectOutputStream(os);
                 oos.writeObject(response);
                 //response.writeTo(os);
+                socket.close();
             }catch(IOException | ClassNotFoundException e){
                 throw new ServerException("Error processing client",e);
             }
