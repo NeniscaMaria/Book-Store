@@ -184,8 +184,10 @@ public class Console {
         System.out.println("Please enter your filters: ");
 
         try {
-            Iterable<Client> clients = clientService.getAllClients(bufferRead.readLine().split(" "));
-            clients.forEach(System.out::println);
+            CompletableFuture<Message<Iterable<Client>>> clients = clientService.getAllClients(bufferRead.readLine().split(" "));
+            clients.thenAccept(c->{
+                c.getBody().forEach(System.out::println);
+            });
         }catch(SQLException | IOException e){
             System.out.println(e);
         }

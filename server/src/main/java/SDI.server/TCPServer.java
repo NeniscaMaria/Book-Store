@@ -52,7 +52,12 @@ public class TCPServer {
 
         addHandler(ClientServiceInterface.GET_ALL_SORT,
                 (request)->{
-
+                    try {
+                        CompletableFuture<Iterable<Client>> clients = clientService.getAllClients(request.getBody());
+                        return new Message("success",clients.get());
+                    } catch (SQLException | InterruptedException | ExecutionException e) {
+                        return new Message("error", e.getMessage());
+                    }
                 });
         //getAllClients function
         //return Set<Client> DONE
