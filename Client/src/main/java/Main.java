@@ -1,3 +1,4 @@
+import Service.BookService;
 import Service.ClientService;
 import Service.PurchaseService;
 import TCP.TCPClient;
@@ -13,7 +14,8 @@ public class Main {
         TCPClient tcpClient= new TCPClient();
         ClientService clientService = new ClientService(executorService,tcpClient);
         PurchaseService purchaseService = new PurchaseService(executorService,tcpClient);
-        Console console = new Console(clientService,purchaseService);
+        BookService bookService = new BookService(executorService, tcpClient);
+        Console console = new Console(clientService, bookService, purchaseService);
         console.runConsole();
 
         executorService.shutdown();

@@ -1,11 +1,11 @@
 package ui;
 
+import Service.BookService;
 import Service.ClientService;
 import Service.PurchaseService;
-import domain.Client;
-import domain.Message;
-import domain.Purchase;
-import domain.ValidatorException;
+import domain.*;
+
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -15,10 +15,12 @@ import java.util.concurrent.CompletableFuture;
 public class Console {
     private ClientService clientService;
     private PurchaseService purchaseService;
+    private BookService bookService;
 
-    public Console(ClientService clientService,PurchaseService purchaseService) {
+    public Console(ClientService clientService,BookService bookService, PurchaseService purchaseService) {
         this.clientService = clientService;
         this.purchaseService = purchaseService;
+        this.bookService = bookService;
     }
 
     public void runConsole() {
@@ -37,31 +39,31 @@ public class Console {
                         addClient();
                         break;
                     case 2:
-                        //addBook();
+                        addBook();
                         break;
                     case 3:
                         printAllClients();
                         break;
                     case 4:
-                        //printAllBooks();
+                        printAllBooks();
                         break;
                     case 5:
                         filterClients();
                         break;
                     case 6:
-                        //filterBooks();
+                        filterBooks();
                         break;
                     case 7:
                         deleteClient();
                         break;
                     case 8:
-                        //deleteBook();
+                        deleteBook();
                         break;
                     case 9:
                         updateClient();
                         break;
                     case 10:
-                        //updateBook();
+                        updateBook();
                         break;
                     case 11:
                         addPurchase();
@@ -368,20 +370,6 @@ public class Console {
     }
 
 
-/*
-    private BookService bookService;
-    private PurchaseService purchaseService;
-
-    public Console(ClientService studentService, BookService bookService, PurchaseService purchaseService) {
-        this.clientService = studentService;
-        this.bookService = bookService;
-        this.purchaseService=purchaseService;
-    }
-    //gitk and git gui in console
-
-
-    }
-
 
 
 
@@ -395,8 +383,11 @@ public class Console {
         System.out.println("Filter: ");
         try {
             String filter = bufferRead.readLine();
-            Set<Book> filteredBooks = bookService.filterBooksByTitle(filter);
-            filteredBooks.forEach(System.out::println);
+            CompletableFuture<Message<Set<Book>>> result = bookService.filterBooksByTitle(filter);
+            result.thenAccept(r->{
+                System.out.println(r.getBody());
+                r.getBody().stream().forEach(System.out::println);
+            });
         } catch (IOException |SQLException e) {
             e.printStackTrace();
         }
@@ -404,27 +395,26 @@ public class Console {
 
     private void printAllBooks() {
         // Print all books from repository
-        try {
-            Set<domain.Book> books = bookService.getAllBooks();
-            books.stream().forEach(System.out::println);
-        }catch(SQLException e){
-            System.out.println(e);
-        }
+        CompletableFuture<Message> clients = bookService.getAllBooks();
+        clients.thenAccept(c->{
+            System.out.println(c.getBody());
+        });
     }
 
     private void addBook() {
         // Save book to repository
         Optional<Book> book = readBook();
 
-        book.ifPresent(b->{
-            try{
-                Optional<Book> book2 = bookService.addBook(b);
-                book2.ifPresent(b2->System.out.println("A book with this ID already exists."));
-            }
-            catch (ValidatorException e) {
+        book.ifPresent(b-> {
+            try {
+                CompletableFuture<Message<Optional<Book>>> result = bookService.addBook(b);
+                result.thenAccept(r -> {
+                    r.getBody().ifPresent(clientResult -> {
+                        System.out.println("A book with this ID already exists");
+                    });
+                });
+            } catch (ValidatorException e) {
                 System.out.println(e.getMessage());
-            } catch (IOException | ParserConfigurationException | SAXException | TransformerException | SQLException e) {
-                e.printStackTrace();
             }
         });
     }
@@ -434,15 +424,15 @@ public class Console {
         // IDs (read) must match
         Optional<Book> book = readBook();
         book.ifPresent(b->{
-            try{
-                Optional<Book> book2 = bookService.updateBook(b);
-                book2.ifPresent(b2->{throw new ValidatorException("Book updated successfully");});
-                throw new ValidatorException("The book with this ID does not exist.");
-            }
-            catch (ValidatorException | SQLException e) {
+            try {
+                CompletableFuture<Message<Optional<Book>>> result = bookService.updateBook(b);
+                result.thenAccept(r->{
+                    r.getBody().ifPresent(clientResult -> {
+                        System.out.println("A book with this ID does not exist");});
+                });
+            } catch (ValidatorException | SQLException e) {
                 System.out.println(e.getMessage());
-            }
-        });
+            }});
     }
 
     private void deleteBook(){
@@ -450,14 +440,19 @@ public class Console {
         BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
         System.out.println("ID: ");
 
+        Long id = null;
         try {
-            Long id = Long.parseLong(bufferRead.readLine());
-            Optional<Book> book = bookService.deleteBook(id);
-            book.ifPresent(b2->{throw new ValidatorException("Book removed successfully");});
-            throw new ValidatorException("The book with this ID does not exist.");
-        } catch (IOException | SQLException e) {
+            id = Long.parseLong(bufferRead.readLine());
+            CompletableFuture<Message<Optional<Book>>> result = bookService.removeBook(id);
+            result.thenAccept(r->{
+                r.getBody().ifPresent(a->{
+                    System.out.println("Continue with message");
+                });
+            });
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     private Optional<Book> findOneBook(){
@@ -466,7 +461,13 @@ public class Console {
         System.out.println("ID: ");
         try {
             Long id = Long.parseLong(bufferRead.readLine());
-            return bookService.findOneBook(id);
+//            return bookService.findOneBook(id);
+            CompletableFuture<Message<Optional<Book>>> result = bookService.findOneBook(id);
+            result.thenAccept(r->{
+                r.getBody().ifPresent(a->{
+                    System.out.println("Continue with message");
+                });
+            });
         } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
@@ -508,29 +509,29 @@ public class Console {
     }
 
     private void sortBooks() {
-        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
-
-        System.out.println("Please enter how to order the elements: ");
-
-
-        try {
-            if (bufferRead.readLine().equals("DESC"))
-                Sort.dir = Sort.Direction.DESC;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println("Please enter your filters: ");
-
-        try {
-            Iterable<Book> books = bookService.getAllBooks(bufferRead.readLine().split(" "));
-            books.forEach(System.out::println);
-        }catch(SQLException | IOException e){
-            System.out.println(e);
-        }
+//        BufferedReader bufferRead = new BufferedReader(new InputStreamReader(System.in));
+//
+//        System.out.println("Please enter how to order the elements: ");
+//
+//
+//        try {
+//            if (bufferRead.readLine().equals("DESC"))
+//                Sort.dir = Sort.Direction.DESC;
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println("Please enter your filters: ");
+//
+//        try {
+//            Iterable<Book> books = bookService.getAllBooks(bufferRead.readLine().split(" "));
+//            books.forEach(System.out::println);
+//        }catch(SQLException | IOException e){
+//            System.out.println(e);
+//        }
     }
 
-
+/*
     //******************************************************************************************************************
 
     private void getReport(){
