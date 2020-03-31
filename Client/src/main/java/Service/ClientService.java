@@ -20,7 +20,7 @@ public class ClientService{
         this.tcpClient = tcpClient;
     }
 
-    public CompletableFuture<Message> getAllClients(){
+    public CompletableFuture<Message<Set<Client>>> getAllClients(){
         return CompletableFuture.supplyAsync(()->{
             //create request
             Message request  = new Message(ClientServiceInterface.GET_ALL_CLIENTS,"");

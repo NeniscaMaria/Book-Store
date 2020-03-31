@@ -27,7 +27,7 @@ public class PurchaseService {
         this.tcpClient = tcpClient;
     }
 
-    public CompletableFuture<Message> getAllPurchases(){
+    public CompletableFuture<Message<Set<Purchase>>> getAllPurchases(){
         return CompletableFuture.supplyAsync(()->{
             //create request
             Message request  = new Message(PurchaseServiceInterface.GET_ALL_PURCHASES,"");
@@ -56,7 +56,7 @@ public class PurchaseService {
             return tcpClient.sendAndReceive(request);
         },executorService);
     }
-    public CompletableFuture<Message> filterPurchasesByClientID(Long id) throws SQLException {
+    public CompletableFuture<Message<Set<Purchase>>> filterPurchasesByClientID(Long id) throws SQLException {
         return CompletableFuture.supplyAsync(()->{
             String ID = String.valueOf(id);
             Message request = new Message(PurchaseServiceInterface.FILTER,ID);
