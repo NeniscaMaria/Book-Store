@@ -15,6 +15,7 @@ import javax.xml.transform.TransformerException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -100,6 +101,8 @@ public class Console {
                 System.out.println("Please input a number.");
             }catch(ValidatorException ve){
                 System.out.println(ve.getMessage());
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
 
@@ -140,6 +143,8 @@ public class Console {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
     }
@@ -156,14 +161,22 @@ public class Console {
             ex.printStackTrace();
         }catch (NumberFormatException ex){
             System.out.println("Please input a valid format.");
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 
     private void printAllClients() {
         //DESCR: function that prints all the clients saved until now
 
-        Set<domain.Client> students = clientService.getAllClients();
-        students.stream().forEach(System.out::println);
+        Set<Client> students = null;
+        try {
+            students = clientService.getAllClients();
+            students.stream().forEach(System.out::println);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void addClient() {
@@ -173,8 +186,8 @@ public class Console {
         client.ifPresent(c->{
             try {
                 Optional<Client> result = clientService.addClient(c);
-                result.ifPresent(r-> System.out.println("A client with this ID already exists."));
-            } catch (ValidatorException | ParserConfigurationException | TransformerException | SAXException | IOException e) {
+                result.ifPresent(r-> System.out.println("Client added."));
+            } catch (ValidatorException | ParserConfigurationException | TransformerException | SAXException | IOException | SQLException e) {
                 System.out.println(e.getMessage());
             }});
     }
@@ -215,7 +228,7 @@ public class Console {
                     throw new ValidatorException("Client updated successfully!");});
                 throw new ValidatorException("A client with this ID was not found!");
 
-            } catch (ValidatorException e) {
+            } catch (ValidatorException | SQLException e) {
                 System.out.println(e.getMessage());
             }});
     }
@@ -231,15 +244,21 @@ public class Console {
             String filter = bufferRead.readLine();
             Set<Book> filteredBooks = bookService.filterBooksByTitle(filter);
             filteredBooks.forEach(System.out::println);
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
     }
 
     private void printAllBooks() {
         // Print all books from repository
-        Set<domain.Book> books = bookService.getAllBooks();
-        books.stream().forEach(System.out::println);
+        Set<Book> books = null;
+        try {
+            books = bookService.getAllBooks();
+            books.stream().forEach(System.out::println);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void addBook() {
@@ -253,7 +272,7 @@ public class Console {
             }
             catch (ValidatorException e) {
                 System.out.println(e.getMessage());
-            } catch (IOException | ParserConfigurationException | SAXException | TransformerException e) {
+            } catch (IOException | ParserConfigurationException | SAXException | TransformerException | SQLException e) {
                 e.printStackTrace();
             }
         });
@@ -269,7 +288,7 @@ public class Console {
                 book2.ifPresent(b2->{throw new ValidatorException("Book updated successfully");});
                 throw new ValidatorException("The book with this ID does not exist.");
             }
-            catch (ValidatorException e) {
+            catch (ValidatorException | SQLException e) {
                 System.out.println(e.getMessage());
             }
         });
@@ -285,7 +304,7 @@ public class Console {
             Optional<Book> book = bookService.deleteBook(id);
             book.ifPresent(b2->{throw new ValidatorException("Book removed successfully");});
             throw new ValidatorException("The book with this ID does not exist.");
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
     }
@@ -297,7 +316,7 @@ public class Console {
         try {
             Long id = Long.parseLong(bufferRead.readLine());
             return bookService.findOneBook(id);
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
         return Optional.empty();
@@ -349,7 +368,7 @@ public class Console {
                 Optional<Purchase> pur = purchaseService.addPurchase(p);
                 pur.ifPresent(pp -> System.out.println("A purchase with this ID already exists"));
 
-            } catch (ParserConfigurationException | TransformerException | SAXException | IOException e) {
+            } catch (ParserConfigurationException | TransformerException | SAXException | IOException | SQLException e) {
                 e.printStackTrace();
             }
 
@@ -357,15 +376,25 @@ public class Console {
     }
 
     private void displayPurchases(){
-        Set<domain.Purchase> purchases = purchaseService.getAllPurchases();
-        purchases.stream().forEach(System.out::println);
+        Set<Purchase> purchases = null;
+        try {
+            purchases = purchaseService.getAllPurchases();
+            purchases.stream().forEach(System.out::println);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updatePurchase(){
 
         Optional<Purchase> purchase = readPurchase();
         purchase.ifPresent(p->{
-            Optional<Purchase> pp = purchaseService.updatePurchase(p);
+            Optional<Purchase> pp = null;
+            try {
+                pp = purchaseService.updatePurchase(p);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             pp.ifPresent(ppp -> {throw new ValidatorException("Purchase updated successfully");});
             throw new ValidatorException("This purchase was not found successfully");
         });
@@ -382,17 +411,26 @@ public class Console {
                 int nr = p.getNrBooks();
                 Long idBook = p.getBookID();
 
-                Book b =  bookService.findOneBook(idBook).get();
+                Book b = null;
+                try {
+                    b = bookService.findOneBook(idBook).get();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
                 Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock() + nr);
                 newBook.setId(b.getId());
 
-                bookService.updateBook(newBook);
+                try {
+                    bookService.updateBook(newBook);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
             });
 
 
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
 
@@ -426,13 +464,17 @@ public class Console {
 
                 Book newBook = new Book(b.getSerialNumber(), b.getTitle(), b.getTitle(), b.getYear(), b.getPrice(), b.getInStock());
                 newBook.setId(b.getId());
-                bookService.updateBook(newBook);
+                try {
+                    bookService.updateBook(newBook);
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
 
             });
 
 
             return Optional.of(purchase);
-        } catch (IOException ex) {
+        } catch (IOException | SQLException ex) {
             ex.printStackTrace();
         }
         return Optional.empty();
@@ -445,14 +487,14 @@ public class Console {
             Long filter = Long.parseLong(bufferRead.readLine());
             Set<Purchase> filteredPurchase = purchaseService.filterPurchasesByClientID(filter);
             filteredPurchase.forEach(System.out::println);
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             e.printStackTrace();
         }
 
     }
     //******************************************************************************************************************
 
-    private void getReport(){//move in service
+    private void getReport() throws SQLException {//move in service
         //getting how many books are in stock
         long nrBooksInStock = StreamSupport.stream(bookService.getAllBooks().spliterator(), false)
                 .map(Book::getInStock).count();
@@ -470,8 +512,14 @@ public class Console {
         //getting the maximum bought books
         clientIDtoBooksBought.entrySet().stream()
                 .max(Comparator.comparing(Map.Entry::getValue))
-                .ifPresent(e-> System.out.println("The "+
-                        clientService.findOneClient(e.getKey()).get() + " bought the most books: "+e.getValue()));
+                .ifPresent(e-> {
+                    try {
+                        System.out.println("The "+
+                                clientService.findOneClient(e.getKey()).get() + " bought the most books: "+e.getValue());
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                    }
+                });
     }
 
 
