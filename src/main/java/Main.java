@@ -89,23 +89,6 @@ public class Main {
         console.runConsole();
     }
 
-    private static void runWithDataBase() throws ParserConfigurationException, SAXException, IOException {
-        Validator<Client> studentValidator = new ClientValidator();
-        Repository<Long, Client> clientRepository = new InMemoryRepository<>(studentValidator);
-        ClientService clientService = new ClientService(clientRepository);
-
-        Validator<Book> bookValidator = new BookValidator();
-        Repository<Long, Book> bookRepository = new BookDataBaseRepository(bookValidator);
-        BookService bookService = new BookService(bookRepository);
-
-        Validator<Purchase> purchaseValidator = new PurchaseValidator(clientService,bookService);
-        Repository<Long, Purchase> purchaseRepository = new InMemoryRepository<>(purchaseValidator);
-        PurchaseService purchaseService = new PurchaseService(purchaseRepository);
-
-        ui.Console console = new ui.Console(clientService, bookService, purchaseService);
-        console.runConsole();
-    }
-
     public static void main(String args[]) {
         System.out.println("Choose storage option:");
         System.out.println("1.In memory");
