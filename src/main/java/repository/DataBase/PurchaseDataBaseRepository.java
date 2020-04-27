@@ -17,7 +17,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class PurchaseDataBaseRepository implements SortingRepository<Long, Purchase> {
 
@@ -65,7 +64,7 @@ public class PurchaseDataBaseRepository implements SortingRepository<Long, Purch
     }
 
     @Override
-    public Iterable<Purchase> findAll() {
+    public List<Purchase> findAll() {
         List<Purchase> result = new ArrayList<>();
         String cmd = "select * from Purchases";
 

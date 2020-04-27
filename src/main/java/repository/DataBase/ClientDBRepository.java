@@ -48,7 +48,7 @@ public class ClientDBRepository implements SortingRepository<Long, Client> {
     }
 
     @Override
-    public Iterable<Client> findAll() throws SQLException {
+    public List<Client> findAll() throws SQLException {
         List<Client> result = new ArrayList<>();
         String cmd = "select * from clients";
 

@@ -4,13 +4,18 @@ import domain.validators.ValidatorException;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.IOException;
+import java.io.Serializable;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.NoRepositoryBean;
 
-public interface Repository<ID, T extends domain.BaseEntity<ID>> {
+@NoRepositoryBean
+public interface Repository<ID extends Serializable, T extends domain.BaseEntity<ID>>
+extends JpaRepository<T,ID>{
     /*
         DESCR:Find the entity with the given {@code id}.
         PRE:param id must be not null.
@@ -19,7 +24,7 @@ public interface Repository<ID, T extends domain.BaseEntity<ID>> {
      */
     Optional<T> findOne(ID id) throws SQLException;
 
-    Iterable<T> findAll() throws SQLException;//return all entities
+    List<T> findAll();//return all entities
 
     /*
      DESCR: Saves the given entity.

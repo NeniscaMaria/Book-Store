@@ -1,7 +1,9 @@
 package domain;
 
+import javax.persistence.Entity;
 import java.util.Objects;
 
+@Entity
 public class Purchase extends BaseEntity<Long>{
 
     private Long clientID;

@@ -1,5 +1,8 @@
 package domain;
 
+import javax.persistence.Entity;
+
+@Entity
 public class Client extends domain.BaseEntity<Long> {
     private String serialNumber;
     private String name;
