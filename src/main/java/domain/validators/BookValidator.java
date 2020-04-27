@@ -1,9 +1,12 @@
 package domain.validators;
 
 import domain.Book;
+import org.springframework.stereotype.Component;
+
 import java.util.Calendar;
 import java.util.Optional;
 
+@Component
 public class BookValidator implements Validator<domain.Book>  {
     boolean checkNull(String stringToBeChecked){
         return stringToBeChecked.equals("") || stringToBeChecked.equals(" ");

@@ -3,12 +3,14 @@ package domain.validators;
 import domain.Book;
 import domain.Client;
 import domain.Purchase;
+import org.springframework.stereotype.Component;
 import service.BookService;
 import service.ClientService;
 
 import java.sql.SQLException;
 import java.util.Optional;
 
+@Component
 public class PurchaseValidator implements Validator<Purchase> {
     private ClientService clients;
     private BookService books;
@@ -19,14 +21,14 @@ public class PurchaseValidator implements Validator<Purchase> {
     }
 
     private boolean bookExists(Long ID) throws SQLException {//checks if a book with this ID exists
-        Optional<Book> book = books.findOneBook(ID);
+        Optional<Book> book = books.findOne(ID);
         return book.isPresent();
     }
 
     private boolean isBookInSock(Long ID, int nrBooks) throws SQLException { //checks if there are enough books in stock for this operation to take place
         if (nrBooks==0)
             return false;
-        Optional<Book> book = books.findOneBook(ID);
+        Optional<Book> book = books.findOne(ID);
         //we know here for sure that the book exists because we check if the book exists before we call this function
         return book.get().getInStock()>=nrBooks;
     }

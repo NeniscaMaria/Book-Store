@@ -1,14 +1,21 @@
 package domain;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import java.util.Objects;
 
 @Entity
 public class Purchase extends BaseEntity<Long>{
 
+    @Column(nullable=false)
     private Long clientID;
+    @Column(nullable=false)
     private Long bookID;
+    @Column(nullable=false)
     private int nrBooks;
+
 
     public Purchase() {
     }

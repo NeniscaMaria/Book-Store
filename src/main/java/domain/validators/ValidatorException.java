@@ -1,6 +1,8 @@
 package domain.validators;
 
+import org.springframework.stereotype.Component;
 
+@Component
 public class ValidatorException extends RuntimeException {
     public ValidatorException(String message) {
         super(message);

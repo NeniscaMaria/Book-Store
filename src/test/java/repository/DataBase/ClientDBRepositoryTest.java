@@ -1,4 +1,4 @@
-package repository.DataBase;
+/*package repository.DataBase;
 
 import domain.Client;
 import domain.validators.ClientValidator;
@@ -130,3 +130,5 @@ public class ClientDBRepositoryTest {
         repository.save(wrongSerial);
     }
 }
+
+ */

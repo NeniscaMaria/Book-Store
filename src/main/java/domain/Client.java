@@ -1,10 +1,13 @@
 package domain;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 @Entity
 public class Client extends domain.BaseEntity<Long> {
+    @Column(nullable=false)
     private String serialNumber;
+    @Column(nullable=false)
     private String name;
 
     public Client() {
