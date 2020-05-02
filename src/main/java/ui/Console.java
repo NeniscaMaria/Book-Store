@@ -186,9 +186,8 @@ public class Console {
         Optional<Client> client = readClient();
         client.ifPresent(c->{
             try {
-                clientService.addClient(c);
-                //Optional<Client> result = clientService.addClient(c);
-                //result.ifPresent(r-> System.out.println("Client added."));
+                Optional<Client> result = clientService.addClient(c);
+                result.ifPresent(r-> System.out.println("Client added."));
             } catch (ValidatorException e) {
                 System.out.println(e.getMessage());
             }});
@@ -554,12 +553,12 @@ public class Console {
 
     private void getReport() throws SQLException {//move in service
         //getting how many books are in stock
-        long nrBooksInStock = StreamSupport.stream(bookService.getAllBooks().spliterator(), false)
+        long nrBooksInStock = bookService.getAllBooks().stream()
                 .map(Book::getInStock).count();
         System.out.println("Total books in storage : "+nrBooksInStock);
 
         //getting how many books were sold
-        long soldBooks = StreamSupport.stream(purchaseService.getAllPurchases().spliterator(),false).
+        long soldBooks = purchaseService.getAllPurchases().stream().
                 map(Purchase::getNrBooks).count();
         System.out.println("Number of books sold : "+soldBooks);
 
@@ -569,7 +568,7 @@ public class Console {
                 .collect(Collectors.groupingBy(Purchase::getClientID,Collectors.summingInt(Purchase::getNrBooks)));
         //getting the maximum bought books
         clientIDtoBooksBought.entrySet().stream()
-                .max(Comparator.comparing(Map.Entry::getValue))
+                .max(Map.Entry.comparingByValue())
                 .ifPresent(e-> {
                         System.out.println("The "+ clientService.findOneClient(e.getKey()).get() + " bought the most books: "+e.getValue());
                 });

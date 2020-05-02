@@ -4,7 +4,7 @@ import javax.persistence.*;
 @MappedSuperclass
 public class BaseEntity<ID> {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
     private ID id;
 
     public ID getId() {

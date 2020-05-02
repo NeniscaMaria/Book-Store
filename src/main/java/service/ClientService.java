@@ -3,10 +3,12 @@ package service;
 import domain.Client;
 import domain.Purchase;
 import domain.validators.Validator;
+import domain.validators.ValidatorException;
 import net.bytebuddy.asm.Advice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -28,12 +30,18 @@ public class ClientService {
     @Autowired
     private Validator<Client> validator;
 
-    public void addClient(domain.Client client){
+    public Optional<Client> addClient(domain.Client client){
         log.trace("addClient - method entered client={}",client);
         validator.validate(client);
-        repository.save(client);
+        try {
+            repository.save(client);
+        }catch(DataIntegrityViolationException de){
+            log.trace("addClient - method finished");
+            return Optional.empty();
+        }
         log.trace("addClient - client saved client = {}",client);
         log.trace("addClient - method finished");
+        return Optional.of(new Client());
     }
 
     public Optional<Client> removeClient(Long ID) {
